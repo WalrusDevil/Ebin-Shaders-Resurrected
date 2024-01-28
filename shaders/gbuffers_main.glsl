@@ -1,4 +1,4 @@
-#include "/../shaders/lib/Syntax.glsl"
+#include "/lib/Syntax.glsl"
 
 
 varying vec3 color;
@@ -13,7 +13,7 @@ varying vec3 worldDisplacement;
 
 flat varying float materialIDs;
 
-#include "/../shaders/lib/Uniform/Shading_Variables.glsl"
+#include "/lib/Uniform/Shading_Variables.glsl"
 
 
 /***********************************************************************/
@@ -32,18 +32,18 @@ uniform vec3  previousCameraPosition;
 uniform float far;
 
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Debug.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.vsh"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Debug.glsl"
+#include "/lib/Uniform/Projection_Matrices.vsh"
 
 #if defined gbuffers_water
 uniform sampler3D gaux1;
 
-#include "/../shaders/UserProgram/centerDepthSmooth.glsl"
-#include "/../shaders/lib/Uniform/Shadow_View_Matrix.vsh"
-#include "/../shaders/lib/Fragment/PrecomputedSky.glsl"
-#include "/../shaders/lib/Vertex/Shading_Setup.vsh"
+#include "/UserProgram/centerDepthSmooth.glsl"
+#include "/lib/Uniform/Shadow_View_Matrix.vsh"
+#include "/lib/Fragment/PrecomputedSky.glsl"
+#include "/lib/Vertex/Shading_Setup.vsh"
 #endif
 
 
@@ -53,7 +53,7 @@ vec2 GetDefaultLightmap() {
 	return clamp01(lightmapCoord / vec2(0.8745, 0.9373)).rg;
 }
 
-#include "/../shaders/../shaders/block.properties"
+#include "/block.properties"
 
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
@@ -75,8 +75,8 @@ vec4 ProjectViewSpace(vec3 viewSpacePosition) {
 #endif
 }
 
-#include "/../shaders/lib/Vertex/Waving.vsh"
-#include "/../shaders/lib/Vertex/Vertex_Displacements.vsh"
+#include "/lib/Vertex/Waving.vsh"
+#include "/lib/Vertex/Vertex_Displacements.vsh"
 
 mat3 CalculateTBN(vec3 worldPosition) {
 	vec3 tangent  = normalize(at_tangent.xyz);
@@ -161,19 +161,19 @@ uniform float wetness;
 uniform float far;
 
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Debug.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.fsh"
-#include "/../shaders/lib/Misc/CalculateFogfactor.glsl"
-#include "/../shaders/lib/Fragment/Masks.fsh"
+#include "/lib/Settings.glsl"
+#include "/lib/Debug.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Uniform/Projection_Matrices.fsh"
+#include "/lib/Misc/CalculateFogfactor.glsl"
+#include "/lib/Fragment/Masks.fsh"
 
 #if defined gbuffers_water
 uniform sampler3D gaux1;
 
-#include "/../shaders/lib/Uniform/Shadow_View_Matrix.fsh"
-#include "/../shaders/lib/Fragment/ComputeShadedFragment.fsh"
-#include "/../shaders/lib/Fragment/ComputeWaveNormals.fsh"
+#include "/lib/Uniform/Shadow_View_Matrix.fsh"
+#include "/lib/Fragment/ComputeShadedFragment.fsh"
+#include "/lib/Fragment/ComputeWaveNormals.fsh"
 #endif
 
 
@@ -218,8 +218,8 @@ float GetSpecularity(vec2 coord) {
 }
 
 
-#include "/../shaders/lib/Fragment/TerrainParallax.fsh"
-#include "/../shaders/lib/Misc/Euclid.glsl"
+#include "/lib/Fragment/TerrainParallax.fsh"
+#include "/lib/Misc/Euclid.glsl"
 
 
 #if defined gbuffers_water
@@ -228,7 +228,7 @@ float GetSpecularity(vec2 coord) {
 	/* DRAWBUFFERS:14 */
 #endif
 
-#include "/../shaders/lib/Exit.glsl"
+#include "/lib/Exit.glsl"
 
 void main() {
 	if (CalculateFogfactor(position[0]) >= 1.0)

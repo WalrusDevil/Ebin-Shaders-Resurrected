@@ -1,6 +1,6 @@
-#include "/../shaders/lib/Fragment/PrecomputedSky.glsl"
-#include "/../shaders/lib/Fragment/2D_Clouds.fsh"
-#include "/../shaders/lib/Fragment/3D_Clouds.fsh"
+#include "/lib/Fragment/PrecomputedSky.glsl"
+#include "/lib/Fragment/2D_Clouds.fsh"
+#include "/lib/Fragment/3D_Clouds.fsh"
 
 vec3 CalculateSkyGradient(vec3 wDir, float sunglow, vec3 sunspot) {
 	float gradientCoeff = pow4(1.0 - abs(wDir.y) * 0.5);

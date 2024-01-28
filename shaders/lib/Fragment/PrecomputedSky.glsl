@@ -1,8 +1,8 @@
 #if !defined _PRECOMPUTEDSKY_
 #define _PRECOMPUTEDSKY_
 
-#include "/../shaders/lib/Fragment/ComputeAtmosphericSky.fsh"
-#include "/../shaders/lib/Misc/CalculateFogfactor.glsl"
+#include "/lib/Fragment/ComputeAtmosphericSky.fsh"
+#include "/lib/Misc/CalculateFogfactor.glsl"
 
 const int TRANSMITTANCE_TEXTURE_WIDTH = 256;
 const int TRANSMITTANCE_TEXTURE_HEIGHT = 64;

@@ -1,4 +1,4 @@
-#include "/../shaders/lib/GLSL_Version.glsl"
+#include "/lib/GLSL_Version.glsl"
 #define gbuffers_water
 #define vsh
 #define world0
@@ -11,4 +11,4 @@ uniform mat4 shadowModelViewInverse;
 uniform float sunAngle;
 
 
-#include "/../shaders/gbuffers_main.glsl"
+#include "/gbuffers_main.glsl"

@@ -1,8 +1,8 @@
 #if !defined ComputeGI_FSH
 #define ComputeGI_FSH
 
-#include "/../shaders/lib/Misc/ShadowBias.glsl"
-#include "/../shaders/lib/Fragment/ComputeSunlight.fsh"
+#include "/lib/Misc/ShadowBias.glsl"
+#include "/lib/Fragment/ComputeSunlight.fsh"
 
 #ifndef GI_ENABLED
 	#define ComputeGI(a, b, c, d, e, f) vec3(0.0)
@@ -44,7 +44,7 @@ vec3 ComputeGI(vec3 worldSpacePosition, vec3 normal, float skyLightmap, cfloat r
 	
 	vec3 GI = vec3(0.0);
 	
-	#include "/../shaders/lib/Samples/GI.glsl"
+	#include "/lib/Samples/GI.glsl"
 	
 	float translucent = clamp01(GI_TRANSLUCENCE + mask.translucent);
 	

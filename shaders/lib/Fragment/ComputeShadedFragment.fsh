@@ -1,7 +1,7 @@
 #if !defined COMPUTESHADEDFRAGMENT_FSH
 #define COMPUTESHADEDFRAGMENT_FSH
 
-#include "/../shaders/lib/Fragment/PrecomputedSky.glsl"
+#include "/lib/Fragment/PrecomputedSky.glsl"
 
 struct Shading { // Scalar light levels
 	float sunlight;

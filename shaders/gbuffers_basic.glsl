@@ -1,4 +1,4 @@
-#include "/../shaders/lib/Syntax.glsl"
+#include "/lib/Syntax.glsl"
 
 
 varying mat2x3 position;
@@ -15,9 +15,9 @@ uniform mat4 gbufferModelViewInverse;
 
 uniform vec3  cameraPosition;
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.vsh"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Uniform/Projection_Matrices.vsh"
 
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
@@ -29,8 +29,8 @@ vec4 ProjectViewSpace(vec3 viewSpacePosition) {
 	return vec4(projMAD(projMatrix, viewSpacePosition), viewSpacePosition.z * projMatrix[2].w);
 }
 
-#include "/../shaders/UserProgram/Terrain_Deformation.vsh"
-#include "/../shaders/lib/Vertex/Vertex_Displacements.vsh"
+#include "/UserProgram/Terrain_Deformation.vsh"
+#include "/lib/Vertex/Vertex_Displacements.vsh"
 
 void main() {
 	SetupProjection();

@@ -1,4 +1,4 @@
-#include "/../shaders/lib/Syntax.glsl"
+#include "/lib/Syntax.glsl"
 
 
 varying vec2 texcoord;
@@ -9,8 +9,8 @@ varying vec2 texcoord;
 
 uniform vec2 pixelSize;
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
 
 
 void main() {
@@ -43,9 +43,9 @@ uniform sampler2D colortex3;
 
 uniform vec2 pixelSize;
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Debug.glsl"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Debug.glsl"
 
 vec3 ComputeBloomTile(cfloat scale, vec2 offset) { // Computes a single bloom tile, the tile's blur level is inversely proportional to its size
 	// Each bloom tile uses (1.0 / scale + pixelSize * 2.0) texcoord-units of the screen
@@ -98,7 +98,7 @@ vec3 ComputeBloom() {
 }
 
 /* DRAWBUFFERS:1 */
-#include "/../shaders/lib/Exit.glsl"
+#include "/lib/Exit.glsl"
 
 void main() {
 	gl_FragData[0] = vec4(pow(ComputeBloom(), vec3(1.0 / 2.2)), 1.0);

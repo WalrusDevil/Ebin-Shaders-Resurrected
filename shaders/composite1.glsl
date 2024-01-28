@@ -1,9 +1,9 @@
-#include "/../shaders/lib/Syntax.glsl"
+#include "/lib/Syntax.glsl"
 
 
 varying vec2 texcoord;
 
-#include "/../shaders/lib/Uniform/Shading_Variables.glsl"
+#include "/lib/Uniform/Shading_Variables.glsl"
 
 
 /***********************************************************************/
@@ -21,14 +21,14 @@ uniform vec3 previousCameraPosition;
 uniform float sunAngle;
 uniform float far;
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Debug.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.vsh"
-#include "/../shaders/UserProgram/centerDepthSmooth.glsl"
-#include "/../shaders/lib/Uniform/Shadow_View_Matrix.vsh"
-#include "/../shaders/lib/Fragment/PrecomputedSky.glsl"
-#include "/../shaders/lib/Vertex/Shading_Setup.vsh"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Debug.glsl"
+#include "/lib/Uniform/Projection_Matrices.vsh"
+#include "/UserProgram/centerDepthSmooth.glsl"
+#include "/lib/Uniform/Shadow_View_Matrix.vsh"
+#include "/lib/Fragment/PrecomputedSky.glsl"
+#include "/lib/Vertex/Shading_Setup.vsh"
 
 void main() {
 	texcoord    = gl_MultiTexCoord0.st;
@@ -46,7 +46,7 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-#include "/../shaders/lib/Settings.glsl"
+#include "/lib/Settings.glsl"
 
 uniform sampler2D colortex0;
 uniform sampler2D colortex1;
@@ -89,13 +89,13 @@ uniform int isEyeInWater;
 uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Debug.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.fsh"
-#include "/../shaders/lib/Uniform/Shadow_View_Matrix.fsh"
-#include "/../shaders/lib/Fragment/Masks.fsh"
+#include "/lib/Utility.glsl"
+#include "/lib/Debug.glsl"
+#include "/lib/Uniform/Projection_Matrices.fsh"
+#include "/lib/Uniform/Shadow_View_Matrix.fsh"
+#include "/lib/Fragment/Masks.fsh"
 
-#include "/../shaders/UserProgram/centerDepthSmooth.glsl" // Doesn't seem to be enabled unless it's initialized in a fragment.
+//#include "/UserProgram/centerDepthSmooth.glsl" // Doesn't seem to be enabled unless it's initialized in a fragment.
 
 vec3 GetDiffuse(vec2 coord) {
 	return texture2D(colortex1, coord).rgb;
@@ -119,14 +119,14 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
 }
 
-#include "/../shaders/lib/Fragment/ComputeShadedFragment.fsh"
-#include "/../shaders/lib/Fragment/BilateralUpsample.fsh"
+#include "/lib/Fragment/ComputeShadedFragment.fsh"
+#include "/lib/Fragment/BilateralUpsample.fsh"
 
-#include "/../shaders/lib/Misc/CalculateFogfactor.glsl"
-#include "/../shaders/lib/Fragment/WaterDepthFog.fsh"
+#include "/lib/Misc/CalculateFogfactor.glsl"
+#include "/lib/Fragment/WaterDepthFog.fsh"
 
 /* DRAWBUFFERS:1465 */
-#include "/../shaders/lib/Exit.glsl"
+#include "/lib/Exit.glsl"
 
 void main() {
 	vec2 texure4 = ScreenTex(colortex4).rg;

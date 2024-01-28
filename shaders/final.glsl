@@ -1,9 +1,9 @@
-#include "/../shaders/lib/Syntax.glsl"
+#include "/lib/Syntax.glsl"
 
 
 varying vec2 texcoord;
 
-#include "/../shaders/lib/Uniform/Shading_Variables.glsl"
+#include "/lib/Uniform/Shading_Variables.glsl"
 
 
 /***********************************************************************/
@@ -21,14 +21,14 @@ uniform vec3 previousCameraPosition;
 uniform float sunAngle;
 uniform float far;
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Debug.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.vsh"
-#include "/../shaders/UserProgram/centerDepthSmooth.glsl"
-#include "/../shaders/lib/Uniform/Shadow_View_Matrix.vsh"
-#include "/../shaders/lib/Fragment/PrecomputedSky.glsl"
-#include "/../shaders/lib/Vertex/Shading_Setup.vsh"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Debug.glsl"
+#include "/lib/Uniform/Projection_Matrices.vsh"
+#include "/UserProgram/centerDepthSmooth.glsl"
+#include "/lib/Uniform/Shadow_View_Matrix.vsh"
+#include "/lib/Fragment/PrecomputedSky.glsl"
+#include "/lib/Vertex/Shading_Setup.vsh"
 
 void main() {
 	texcoord    = gl_MultiTexCoord0.st;
@@ -61,13 +61,13 @@ uniform vec2 pixelSize;
 
 uniform float rainStrength;
 
-#include "/../shaders/lib/Settings.glsl"
-#include "/../shaders/lib/Utility.glsl"
-#include "/../shaders/lib/Debug.glsl"
-#include "/../shaders/lib/Uniform/Projection_Matrices.fsh"
-#include "/../shaders/lib/Uniform/Shadow_View_Matrix.fsh"
-#include "/../shaders/lib/Fragment/Masks.fsh"
-#include "/../shaders/lib/Fragment/Tonemap.fsh"
+#include "/lib/Settings.glsl"
+#include "/lib/Utility.glsl"
+#include "/lib/Debug.glsl"
+#include "/lib/Uniform/Projection_Matrices.fsh"
+#include "/lib/Uniform/Shadow_View_Matrix.fsh"
+#include "/lib/Fragment/Masks.fsh"
+#include "/lib/Fragment/Tonemap.fsh"
 
 vec3 GetColor(vec2 coord) {
 	return DecodeColor(texture2D(colortex3, coord).rgb);
@@ -166,7 +166,7 @@ vec3 Vignette(vec3 color) {
 	return color * (1.0 - pow(edge * 1.0, 1.5));
 }
 
-#include "/../shaders/lib/Exit.glsl"
+#include "/lib/Exit.glsl"
 
 void main() {
 	float depth = GetDepth(texcoord);

@@ -43,19 +43,19 @@ cvec4 swizzle = vec4(1.0, 0.0, -1.0, 0.5);
 #define rcp(x) (1.0 / (x))
 
 
-#include "/../shaders/lib/Utility/boolean.glsl"
+#include "/lib/Utility/boolean.glsl"
 
-#include "/../shaders/lib/Utility/pow.glsl"
+#include "/lib/Utility/pow.glsl"
 
-#include "/../shaders/lib/Utility/fastMath.glsl"
+#include "/lib/Utility/fastMath.glsl"
 
-#include "/../shaders/lib/Utility/lengthDotNormalize.glsl"
+#include "/lib/Utility/lengthDotNormalize.glsl"
 
-#include "/../shaders/lib/Utility/clamping.glsl"
+#include "/lib/Utility/clamping.glsl"
 
-#include "/../shaders/lib/Utility/encoding.glsl"
+#include "/lib/Utility/encoding.glsl"
 
-#include "/../shaders/lib/Utility/blending.glsl"
+#include "/lib/Utility/blending.glsl"
 
 
 // Applies a subtle S-shaped curve, domain [0 to 1]
