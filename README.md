@@ -27,17 +27,16 @@ If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Sha
 
 ## Installation
 
-1. Download and install a compatible version of Optifine
+1. Download and install a compatible version of Optifine or Iris
 2. If you haven't already, launch the game once to create the 'shaderpacks' folder, which is located adjacent to your "saves" folder
 3. Download the Ebin-Shaders .zip and place it into your 'shaderpacks' folder.
-4. (For legacy Minecraft versions before 1.12) you may need to go on Youtube and look at how older shaderpacks used to be installed. This usually involved inzipping the shaderpack and making sure the correct sub-folder is placed into your game's 'shaderpacks' folder.
 
 ## If you run into problems
 There is not a support team for using Ebin, and its primary developer does not have time to offer individual support to everybody who needs help. [Shaderlabs](https://discord.gg/SMgEpZe) is a popular Discord server for Minecraft shader development; you may be able to get help from somebody there.
 
 ## Team
-[jbritain](https://github.com/jbritain): Maintainer
-[BruceKnowsHow](https://github.com/BruceKnowsHow): Original Developer
+- [jbritain](https://github.com/jbritain): Maintainer
+- [BruceKnowsHow](https://github.com/BruceKnowsHow): Original Developer
 
 ## Contributors
 [dotModded](https://github.com/dotModded), [DethRaid](https://github.com/DethRaid), [zombye](https://github.com/zombye)
