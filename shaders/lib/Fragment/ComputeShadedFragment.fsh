@@ -146,7 +146,7 @@ vec3 nightDesat(vec3 color, vec3 lightmap, cfloat mult, cfloat curve) {
 	return mix(desatColor, color, desatAmount);
 }
 
-vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float smoothness, mat2x3 position) {
+vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float specularity, mat2x3 position) {
 	Shading shading;
 	
 #ifndef VARIABLE_WATER_HEIGHT

@@ -66,10 +66,10 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	return false;
 }
 
-void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float smoothness, float skyLightmap) {
+void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float specularity, float skyLightmap) {
 	if (isEyeInWater == 1) return;
 	
-	float alpha = pow2(clamp01(1.0 + dotNorm(position[0], normal))) * smoothness;
+	float alpha = pow2(clamp01(1.0 + dotNorm(position[0], normal))) * specularity;
 	
 	if (length(alpha) < 0.0005) return;
 	

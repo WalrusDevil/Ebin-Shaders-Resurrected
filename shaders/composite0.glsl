@@ -137,7 +137,7 @@ void main() {
 	
 	vec4  decode4       = Decode4x8F(texure4.r);
 	Mask  mask          = CalculateMasks(decode4.r);
-	float smoothness    = decode4.g;
+	float specularity    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
 	

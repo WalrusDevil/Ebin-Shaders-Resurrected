@@ -113,7 +113,7 @@ vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 /* DRAWBUFFERS:32 */
 #include "/lib/Exit.glsl"
 
-vec3 ComputeReflectiveSurface(float depth0, float depth1, mat2x3 frontPos, mat2x3 backPos, vec3 normal, float smoothness, float skyLightmap, Mask mask, out vec3 alpha, vec3 transmit) {
+vec3 ComputeReflectiveSurface(float depth0, float depth1, mat2x3 frontPos, mat2x3 backPos, vec3 normal, float specularity, float skyLightmap, Mask mask, out vec3 alpha, vec3 transmit) {
 	vec3 color = vec3(0.0);
 	
 	alpha = vec3(1.0);
@@ -136,7 +136,7 @@ vec3 ComputeReflectiveSurface(float depth0, float depth1, mat2x3 frontPos, mat2x
 		alpha *= 0.0;
 
 	if (depth0 < 1.0)
-		ComputeSSReflections(color, frontPos, normal, smoothness, skyLightmap);
+		ComputeSSReflections(color, frontPos, normal, specularity, skyLightmap);
 	
 	return color * transmit;
 }
@@ -146,7 +146,7 @@ void main() {
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
 	Mask  mask          = CalculateMasks(decode4.r);
-	float smoothness    = decode4.g;
+	float specularity    = decode4.g;
 	float skyLightmap   = decode4.a;
 	
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
@@ -176,7 +176,7 @@ void main() {
 		vec3 color = vec3(0.0);
 		vec3 fog = (depth0 < 1.0) ? SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit) : vec3(0.0);
 		
-		color = fog + ComputeReflectiveSurface(depth0, depth1, frontPos, backPos, normal, smoothness, skyLightmap, mask, alpha, fogTransmit);
+		color = fog + ComputeReflectiveSurface(depth0, depth1, frontPos, backPos, normal, specularity, skyLightmap, mask, alpha, fogTransmit);
 		
 		if (alpha.r + alpha.g + alpha.b > 0.0) {
 			color += ComputeSky(normalize(frontPos[1]), vec3(0.0), alpha, 1.0, false);

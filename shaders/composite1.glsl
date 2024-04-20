@@ -133,7 +133,7 @@ void main() {
 	
 	vec4  decode4       = Decode4x8F(texure4.r);
 	Mask  mask          = CalculateMasks(decode4.r);
-	float smoothness    = decode4.g;
+	float specularity    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
 	
@@ -175,7 +175,7 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, smoothness, backPos);
+	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, specularity, backPos);
 	
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	

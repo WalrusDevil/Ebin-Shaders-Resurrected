@@ -211,7 +211,11 @@ float GetSpecularity(vec2 coord) {
 	float specularity = 0.0;
 	
 #ifdef SPECULARITY_MAPS
-	return specularity = GetTexture(specular, coord).r;
+	float smoothness = GetTexture(specular, coord).r;
+
+	float baseReflectance = GetTexture(specular, coord).g * (229 / 255);
+
+	specularity = pow(smoothness, 2) * baseReflectance;
 #endif
 	
 	return clamp01(specularity + wetness);
