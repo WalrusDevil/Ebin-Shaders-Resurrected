@@ -221,15 +221,23 @@ float GetSpecularity(vec2 coord) {
 	return clamp01(specularity + wetness);
 }
 
+float getRoughness(vec2 coord){
+	return pow(1.0 - GetTexture(specular, coord).r, 2.0);
+}
+
+float getBaseReflectance(vec2 coord){
+	return GetTexture(specular, coord).g * (229 / 255);
+}
+
 
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
 
 #if defined gbuffers_water
-	/* DRAWBUFFERS:03 */
+	/* DRAWBUFFERS:038 */
 #else
-	/* DRAWBUFFERS:14 */
+	/* DRAWBUFFERS:149 */
 #endif
 
 #include "/lib/Exit.glsl"
@@ -238,10 +246,12 @@ void main() {
 	if (CalculateFogfactor(position[0]) >= 1.0)
 		{ discard; }
 	
-	vec2  coord       = ComputeParallaxCoordinate(texcoord, position[1]);
-	vec4  diffuse     = GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
-	vec3  normal      = GetNormal(coord);
-	float specularity = GetSpecularity(coord);
+	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
+	vec4  diffuse     		= GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
+	vec3  normal      		= GetNormal(coord);
+	float specularity 		= GetSpecularity(coord);
+	float roughness				= getRoughness(coord);
+	float baseReflectance = getBaseReflectance(coord);
 	
 #if !defined gbuffers_water
 	float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
@@ -259,6 +269,8 @@ void main() {
 		diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
 		normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
 		specularity = 1.0;
+		roughness = 0;
+		baseReflectance = 0.04;
 		mask.water  = 1.0;
 	}
 	
@@ -276,7 +288,8 @@ void main() {
 	gl_FragData[0] = vec4(encode, 0.0, 1.0);
 	gl_FragData[1] = vec4(composite, diffuse.a);
 #endif
-	
+	gl_FragData[2] = vec4(roughness, baseReflectance, 0.0, 0.0);
+
 	exit();
 }
 
