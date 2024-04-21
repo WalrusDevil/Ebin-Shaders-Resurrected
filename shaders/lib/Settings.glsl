@@ -139,13 +139,13 @@ const float zShrink = 4.0;
 
 #define TEXTURE_PACK_RESOLUTION 16 // [16 32 64 128 256 512 1024 2048 4096]
 
-#if !defined gbuffers_entities
-	//#define NORMAL_MAPS
-#endif
+//#define NORMAL_MAPS
 
 //#define TERRAIN_PARALLAX
 
 //#define SPECULARITY_MAPS
+
+#define REFLECTION_SAMPLES 4 // [1 2 3 4 5 6 7 8 9 10]
 
 //#define FOV_OVERRIDE
 

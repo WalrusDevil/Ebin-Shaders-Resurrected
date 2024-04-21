@@ -37,6 +37,15 @@ uniform float far;
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 
+#if defined gbuffers_water
+uniform sampler3D gaux1;
+
+#include "/UserProgram/centerDepthSmooth.glsl"
+#include "/lib/Uniform/Shadow_View_Matrix.vsh"
+#include "/lib/Fragment/PrecomputedSky.glsl"
+#include "/lib/Vertex/Shading_Setup.vsh"
+#endif
+
 
 vec2 GetDefaultLightmap() {
 	vec2 lightmapCoord = mat2(gl_TextureMatrix[1]) * gl_MultiTexCoord1.st;
@@ -48,6 +57,12 @@ vec2 GetDefaultLightmap() {
 
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
+	
+#if  defined gbuffers_water
+	position -= gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.00005 * float(abs(mc_Entity.x - 8.5) > 0.6));
+#elif defined gbuffers_spidereyes
+	position += gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.0002);
+#endif
 	
 	return mat3(gbufferModelViewInverse) * position;
 }
@@ -105,7 +120,9 @@ void main() {
 	
 	
 	tbnMatrix = CalculateTBN(worldSpacePosition);
-
+	
+	
+	SetupShading();
 }
 
 #endif
@@ -149,6 +166,13 @@ uniform float far;
 #include "/lib/Misc/CalculateFogfactor.glsl"
 #include "/lib/Fragment/Masks.fsh"
 
+uniform sampler3D gaux1;
+
+#include "/lib/Uniform/Shadow_View_Matrix.fsh"
+#include "/lib/Fragment/ComputeShadedFragment.fsh"
+#include "/lib/Fragment/ComputeWaveNormals.fsh"
+
+
 float LOD;
 
 #ifdef TERRAIN_PARALLAX
@@ -164,7 +188,7 @@ vec4 GetDiffuse(vec2 coord) {
 vec3 GetNormal(vec2 coord) {
 	vec3 normal = vec3(0.0, 0.0, 1.0);
 	
-#ifdef NORMAL_MAPS
+#ifndef NORMAL_MAPS
 	normal = GetTexture(normals, coord).xyz * 2.0 - 1.0;
 #endif
 	
@@ -172,11 +196,11 @@ vec3 GetNormal(vec2 coord) {
 }
 
 vec3 GetTangentNormal() {
-#ifdef NORMAL_MAPS
-	return texture2D(normals, texcoord).rgb;
+#ifndef NORMAL_MAPS
+	return vec3(0.5, 0.5, 1.0);
 #endif
 	
-	return vec3(0.5, 0.5, 1.0);
+	return texture2D(normals, texcoord).rgb;
 }
 
 float GetSpecularity(vec2 coord) {
@@ -194,24 +218,19 @@ float GetSpecularity(vec2 coord) {
 }
 
 float getPerceptualSmoothness(vec2 coord){
-	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).r;
-	#endif
-	return 0;
 }
 
 float getBaseReflectance(vec2 coord){
-	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).g;
-	#endif
-	return 0;
 }
 
 
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
-/* DRAWBUFFERS:149 */
+
+/* DRAWBUFFERS:038 */
 
 #include "/lib/Exit.glsl"
 
@@ -226,10 +245,34 @@ void main() {
 	float perceptualSmoothness				= getPerceptualSmoothness(coord);
 	float baseReflectance = getBaseReflectance(coord);
 	
-	float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
+	specularity = clamp(specularity, 0.0, 1.0 - 1.0 / 255.0);
 	
-	gl_FragData[0] = vec4(diffuse.rgb, 1.0);
-	gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), 0.0, 1.0);
+	Mask mask = EmptyMask;
+	
+	if (materialIDs == 4.0) {
+		if (!gl_FrontFacing) discard;
+		
+		diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
+		normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
+		specularity = 1.0;
+		perceptualSmoothness = 1;
+		baseReflectance = 0.13;
+		mask.water  = 1.0;
+	}
+	
+	vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), specularity, position);
+	
+	vec2 encode;
+	encode.x = Encode4x8F(vec4(specularity, vertLightmap.g, mask.water, 0.1));
+	encode.y = EncodeNormal(normal, 11.0);
+	
+	if (materialIDs == 4.0) {
+		composite *= 0.0;
+		diffuse.a = 0.0;
+	}
+	
+	gl_FragData[0] = vec4(encode, 0.0, 1.0);
+	gl_FragData[1] = vec4(composite, diffuse.a);
 	gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, 0.0, 1.0);
 
 	exit();

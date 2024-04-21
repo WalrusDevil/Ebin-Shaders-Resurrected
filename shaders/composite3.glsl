@@ -40,6 +40,7 @@ void main() {
 const bool colortex3MipmapEnabled = true;
 
 uniform sampler2D colortex3;
+uniform sampler2D noisetex;
 
 uniform vec2 pixelSize;
 

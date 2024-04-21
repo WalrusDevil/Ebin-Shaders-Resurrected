@@ -50,6 +50,7 @@ uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform sampler2D colortex3;
 uniform sampler2D gdepthtex;
+uniform sampler2D noisetex;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferPreviousModelView;

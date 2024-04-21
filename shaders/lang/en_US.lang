@@ -3,10 +3,13 @@ screen.TexturePack=Texture Pack
 option.TEXTURE_PACK_RESOLUTION=Texture Pack Resolution
 
 option.NORMAL_MAPS=Normal Map Texture Pack
-option.NORMAL_MAPS.comment=Disable this if you're using a texture-pack that does not have normal-map textures.
+option.NORMAL_MAPS.comment=Use normal map data from resource pack
 
 option.SPECULARITY_MAPS=Specular Map Texture Pack
-option.SPECULARITY_MAPS.comment=Disable this if you're using a texture-pack that does not have specularity textures.
+option.SPECULARITY_MAPS.comment=Use specular map data from resource pack [EXPERIMENTAL]
+
+option.REFLECTION_SAMPLES=Rough Reflection Samples
+option.REFLECTION_SAMPLES.comment=Accuracy of rough reflections.
 
 
 screen.FOV=FOV Override
