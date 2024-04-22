@@ -26,7 +26,7 @@ If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Sha
 ## Planned Features
 - Coloured Shadows
 - Penumbra Shadows
-- Nether/End Support
+- Improved Nether/End Support
 
 ## Requirements
 - A relatively recent version of Iris or Optifine.
