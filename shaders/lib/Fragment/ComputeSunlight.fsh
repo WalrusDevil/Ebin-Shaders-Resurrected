@@ -26,12 +26,12 @@ float GetLambertianShading(vec3 normal, vec3 lightVector, Mask mask) {
 		
 		for (float y = -range; y <= range; y += interval)
 			for (float x = -range; x <= range; x += interval)
-				sunlight += shadow2D(shadow, vec3(shadowPosition.xy + vec2(x, y) * spread, shadowPosition.z)).x;
+				sunlight += shadow2D(shadowtex0, vec3(shadowPosition.xy + vec2(x, y) * spread, shadowPosition.z)).x;
 		
 		return sunlight / sampleCount;
 	}
 #else
-	#define ComputeShadows(shadowPosition, biasCoeff) shadow2D(shadow, shadowPosition).x
+	#define ComputeShadows(shadowPosition, biasCoeff) shadow2D(shadowtex0, shadowPosition).x
 #endif
 
 float ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {

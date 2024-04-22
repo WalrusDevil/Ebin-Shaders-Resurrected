@@ -64,8 +64,8 @@ uniform sampler2D depthtex1;
 uniform sampler2D noisetex;
 uniform sampler2D shadowcolor;
 uniform sampler2D shadowcolor1;
-uniform sampler2D shadowtex1;
-uniform sampler2DShadow shadow;
+uniform sampler2DShadow shadowtex1;
+uniform sampler2DShadow shadowtex0;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
