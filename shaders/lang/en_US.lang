@@ -109,6 +109,9 @@ option.SHADOW_TYPE.comment=Soft Shadows have a medium performance cost!
 value.SHADOW_TYPE.1=Hard Shadows
 value.SHADOW_TYPE.2=Soft Shadows
 
+option.TRANSPARENT_SHADOWS=Transparent Shadows
+option.TRANSPARENT_SHADOWS.comment=Allows transparent objects to let light through in their shadows (does not currently support coloured shadows)
+
 option.PLAYER_SHADOW=Player Shadow
 option.PLAYER_SHADOW.comment=Whether or not the player casts a shadow
 

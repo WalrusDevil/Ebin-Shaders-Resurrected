@@ -25,7 +25,9 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	float frontLength = length(frontPos);
 	
 	while (count < end) {
-		result += shadow2D(shadowtex0, BiasShadowProjection(ray) * 0.5 + 0.5).x * mix(vec2(1.0, 0.0), clamp01(vec2(1.0, -1.0) * (frontLength - count++)), waterMask);
+		vec3 samplePos = BiasShadowProjection(ray) * 0.5 + 0.5;
+		float shadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+		result += shadow * mix(vec2(1.0, 0.0), clamp01(vec2(1.0, -1.0) * (frontLength - count++)), waterMask);
 		ray += shadowStep;
 	}
 	
