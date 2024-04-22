@@ -146,7 +146,7 @@ vec3 nightDesat(vec3 color, vec3 lightmap, cfloat mult, cfloat curve) {
 	return mix(desatColor, color, desatAmount);
 }
 
-vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float specularity, mat2x3 position) {
+vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position) {
 	Shading shading;
 	
 #ifndef VARIABLE_WATER_HEIGHT
@@ -168,12 +168,15 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 #ifdef GI_ENABLED
 	shading.skylight *= 0.9 * SKY_LIGHT_LEVEL;
 #endif
-	
-	shading.torchlight  = pow2(1.0 / ((1.0 - torchLightmap*0.9) * 16.0) - 1.0 / 16.0) * 16.0;
-	shading.torchlight += GetHeldLight(position[0], normal, mask.hand);
-	shading.torchlight += mask.emissive * 50.0;
-	shading.torchlight *= GI.a;
-	shading.torchlight *= 0.05 * TORCH_LIGHT_LEVEL;
+
+	shading.torchlight  = torchLightmap;
+	shading.torchlight 	= max(shading.torchlight, emission);
+	shading.torchlight  = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
+	// shading.torchlight += mask.emissive * 50.0;
+	// shading.torchlight *= GI.a;
+	// shading.torchlight *= 0.05 * TORCH_LIGHT_LEVEL;
+
+	shading.torchlight = 2.0 * pow(shading.torchlight, 5.06) * TORCH_LIGHT_LEVEL;
 	
 	shading.ambient  = 0.5 + (1.0 - eyeBrightnessSmooth.g / 240.0) * 3.0;
 	shading.ambient += nightVision * 50.0;

@@ -207,6 +207,17 @@ float getBaseReflectance(vec2 coord){
 	return 0;
 }
 
+float getEmission(vec2 coord){
+	#ifdef EMISSION_MAPS
+	float emission = GetTexture(specular, coord).a;
+	if (emission == 1.0) {
+		return 0;
+	}
+	return emission;
+	#endif
+	return 0;
+}
+
 
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
@@ -225,12 +236,13 @@ void main() {
 	float specularity 		= GetSpecularity(coord);
 	float perceptualSmoothness				= getPerceptualSmoothness(coord);
 	float baseReflectance = getBaseReflectance(coord);
+	float emission 				= getEmission(coord);
 	
 	float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
 	
 	gl_FragData[0] = vec4(diffuse.rgb, 1.0);
 	gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), 0.0, 1.0);
-	gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, 0.0, 1.0);
+	gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
 
 	exit();
 }

@@ -260,7 +260,7 @@ void main() {
 		mask.water  = 1.0;
 	}
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), specularity, position);
+	vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position);
 	
 	vec2 encode;
 	encode.x = Encode4x8F(vec4(specularity, vertLightmap.g, mask.water, 0.1));

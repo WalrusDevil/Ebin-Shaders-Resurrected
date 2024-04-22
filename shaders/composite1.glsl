@@ -53,6 +53,7 @@ uniform sampler2D colortex1;
 uniform sampler2D colortex3;
 uniform sampler2D colortex4;
 uniform sampler3D colortex7;
+uniform sampler2D colortex9;
 
 #if defined COMPOSITE0_ENABLED
 const bool colortex5MipmapEnabled = true;
@@ -129,38 +130,39 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 #include "/lib/Exit.glsl"
 
 void main() {
-	vec2 texure4 = ScreenTex(colortex4).rg;
+	vec2 texture4 = ScreenTex(colortex4).rg;
 	
-	vec4  decode4       = Decode4x8F(texure4.r);
+	vec4  decode4       = Decode4x8F(texture4.r);
 	Mask  mask          = CalculateMasks(decode4.r);
 	float specularity    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
+	float emission			= texture(colortex9, texcoord).b;
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
 	
-	vec3 wNormal = DecodeNormal(texure4.g, 11);
+	vec3 wNormal = DecodeNormal(texture4.g, 11);
 	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
 	
 	float depth1 = mask.hand > 0.5 ? depth0 : GetTransparentDepth(texcoord);
 	
 	if (depth0 != depth1) {
-		vec2 texure0 = texture2D(colortex0, texcoord).rg;
+		vec2 texture0 = texture2D(colortex0, texcoord).rg;
 		
-		vec4 decode0 = Decode4x8F(texure0.r);
+		vec4 decode0 = Decode4x8F(texture0.r);
 		
 		mask.transparent = 1.0;
 		mask.water       = decode0.b;
 		mask.bits.xy     = vec2(mask.transparent, mask.water);
 		mask.materialIDs = EncodeMaterialIDs(1.0, mask.bits);
 
-		texure4 = vec2(Encode4x8F(vec4(mask.materialIDs, decode0.r, 0.0, decode0.g)), texure0.g);
+		texture4 = vec2(Encode4x8F(vec4(mask.materialIDs, decode0.r, 0.0, decode0.g)), texture0.g);
 	}
 	
 	vec4 GI; vec2 VL;
 	BilateralUpsample(wNormal, depth1, GI, VL);
 	
-	gl_FragData[1] = vec4(texure4.rg, 0.0, 1.0);
+	gl_FragData[1] = vec4(texture4.rg, 0.0, 1.0);
 	gl_FragData[2] = vec4(VL.xy, 0.0, 1.0);
 	
 	
@@ -175,7 +177,7 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, specularity, backPos);
+	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos);
 	
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	

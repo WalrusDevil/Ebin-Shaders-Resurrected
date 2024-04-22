@@ -9,6 +9,9 @@ const float drynessHalflife          = 40.0;
 
 const float centerDepthHalflife = 0.5;
 
+#define EBIN_SHADERS
+#define INFO "by jbritain" // ["by jbritain" "originally developed by BruceKnowsHow"]
+
 /*
 ** Transparent Gbuffers **
 const int colortex0Format = RG32F;
@@ -113,12 +116,12 @@ const float zShrink = 4.0;
 #include "/UserProgram/WaterHeight.glsl"
 //#define VARIABLE_WATER_HEIGHT
 #define UNDERWATER_LIGHT_DEPTH 16 // [4 8 16 32 64 65536]
+
 #define WAVE_MULT  1.0 // [0.0 0.5 1.0 1.5 2.0]
 #define WAVE_SPEED 1.0 // [0.0 0.5 1.0 2.0]
 
 //#define DEFORM
 #define DEFORMATION 1 // [1 2 3]
-
 
 //#define HIDE_ENTITIES
 //#define CLEAR_WATER
@@ -139,11 +142,13 @@ const float zShrink = 4.0;
 
 #define TEXTURE_PACK_RESOLUTION 16 // [16 32 64 128 256 512 1024 2048 4096]
 
-//#define NORMAL_MAPS
+#define NORMAL_MAPS
 
-//#define TERRAIN_PARALLAX
+#define TERRAIN_PARALLAX
 
-//#define SPECULARITY_MAPS
+#define SPECULARITY_MAPS
+
+#define EMISSION_MAPS
 
 #define REFLECTION_SAMPLES 4 // [1 2 3 4 5 6 7 8 9 10]
 

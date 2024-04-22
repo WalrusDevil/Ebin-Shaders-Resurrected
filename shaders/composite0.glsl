@@ -133,9 +133,9 @@ void main() {
 	vec2 noise2D = vec2(0.0);
 #endif
 	
-	vec2 texure4 = textureRaw(colortex4, texcoord).rg;
+	vec2 texture4 = textureRaw(colortex4, texcoord).rg;
 	
-	vec4  decode4       = Decode4x8F(texure4.r);
+	vec4  decode4       = Decode4x8F(texture4.r);
 	Mask  mask          = CalculateMasks(decode4.r);
 	float specularity    = decode4.g;
 	float torchLightmap = decode4.b;
@@ -162,7 +162,7 @@ void main() {
 		{ gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0); exit(); return; }
 	
 	
-	vec3 normal = DecodeNormal(texure4.g, 11);
+	vec3 normal = DecodeNormal(texture4.g, 11);
 	
 	float AO = ComputeSSAO(backPos[0], normal * mat3(gbufferModelViewInverse));
 	

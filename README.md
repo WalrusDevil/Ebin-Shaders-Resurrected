@@ -1,10 +1,10 @@
-# Ebin Shaders
+# Ebin Shaders Resurrected
 
 Ebin Shaders is a Minecraft shaderpack for use with the [OptiFine](https://optifine.net/home) and [Iris](https://irisshaders.dev/) mods.
 
-Ebin began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed almost entirely by BruceKnowsHow ([Github](https://github.com/BruceKnowsHow), [Youtube](https://www.youtube.com/user/MiningGodBruce)) throughout summer & fall of 2016. As development went on, Ebin became more of a platform for experimental low-level graphics optimizations and coding practices. Work slowed down and eventually stopped when Bruce discovered a tragic fact: sometimes it's not possible to write code that is both "fast" and "clean".
+Ebin began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed almost entirely by BruceKnowsHow ([Github](https://github.com/BruceKnowsHow), [Youtube](https://www.youtube.com/user/MiningGodBruce)) throughout summer & fall of 2016. As development went on, Ebin became more of a platform for experimental low-level graphics optimizations and coding practices. Work slowed down and eventually stopped when Bruce discovered a tragic fact: sometimes it's not possible to write code that is both "fast" and "clean". It was resumed by jbritain in 2024 because he liked the shaderpack and couldn't be bothered making his own.
 
-This fork makes Ebin compatible with modern versions of Iris. I haven't done much testing on this, but the base version didn't work on Iris 1.20.4. This version does. I tested it on OptiFine 1.20.1 (the only version I have installed right now) and it also works there.
+This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and also improves upon some aspects of the shader, using more modern features.
 
 ## Community
 If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Shaderlabs Discord server](https://discord.gg/SMgEpZe).
@@ -18,11 +18,18 @@ If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Sha
 - Procedural Water Waves
 - Screen Space Reflections
 - Terrain Parallax - 3D blocks with a supported texture pack
-- Multi-Layered Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
+- Multi-Layered Shading Pipeline - Everything is correctly shaded*, even behind semi-transparent blocks
 - Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
+*specular mapping support is currently experimental
+
+## Planned Features
+- Transparent/Coloured Shadows
+- Penumbra Shadows
+- Nether/End Support
+
 ## Requirements
-- A relatively recent version of Iris or Optifine. As I say, I haven't tested this much.
+- A relatively recent version of Iris or Optifine.
 - OpenGL 4.1 compatible hardware
 
 ## Installation
@@ -36,10 +43,10 @@ There is not a support team for using Ebin, and its primary developer does not h
 
 ## Team
 - [jbritain](https://github.com/jbritain): Maintainer
-- [BruceKnowsHow](https://github.com/BruceKnowsHow): Original Developer
 
 ## Contributors
-[dotModded](https://github.com/dotModded), [DethRaid](https://github.com/DethRaid), [zombye](https://github.com/zombye)
+- [BruceKnowsHow](https://github.com/BruceKnowsHow): Original Developer
+- [dotModded](https://github.com/dotModded), [DethRaid](https://github.com/DethRaid), [zombye](https://github.com/zombye)
 
 
 ## Thanks
@@ -48,5 +55,3 @@ There is not a support team for using Ebin, and its primary developer does not h
 - [karyonix](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286604), longtime maintainer of the Shaders Mod
 - [sp614x](https://twitter.com/sp614x), Ebin would not be possible without #include.
 - [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years
-
-![slide](https://raw.githubusercontent.com/wiki/BruceKnowsHow/Ebin-Shaders/images/cute-anime-bear.png)
