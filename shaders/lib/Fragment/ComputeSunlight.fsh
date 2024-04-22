@@ -18,6 +18,13 @@ float shadowVisibility(sampler2D shadowMap, vec3 shadowPosition){
 	return step(shadowPosition.z, texture2D(shadowMap, shadowPosition.xy).r);
 }
 
+mat2 getRandomRotation(){
+	float randomAngle = texture2D(noisetex, texcoord * 20.0f).r * 100.0f;
+	float cosTheta = cos(randomAngle);
+	float sinTheta = sin(randomAngle);
+	return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
+}
+
 #if SHADOW_TYPE == 2 && defined composite1
 	float ComputeShadows(vec3 shadowPosition, float biasCoeff) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
@@ -30,9 +37,11 @@ float shadowVisibility(sampler2D shadowMap, vec3 shadowPosition){
 		
 		for (float y = -range; y <= range; y += interval){
 			for (float x = -range; x <= range; x += interval){
+				vec2 offset = vec2(x, y);
+				offset = getRandomRotation() * offset;
 				#ifdef TRANSPARENT_SHADOWS
-				float fullShadow = shadowVisibility(shadowtex0, shadowPosition + vec3(x, y, 0) * spread);
-				float opaqueShadow = shadowVisibility(shadowtex1, shadowPosition + vec3(x, y, 0) * spread);
+				float fullShadow = shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread);
+				float opaqueShadow = shadowVisibility(shadowtex1, shadowPosition + vec3(offset, 0) * spread);
 				float shadowTransparency = 1.0 - texture2D(shadowcolor0, shadowPosition.xy).a;
 
 				sunlight += mix(shadowTransparency * opaqueShadow, 1.0, fullShadow);
