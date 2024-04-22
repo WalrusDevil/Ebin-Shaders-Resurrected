@@ -115,7 +115,7 @@ const float zShrink = 4.0;
 //#define WATER_PARALLAX
 //#define WATER_CAUSTICS
 #include "/UserProgram/WaterHeight.glsl"
-//#define VARIABLE_WATER_HEIGHT
+#define VARIABLE_WATER_HEIGHT
 #define UNDERWATER_LIGHT_DEPTH 16 // [4 8 16 32 64 65536]
 
 #define WAVE_MULT  1.0 // [0.0 0.5 1.0 1.5 2.0]

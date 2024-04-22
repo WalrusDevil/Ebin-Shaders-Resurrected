@@ -25,7 +25,7 @@ mat2 getRandomRotation(){
 	return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 }
 
-#if SHADOW_TYPE == 2 && defined composite1
+#if SHADOW_TYPE == 2
 	float ComputeShadows(vec3 shadowPosition, float biasCoeff) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
 		

@@ -138,6 +138,8 @@ uniform sampler2D normals;
 uniform sampler2D specular;
 uniform sampler2D noisetex;
 uniform sampler2D shadowtex0;
+uniform sampler2D shadowtex1;
+uniform sampler2D shadowcolor0;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
