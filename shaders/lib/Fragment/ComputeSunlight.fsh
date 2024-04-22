@@ -24,9 +24,15 @@ float GetLambertianShading(vec3 normal, vec3 lightVector, Mask mask) {
 		
 		float sunlight = 0.0;
 		
-		for (float y = -range; y <= range; y += interval)
-			for (float x = -range; x <= range; x += interval)
-				sunlight += shadow2D(shadowtex0, vec3(shadowPosition.xy + vec2(x, y) * spread, shadowPosition.z)).x;
+		for (float y = -range; y <= range; y += interval){
+			for (float x = -range; x <= range; x += interval){
+				float opaqueShadow = shadow2D(shadowtex0, vec3(shadowPosition.xy + vec2(x, y) * spread, shadowPosition.z)).x;
+				float transparentShadow = shadow2D(shadowtex1, vec3(shadowPosition.xy + vec2(x, y) * spread, shadowPosition.z)).x;
+				float shadowTransparency = 1.0 - texture2D(shadowcolor0, shadowPosition.xy).a;
+
+				sunlight += mix(shadowTransparency * transparentShadow, 1.0, opaqueShadow);
+			}
+		}
 		
 		return sunlight / sampleCount;
 	}

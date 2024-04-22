@@ -24,7 +24,7 @@ If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Sha
 *specular mapping support is currently experimental
 
 ## Planned Features
-- Transparent/Coloured Shadows
+- Coloured Shadows
 - Penumbra Shadows
 - Nether/End Support
 
