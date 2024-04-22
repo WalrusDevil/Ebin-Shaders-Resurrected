@@ -51,6 +51,7 @@ uniform sampler2D colortex2;
 uniform sampler2D colortex3;
 uniform sampler2D gdepthtex;
 uniform sampler2D noisetex;
+uniform bool isEyeInWater;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferPreviousModelView;
@@ -61,6 +62,8 @@ uniform vec3 previousCameraPosition;
 uniform vec2 pixelSize;
 
 uniform float rainStrength;
+
+uniform float far;
 
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
@@ -169,11 +172,18 @@ vec3 Vignette(vec3 color) {
 
 #include "/lib/Exit.glsl"
 
+#include "/lib/fragment/waterDepthFog.fsh"
+#include "/lib/misc/CalculateFogfactor.glsl"
+
 void main() {
 	float depth = GetDepth(texcoord);
 	vec3  color = GetColor(texcoord);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
+	if (isEyeInWater){
+		color = mix(color, waterColor, CalculateFogfactor(vec3(0, 0, depth * far)));
+	}
+
 	color = MotionBlur(color, depth, mask.hand);
 	color =   GetBloom(color);
 	color =   Vignette(color);
