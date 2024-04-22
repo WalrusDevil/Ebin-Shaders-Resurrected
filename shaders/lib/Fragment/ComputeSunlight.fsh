@@ -57,6 +57,7 @@ mat2 getRandomRotation(){
 	#define ComputeShadows(shadowPosition, biasCoeff) shadowVisibility(shadowtex0, shadowPosition);
 #endif
 
+
 float ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
 	if (sunlightCoeff <= 0.0) return sunlightCoeff;
 	
