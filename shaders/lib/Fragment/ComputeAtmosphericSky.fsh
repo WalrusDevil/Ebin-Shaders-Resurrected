@@ -28,6 +28,10 @@ vec2 AtmosphereDistances(vec3 worldPosition, vec3 worldDirection, cfloat atmosph
 }
 
 vec3 ComputeAtmosphericSky(vec3 worldDirection, io vec3 transmit) {
+	#ifndef world0
+		return vec3(0);
+	#endif
+
 	cfloat iSteps = 23;
 	
 	cvec3  OZoneCoeff    =  vec3(3.426, 8.298, 0.356) * 6e-7;

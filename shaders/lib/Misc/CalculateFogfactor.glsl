@@ -9,6 +9,10 @@ float CalculateFogfactor(vec3 position) {
 #ifndef FOG_ENABLED
 	return 0.0;
 #endif
+
+#ifdef world1 //end
+	return 0.0;
+#endif
 	
 	float fogfactor  = length(position) / far;
 		  fogfactor  = clamp01(fogfactor - FOG_START) / (1.0 - FOG_START);

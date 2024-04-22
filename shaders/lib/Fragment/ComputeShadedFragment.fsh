@@ -182,7 +182,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.ambient += nightVision * 50.0;
 	shading.ambient *= GI.a * 0.5 + 0.5;
 	shading.ambient *= 0.04 * AMBIENT_LIGHT_LEVEL;
-	#ifdef world2 // the nether
+	#ifndef world0
 		shading.ambient *= 3;
 	#endif
 	
