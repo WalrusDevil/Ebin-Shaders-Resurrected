@@ -1,7 +1,6 @@
-# Ebin Shaders Resurrected
 ![ebin-banner](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/358e8e8c-f5fe-45f8-8660-c3dfeadb2081)
 
-Ebin Shaders is a Minecraft shaderpack for use with the [OptiFine](https://optifine.net/home) and [Iris](https://irisshaders.dev/) mods.
+Ebin Resurrected is a vibrant and performant Minecraft shaderpack for use with the [OptiFine](https://optifine.net/home) and [Iris](https://irisshaders.dev/) mods.
 
 Ebin began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed almost entirely by BruceKnowsHow ([Github](https://github.com/BruceKnowsHow), [Youtube](https://www.youtube.com/user/MiningGodBruce)) throughout summer & fall of 2016. As development went on, Ebin became more of a platform for experimental low-level graphics optimizations and coding practices. Work slowed down and eventually stopped when Bruce discovered a tragic fact: sometimes it's not possible to write code that is both "fast" and "clean". It was resumed by jbritain in 2024 because he liked the shaderpack and couldn't be bothered making his own.
 
