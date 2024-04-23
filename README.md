@@ -39,7 +39,7 @@ If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Sha
 3. Download the Ebin-Shaders .zip and place it into your 'shaderpacks' folder.
 
 ## If you run into problems
-There is not a support team for using Ebin, and its primary developer does not have time to offer individual support to everybody who needs help. [Shaderlabs](https://discord.gg/SMgEpZe) is a popular Discord server for Minecraft shader development; you may be able to get help from somebody there.
+There is not a support team for using Ebin, and its primary developer does not have time to offer individual support to everybody who needs help. [Shaderlabs](https://discord.gg/RpzWN9S) is a popular Discord server for Minecraft shader development; you may be able to get help from somebody there.
 
 ## Team
 - [jbritain](https://github.com/jbritain): Maintainer
@@ -50,8 +50,10 @@ There is not a support team for using Ebin, and its primary developer does not h
 
 
 ## Thanks
+- [The shaderLABS Discord](https://discord.gg/RpzWN9S) members, for answering the many questions I've had in my time developing shaders, some of which were even constructive.
 - [Sonic Ether](https://www.facebook.com/SonicEther/), creator of SEUS and inspiration for Ebin
 - [daxnitro](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272365), original creator of the Shaders Mod
 - [karyonix](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286604), longtime maintainer of the Shaders Mod
 - [sp614x](https://twitter.com/sp614x), Ebin would not be possible without #include.
+- [IMS](https://github.com/IMS212), for maintaining Iris and Sodium, which are really cool mods.
 - [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years
