@@ -258,7 +258,7 @@ void main() {
 		normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
 		specularity = 1.0;
 		perceptualSmoothness = 1;
-		baseReflectance = 0.13;
+		baseReflectance = 0.02;
 		mask.water  = 1.0;
 	}
 	

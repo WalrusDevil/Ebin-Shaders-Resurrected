@@ -46,7 +46,7 @@ mat2 getRandomRotation(){
 
 				sunlight += mix(shadowTransparency * opaqueShadow, 1.0, fullShadow);
 				#else
-				sunlight += shadow2D(shadowtex0, vec3(shadowPosition.xy + vec2(x, y) * spread, shadowPosition.z)).x;
+				sunlight += shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread);
 				#endif
 			}
 		}

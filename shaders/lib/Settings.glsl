@@ -9,8 +9,7 @@ const float drynessHalflife          = 40.0;
 
 const float centerDepthHalflife = 0.5;
 
-#define EBIN_SHADERS
-#define INFO "by jbritain" // ["by jbritain" "originally developed by BruceKnowsHow"]
+#define INFO 0 // [0 1]
 
 /*
 ** Transparent Gbuffers **
@@ -65,7 +64,7 @@ const float zShrink = 4.0;
 #define SHADOW_MAP_BIAS 0.80 // [0.00 0.60 0.70 0.80 0.85 0.90 0.95]
 #define SHADOW_TYPE 2 // [1 2]
 #define PLAYER_SHADOW
-//#define TRANSPARENT_SHADOWS
+#define TRANSPARENT_SHADOWS
 //#define LIMIT_SHADOW_DISTANCE
 
 //#define GI_ENABLED

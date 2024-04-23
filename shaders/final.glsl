@@ -180,7 +180,7 @@ void main() {
 	vec3  color = GetColor(texcoord);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
-	if (isEyeInWater){
+	if (isEyeInWater){ // hacky water fog
 		color = mix(color, waterColor, CalculateFogfactor(vec3(0, 0, depth * far)));
 	}
 
