@@ -165,7 +165,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			transmit = vec3(1.0);
 			vec3 upVector = mat3(gbufferModelViewInverse) * vec3(0.0, 1.0, 0.0);
 
-			float skyReflectionFactor = clamp01(dot(normal, upVector));
+			float skyReflectionFactor = clamp01(dot(normal, upVector)) * pow2(skyLightmap);
 			in_scatter *= skyReflectionFactor;
 		}
 		
