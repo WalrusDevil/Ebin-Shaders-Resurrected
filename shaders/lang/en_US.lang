@@ -9,7 +9,10 @@ option.SPECULARITY_MAPS=Specular Maps
 option.SPECULARITY_MAPS.comment=Use specular map data from resource pack [EXPERIMENTAL]
 
 option.REFLECTION_SAMPLES=Rough Reflection Samples
-option.REFLECTION_SAMPLES.comment=Number of samples taken for rough surfaces
+option.REFLECTION_SAMPLES.comment=Number of samples taken for rough surfaces. Lower sample count = more performance but more noise
+
+option.ROUGHNESS_THRESHOLD=Reflection Roughness Threshold
+option.ROUGHNESS_THRESHOLD.comment=If an object's roughness is above this threshold, the reflections on it will be faded out.
 
 
 screen.FOV=FOV Override

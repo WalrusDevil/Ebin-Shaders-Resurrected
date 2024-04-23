@@ -17,27 +17,24 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 	return min(75, int(x));
 }
 
-int randOffset = 0;
-float rand(){
-	vec2 coord = frameCounter + texcoord + vec2(randOffset);
-	randOffset++;
-	return fract(sin(dot(coord.xy, vec2(12.9898, 78.233))) * 43758.5453);
+// https://github.com/riccardoscalco/glsl-pcg-prng/blob/main/index.glsl
+uint pcg(uint v) {
+	uint state = v * uint(747796405) + uint(2891336453);
+	uint word = ((state >> ((state >> uint(28)) + uint(4))) ^ state) * uint(277803737);
+	return (word >> uint(22)) ^ word;
 }
 
-// returns a random float from a normal distribution
-float normalDistRandom(){
-
-	float theta = 2 * PI * rand();
-	float rho = sqrt(-2 * log(rand()));
-	return rho * cos(theta);
-
+float prng (uint seed) {
+	return float(pcg(seed)) / float(uint(0xffffffff));
 }
 
-vec3 randomVector(){
-	vec3 vec = vec3(normalDistRandom(), normalDistRandom(), normalDistRandom());
-	if (vec == vec3(0)){
-		return vec3(frameCounter + texcoord.x, frameCounter, texcoord.y);
-	}
+vec3 randomVector(int sampleCount){
+	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y);
+  seed = seed * 720720u + uint(sampleCount);
+
+	float theta = acos(sqrt(prng(seed)));
+	float phi = 2 * PI * prng(seed+seed);
+	return vec3(sin(phi)*cos(theta), sin(phi)*sin(theta), cos(phi));
 }
 
 bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
@@ -101,18 +98,18 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	if (isEyeInWater == 1) return;
 	
-	float hDotV = clamp01(dotNorm(position[0], normal));
+	float nDotV = clamp01(dotNorm(-position[0], normal));
 
 	vec3 fresnel;
 
 	if (baseReflectance < (229.0 / 255.0)) {
-		fresnel = vec3(baseReflectance + (1 - (baseReflectance)) * pow(1 - hDotV, 5)); // schlick approximation
+		fresnel = vec3(baseReflectance + (1 - (baseReflectance)) * pow(1 - nDotV, 5)); // schlick approximation
 	} else {
-		fresnel = color * pow(1 - hDotV, 5); // schlick approximation
+		fresnel = color + (1.0 - color) * pow(1.0 - nDotV, 5.0);
 	}
   
 	
-	if (length(fresnel) < 0.0005) return;
+	if (length(fresnel) < 0.0005 || roughness > ROUGHNESS_THRESHOLD) return;
 	
 
 	mat2x3 refRay;
@@ -130,7 +127,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	for(int i = 0; i < REFLECTION_SAMPLES; i++){
 		
 		if (roughness > 0){ // rough reflections
-			vec3 randomNormal = randomVector();
+			vec3 randomNormal = randomVector(i);
 			if (dot(randomNormal, normal) < 0){ // new random normal faces into surface
 				randomNormal *= -1;
 			}
@@ -164,7 +161,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true);
 			transmit = vec3(1.0);
 
-			float skyReflectionFactor = pow2(skyLightmap) * clamp01(dot(normalize(refRay[1]), vec3(0, 1, 0)));
+			float skyReflectionFactor = pow2(skyLightmap);
 			in_scatter *= skyReflectionFactor;
 		}
 		
@@ -182,7 +179,9 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
 	
 	if (baseReflectance < 1.0){
-		color += mix(color, reflectionSum, clamp01(fresnel * perceptualSmoothness));
+		float fadeFactor = clamp01(1 - (roughness - ROUGHNESS_THRESHOLD)/(1.0 - ROUGHNESS_THRESHOLD)); // fade out reflections above roughness threshold
+		color = mix(color, reflectionSum, clamp01(fresnel) * fadeFactor);
+		
 	}
 	
 }
