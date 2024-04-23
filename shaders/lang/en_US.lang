@@ -1,15 +1,15 @@
-screen.TexturePack=Texture Pack
+screen.TexturePack=PBR
 
-option.TEXTURE_PACK_RESOLUTION=Texture Pack Resolution
+option.TEXTURE_PACK_RESOLUTION=Texture Resolution
 
-option.NORMAL_MAPS=Normal Map Texture Pack
+option.NORMAL_MAPS=Normal Maps
 option.NORMAL_MAPS.comment=Use normal map data from resource pack
 
-option.SPECULARITY_MAPS=Specular Map Texture Pack
+option.SPECULARITY_MAPS=Specular Maps
 option.SPECULARITY_MAPS.comment=Use specular map data from resource pack [EXPERIMENTAL]
 
 option.REFLECTION_SAMPLES=Rough Reflection Samples
-option.REFLECTION_SAMPLES.comment=Accuracy of rough reflections.
+option.REFLECTION_SAMPLES.comment=Number of samples taken for rough surfaces
 
 
 screen.FOV=FOV Override
@@ -23,7 +23,7 @@ option.FOV_TRUE_TENS=Actual FOV
 option.FOV_TRUE_FIVES=Actual FOV
 
 
-screen.Brightness=Brightness and Saturation
+screen.Brightness=Post-Processing
 
 option.EXPOSURE=Exposure
 option.EXPOSURE.comment=The brightness level of the entire scene
@@ -108,6 +108,9 @@ option.SHADOW_TYPE=Shadow Type
 option.SHADOW_TYPE.comment=Soft Shadows have a medium performance cost!
 value.SHADOW_TYPE.1=Hard Shadows
 value.SHADOW_TYPE.2=Soft Shadows
+
+option.SHADOW_SOFTNESS=Soft Shadow Radius
+option.SHADOW_SOFTNESS.comment=Radius in which shadow samples are made. A higher radius results in more samples.
 
 option.TRANSPARENT_SHADOWS=Transparent Shadows
 option.TRANSPARENT_SHADOWS.comment=Allows transparent objects to let light through in their shadows (does not currently support coloured shadows)
@@ -273,7 +276,7 @@ screen.Misc=Misc
 
 option.HIDE_ENTITIES=Hide Entities
 
-option.LIGHT_DESATURATION=Light Desturation
+option.LIGHT_DESATURATION=Light Desaturation
 
 option.CLEAR_WATER=Clear Water
 

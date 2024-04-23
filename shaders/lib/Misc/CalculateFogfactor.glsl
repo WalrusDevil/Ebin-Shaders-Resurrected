@@ -1,7 +1,7 @@
 #if !defined CALCULATEFOGFACTOR_GLSL
 #define CALCULATEFOGFACTOR_GLSL
 
-//#define FOG_ENABLED
+
 #define FOG_POWER 1.5 // [1.0 1.5 2.0 3.0 4.0 6.0 8.0]
 #define FOG_START 0.2 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8]
 
