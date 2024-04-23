@@ -1,4 +1,5 @@
 # Ebin Shaders Resurrected
+![ebin-banner](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/358e8e8c-f5fe-45f8-8660-c3dfeadb2081)
 
 Ebin Shaders is a Minecraft shaderpack for use with the [OptiFine](https://optifine.net/home) and [Iris](https://irisshaders.dev/) mods.
 
