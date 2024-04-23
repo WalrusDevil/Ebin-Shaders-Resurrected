@@ -1,6 +1,9 @@
 ![ebin-banner](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/358e8e8c-f5fe-45f8-8660-c3dfeadb2081)
+[![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/ebin-resurrected)
 
 Ebin Resurrected is a vibrant and performant Minecraft shaderpack for use with the [OptiFine](https://optifine.net/home) and [Iris](https://irisshaders.dev/) mods.
+
+**This repo contains the latest development versions of Ebin resurrected. To download stable releases, get them from [Modrinth](https://modrinth.com/mod/ebin-resurrected) or head over to the [releases tab](https://github.com/jbritain/Ebin-Shaders-Resurrected/latest).**
 
 Ebin began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed almost entirely by BruceKnowsHow ([Github](https://github.com/BruceKnowsHow), [Youtube](https://www.youtube.com/user/MiningGodBruce)) throughout summer & fall of 2016. As development went on, Ebin became more of a platform for experimental low-level graphics optimizations and coding practices. Work slowed down and eventually stopped when Bruce discovered a tragic fact: sometimes it's not possible to write code that is both "fast" and "clean". It was resumed by jbritain in 2024 because he liked the shaderpack and couldn't be bothered making his own.
 
@@ -39,7 +42,7 @@ If you would like to discuss Ebin, or other Minecraft shaderpacks, join the [Sha
 3. Download the Ebin-Shaders .zip and place it into your 'shaderpacks' folder.
 
 ## If you run into problems
-There is not a support team for using Ebin, and its primary developer does not have time to offer individual support to everybody who needs help. [Shaderlabs](https://discord.gg/RpzWN9S) is a popular Discord server for Minecraft shader development; you may be able to get help from somebody there.
+If you are experiencing a problem with Ebin you consider to be a bug, create a new [issue](https://github.com/jbritain/Ebin-Shaders-Resurrected/issues). Please read the issue guidelines before creating one and make sure somebody else hasn't raised the same issue already.
 
 ## Team
 - [jbritain](https://github.com/jbritain): Maintainer
@@ -57,3 +60,7 @@ There is not a support team for using Ebin, and its primary developer does not h
 - [sp614x](https://twitter.com/sp614x), Ebin would not be possible without #include.
 - [IMS](https://github.com/IMS212), for maintaining Iris and Sodium, which are really cool mods.
 - [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years
+
+## Evidence of written proof from BruceKnowsHow to distribute this shaderpack
+![evidence](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/0cca45b6-dd21-4718-a271-80afe12f0546)
+
