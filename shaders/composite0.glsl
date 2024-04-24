@@ -49,6 +49,7 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
+
 const bool shadowtex1Mipmap    = true;
 const bool shadowcolor0Mipmap  = true;
 const bool shadowcolor1Mipmap  = true;
