@@ -146,7 +146,7 @@ uniform float far;
 #include "/lib/Debug.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Uniform/Projection_Matrices.fsh"
-#include "/lib/Misc/CalculateFogFactor.glsl"
+#include "/lib/Misc/CalculateFogfactor.glsl"
 #include "/lib/Fragment/Masks.fsh"
 
 float LOD;

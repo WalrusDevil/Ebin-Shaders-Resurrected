@@ -2,7 +2,7 @@
 #define _PRECOMPUTEDSKY_
 
 #include "/lib/Fragment/ComputeAtmosphericSky.fsh"
-#include "/lib/Misc/CalculateFogFactor.glsl"
+#include "/lib/Misc/CalculateFogfactor.glsl"
 
 const int TRANSMITTANCE_TEXTURE_WIDTH = 256;
 const int TRANSMITTANCE_TEXTURE_HEIGHT = 64;

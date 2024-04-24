@@ -172,8 +172,8 @@ vec3 Vignette(vec3 color) {
 
 #include "/lib/Exit.glsl"
 
-#include "/lib/fragment/waterDepthFog.fsh"
-#include "/lib/misc/CalculateFogFactor.glsl"
+#include "/lib/Fragment/WaterDepthFog.fsh"
+#include "/lib/Misc/CalculateFogfactor.glsl"
 
 void main() {
 	float depth = GetDepth(texcoord);

@@ -89,7 +89,7 @@ uniform int isEyeInWater;
 #include "/lib/Uniform/Projection_Matrices.fsh"
 #include "/lib/Uniform/Shadow_View_Matrix.fsh"
 #include "/lib/Fragment/Masks.fsh"
-#include "/lib/Misc/CalculateFogFactor.glsl"
+#include "/lib/Misc/CalculateFogfactor.glsl"
 
 
 vec3 GetColor(vec2 coord) {
