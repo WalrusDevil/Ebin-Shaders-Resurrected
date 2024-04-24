@@ -180,7 +180,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	if (baseReflectance < 1.0){
 		float fadeFactor = clamp01(1 - (roughness - ROUGHNESS_THRESHOLD)/(1.0 - ROUGHNESS_THRESHOLD)); // fade out reflections above roughness threshold
-		color = mix(color, reflectionSum, clamp01(fresnel) * fadeFactor);
+		color = mix(color, clamp01(reflectionSum), clamp01(fresnel * fadeFactor));
 		
 	}
 	

@@ -6,7 +6,7 @@ option.NORMAL_MAPS=Normal Maps
 option.NORMAL_MAPS.comment=Use normal map data from resource pack
 
 option.SPECULARITY_MAPS=Specular Maps
-option.SPECULARITY_MAPS.comment=Use specular map data from resource pack [EXPERIMENTAL]
+option.SPECULARITY_MAPS.comment=Use specular map data from resource pack
 
 option.REFLECTION_SAMPLES=Rough Reflection Samples
 option.REFLECTION_SAMPLES.comment=Number of samples taken for rough surfaces. Lower sample count = more performance but more noise

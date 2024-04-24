@@ -24,8 +24,6 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Multi-Layered Shading Pipeline - Everything is correctly shaded*, even behind semi-transparent blocks
 - Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
-*specular mapping support is currently experimental
-
 ## Planned Features
 - Coloured Shadows
 - Penumbra Shadows

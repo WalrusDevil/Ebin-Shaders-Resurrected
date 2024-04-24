@@ -40,7 +40,7 @@ float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
 	falloff  = mix(falloff, vec2(1.0), handMask * vec2(greaterThan(viewSpacePosition.x * vec2(1.0, -1.0), vec2(0.0))));
 	falloff *= vec2(heldBlockLightValue, heldBlockLightValue2);
 	
-	return pow(falloff.x + falloff.y, 0.3);
+	return falloff.x + falloff.y;
 }
 
 #if defined composite1
@@ -170,13 +170,12 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 #endif
 
 	shading.torchlight  = torchLightmap;
-	shading.torchlight 	= max(shading.torchlight, emission);
-	shading.torchlight  = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
-	// shading.torchlight += mask.emissive * 50.0;
-	// shading.torchlight *= GI.a;
-	// shading.torchlight *= 0.05 * TORCH_LIGHT_LEVEL;
+	shading.torchlight += GetHeldLight(position[0], normal, mask.hand);
+	shading.torchlight += mask.emissive * 50.0;
+	shading.torchlight *= GI.a;
+	shading.torchlight = 0.05 * TORCH_LIGHT_LEVEL * 2 * pow(shading.torchlight, 5.06);
 
-	shading.torchlight = pow(shading.torchlight, 5.06) * TORCH_LIGHT_LEVEL;
+	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * TORCH_LIGHT_LEVEL);
 	
 	shading.ambient  = 0.5 + (1.0 - eyeBrightnessSmooth.g / 240.0) * 3.0;
 	shading.ambient += nightVision * 50.0;
