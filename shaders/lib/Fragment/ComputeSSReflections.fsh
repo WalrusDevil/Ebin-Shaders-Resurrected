@@ -152,8 +152,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true);
 			transmit = vec3(1.0);
 
-			float skyReflectionFactor = pow2(skyLightmap);
-			in_scatter *= skyReflectionFactor;
+			in_scatter *= skyLightmap;
 		}
 		
 		

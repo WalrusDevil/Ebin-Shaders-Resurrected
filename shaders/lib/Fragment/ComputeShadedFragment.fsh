@@ -24,21 +24,36 @@ struct Lightmap { // Vector light levels with color
 
 
 float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
-	mat2x3 lightPos = mat2x3(
-	     0.16, -0.05, -0.1,
-	    -0.16, -0.05, -0.1);
+	// mat2x3 lightPos = mat2x3(
+	//      0.16, -0.05, -0.1,
+	//     -0.16, -0.05, -0.1);
 	
-	mat2x3 lightRay = mat2x3(
-	    viewSpacePosition - lightPos[0]*0 - gbufferModelView[3].xyz,
-	    viewSpacePosition - lightPos[1]*0 - gbufferModelView[3].xyz);
+	// mat2x3 lightRay = mat2x3(
+	//     viewSpacePosition - lightPos[0]*0 - gbufferModelView[3].xyz,
+	//     viewSpacePosition - lightPos[1]*0 - gbufferModelView[3].xyz);
 	
-	vec2 falloff = rcp(vec2(length2(lightRay[0]), length2(lightRay[1])));
+	// vec2 falloff = rcp(vec2(length2(lightRay[0]), length2(lightRay[1])));
 	
-	falloff  = vec2(length(lightRay[0]), length(lightRay[1]));
-	falloff  = pow2(1.0 / ((1.0 - clamp01(1.0 - falloff / 16.0)*0.9) * 16.0) - 1.0 / 16.0);
-	falloff *= clamp01(vec2(dot(normal, lightPos[0]), dot(normal, lightPos[1])) * falloff) * 0.35 + 0.65;
-	falloff  = mix(falloff, vec2(1.0), handMask * vec2(greaterThan(viewSpacePosition.x * vec2(1.0, -1.0), vec2(0.0))));
-	falloff *= vec2(heldBlockLightValue, heldBlockLightValue2);
+	// falloff  = vec2(length(lightRay[0]), length(lightRay[1]));
+	// falloff /= (far);
+	// falloff = 1.0 - clamp01(falloff);
+	// //falloff = clamp01(falloff * 16) / 16;
+	// // falloff  = pow2(1.0 / ((1.0 - clamp01(1.0 - falloff / 16.0)*0.9) * 16.0) - 1.0 / 16.0);
+	// // falloff *= clamp01(vec2(dot(normal, lightPos[0]), dot(normal, lightPos[1])) * falloff) * 0.35 + 0.65;
+	// // falloff  = mix(falloff, vec2(1.0), handMask * vec2(greaterThan(viewSpacePosition.x * vec2(1.0, -1.0), vec2(0.0))));
+	
+	vec2 falloff = vec2(0);
+
+
+	if (length(viewSpacePosition) < heldBlockLightValue){
+		float dist = length(viewSpacePosition);
+		falloff = vec2(heldBlockLightValue, heldBlockLightValue2);
+		falloff = clamp01(falloff);
+		falloff = mix(falloff, vec2(0), dist / vec2(heldBlockLightValue, heldBlockLightValue2));
+	}
+	
+	
+	
 	
 	return falloff.x + falloff.y;
 }
@@ -173,9 +188,9 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.torchlight += GetHeldLight(position[0], normal, mask.hand);
 	shading.torchlight += mask.emissive * 50.0;
 	shading.torchlight *= GI.a;
-	shading.torchlight = 0.05 * TORCH_LIGHT_LEVEL * 2 * pow(shading.torchlight, 5.06);
+	//shading.torchlight = 2 * pow(shading.torchlight, 5.06);
 
-	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * TORCH_LIGHT_LEVEL);
+	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL/ 4));
 	
 	shading.ambient  = 0.5 + (1.0 - eyeBrightnessSmooth.g / 240.0) * 3.0;
 	shading.ambient += nightVision * 50.0;
