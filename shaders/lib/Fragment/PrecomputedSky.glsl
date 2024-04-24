@@ -2,7 +2,7 @@
 #define _PRECOMPUTEDSKY_
 
 #include "/lib/Fragment/ComputeAtmosphericSky.fsh"
-#include "/lib/Misc/CalculateFogfactor.glsl"
+#include "/lib/Misc/CalculateFogFactor.glsl"
 
 const int TRANSMITTANCE_TEXTURE_WIDTH = 256;
 const int TRANSMITTANCE_TEXTURE_HEIGHT = 64;
@@ -590,8 +590,8 @@ vec3 SkyAtmosphereToPoint(vec3 wPos0, vec3 wPos1, io vec3 transmit) {
 	inScatter += CalculateNightSky(wDir, transmitIgnore);
 	inScatter += PrecomputedSky(kCamera, wDir, 0.0, sunVector, transmitIgnore)*0.1;
 	
-	float fog0 = CalculateFogfactor(wPos0);
-	float fog1 = CalculateFogfactor(wPos1);
+	float fog0 = CalculateFogFactor(wPos0);
+	float fog1 = CalculateFogFactor(wPos1);
 	
 	float fog = fog1 - fog0;
 	
@@ -603,8 +603,8 @@ vec3 SkyAtmosphereToPoint(vec3 wPos0, vec3 wPos1, io vec3 transmit) {
 	vec3 transmitIgnore = vec3(1.0);
 	vec3 inScatter = ComputeAtmosphericSky(normalize(wPos1 - wPos0), transmitIgnore);
 	
-	float fog0 = CalculateFogfactor(wPos0);
-	float fog1 = CalculateFogfactor(wPos1);
+	float fog0 = CalculateFogFactor(wPos0);
+	float fog1 = CalculateFogFactor(wPos1);
 	
 	float fog = fog1 - fog0;
 	

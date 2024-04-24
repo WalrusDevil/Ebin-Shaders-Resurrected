@@ -173,7 +173,7 @@ vec3 Vignette(vec3 color) {
 #include "/lib/Exit.glsl"
 
 #include "/lib/fragment/waterDepthFog.fsh"
-#include "/lib/misc/CalculateFogfactor.glsl"
+#include "/lib/misc/CalculateFogFactor.glsl"
 
 void main() {
 	float depth = GetDepth(texcoord);
@@ -181,7 +181,7 @@ void main() {
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
 	if (isEyeInWater){ // hacky water fog
-		color = mix(color, waterColor, CalculateFogfactor(vec3(0, 0, depth * far)));
+		color = mix(color, waterColor, CalculateFogFactor(vec3(0, 0, depth * far)));
 	}
 
 	color = MotionBlur(color, depth, mask.hand);

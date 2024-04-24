@@ -165,7 +165,7 @@ uniform float far;
 #include "/lib/Debug.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Uniform/Projection_Matrices.fsh"
-#include "/lib/Misc/CalculateFogfactor.glsl"
+#include "/lib/Misc/CalculateFogFactor.glsl"
 #include "/lib/Fragment/Masks.fsh"
 
 uniform sampler3D gaux1;
@@ -237,7 +237,7 @@ float getBaseReflectance(vec2 coord){
 #include "/lib/Exit.glsl"
 
 void main() {
-	if (CalculateFogfactor(position[0]) >= 1.0)
+	if (CalculateFogFactor(position[0]) >= 1.0)
 		{ discard; }
 	
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
