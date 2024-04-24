@@ -85,7 +85,7 @@ mat4x3 cloudAdd;
 vec3 directColor, ambientColor, bouncedColor;
 
 vec4 CloudColor(vec3 worldPosition, cfloat cloudLowerHeight, cfloat cloudDepth, cfloat denseFactor, float coverage, float sunglow) {
-	cfloat cloudCenter = cloudLowerHeight + cloudDepth * 0.5;
+	float cloudCenter = cloudLowerHeight + cloudDepth * 0.5;
 	
 	float cloudAltitudeWeight = clamp01(distance(worldPosition.y, cloudCenter) / (cloudDepth / 2.0));
 	      cloudAltitudeWeight = pow(1.0 - cloudAltitudeWeight, 0.33);
@@ -94,7 +94,7 @@ vec4 CloudColor(vec3 worldPosition, cfloat cloudLowerHeight, cfloat cloudDepth, 
 	
 	mat4x3 p;
 	
-	cfloat[5] weights = float[5](1.3, -0.7, -0.255, -0.105, 0.04);
+	float[5] weights = float[5](1.3, -0.7, -0.255, -0.105, 0.04);
 	
 	vec3 w = worldPosition / 100.0;
 	
@@ -187,7 +187,7 @@ void CloudLighting2(float sunglow) {
 void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat noise, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
 	if (cloud.a >= 1.0) return;
 	
-	cfloat cloudUpperHeight = cloudLowerHeight + cloudDepth;
+	float cloudUpperHeight = cloudLowerHeight + cloudDepth;
 	
 	vec3 a, b, rayPosition, rayIncrement;
 	
@@ -215,7 +215,7 @@ void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, 
 	coverage *= clamp01(1.0 - length2((rayPosition.xz - cameraPosition.xz) / 10000.0));
 	if (coverage <= 0.1) return;
 	
-	cfloat denseFactor = 1.0 / (1.0 - density);
+	float denseFactor = 1.0 / (1.0 - density);
 	
 	for (float i = 0.0; i < samples && cloud.a < 1.0; i++, rayPosition += rayIncrement) {
 		vec4 cloud = CloudColor(rayPosition, cloudLowerHeight, cloudDepth, denseFactor, coverage, sunglow);

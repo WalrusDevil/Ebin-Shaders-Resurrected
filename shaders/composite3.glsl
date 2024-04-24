@@ -63,8 +63,8 @@ vec3 ComputeBloomTile(cfloat scale, vec2 offset) { // Computes a single bloom ti
 	
 	float Lod = log2(scale);
 	
-	cfloat range     = 2.0 * scale; // Sample radius has to be adjusted based on the scale of the bloom tile
-	cfloat interval  = 1.0 * scale;
+	float range     = 2.0 * scale; // Sample radius has to be adjusted based on the scale of the bloom tile
+	float interval  = 1.0 * scale;
 	float  maxLength = length(vec2(range));
 	
 	vec3  bloom       = vec3(0.0);
