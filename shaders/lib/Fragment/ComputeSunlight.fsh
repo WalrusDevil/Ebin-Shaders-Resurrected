@@ -7,6 +7,17 @@ float GetLambertianShading(vec3 normal) {
 	return clamp01(dot(normal, lightVector));
 }
 
+// https://github.com/riccardoscalco/glsl-pcg-prng/blob/main/index.glsl
+uint pcg(uint v) {
+	uint state = v * uint(747796405) + uint(2891336453);
+	uint word = ((state >> ((state >> uint(28)) + uint(4))) ^ state) * uint(277803737);
+	return (word >> uint(22)) ^ word;
+}
+
+float prng (uint seed) {
+	return float(pcg(seed)) / float(uint(0xffffffff));
+}
+
 float GetLambertianShading(vec3 normal, vec3 lightVector, Mask mask) {
 	float shading = clamp01(dot(normal, lightVector));
 	      shading = mix(shading, 1.0, mask.translucent);
@@ -19,7 +30,8 @@ float shadowVisibility(sampler2D shadowMap, vec3 shadowPosition){
 }
 
 mat2 getRandomRotation(vec2 offset){
-	float randomAngle = texture2D(noisetex, (texcoord + offset) * 20.0f).r * 100.0f;
+	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y) * 720720u;
+	float randomAngle = 2 * PI * prng(seed);
 	float cosTheta = cos(randomAngle);
 	float sinTheta = sin(randomAngle);
 	return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);

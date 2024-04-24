@@ -129,6 +129,7 @@ uniform mat4 shadowProjection;
 uniform vec3 cameraPosition;
 
 uniform float nightVision;
+uniform float viewHeight;
 
 uniform ivec2 eyeBrightnessSmooth;
 
