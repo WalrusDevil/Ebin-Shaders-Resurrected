@@ -337,3 +337,7 @@ option.ANIMATION_FRAMERATE.comment=The fixed-framerate to assume when animating 
 option.INFO=Ebin Resurrected
 value.INFO.0=By jbritain
 value.INFO.1=By BruceKnowsHow
+
+option.VERSION=Version
+value.VERSION.0=SOURCE
+value.VERSION.1=ROLLING

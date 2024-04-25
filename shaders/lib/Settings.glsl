@@ -10,6 +10,7 @@ const float drynessHalflife          = 40.0;
 const float centerDepthHalflife = 0.5;
 
 #define INFO 0 // [0 1]
+#define VERSION 0 // [0 1]
 
 /*
 ** Transparent Gbuffers **

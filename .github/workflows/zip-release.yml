@@ -9,6 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "value.VERSION.0=SOURCE"
+          replace: "value.VERSION.0=${{ github.event.release.tag_name }}"
+          regex: false
+      - uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "value.VERSION.1=ROLLING"
+          replace: "value.VERSION.1=${{ github.event.repository.updated_at}}"
+          regex: false
       - uses: vimtor/action-zip@v1.2
         with:
           files: LICENSE.md shaders/
