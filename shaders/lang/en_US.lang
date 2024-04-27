@@ -6,10 +6,10 @@ option.NORMAL_MAPS=Normal Maps
 option.NORMAL_MAPS.comment=Use normal map data from resource pack
 
 option.SPECULARITY_MAPS=Specular Maps
-option.SPECULARITY_MAPS.comment=Use specular map data from resource pack
+option.SPECULARITY_MAPS.comment=Use specular map data from resource pack. This has a high performance impact as it uses screen space reflections
 
 option.REFLECTION_SAMPLES=Rough Reflection Samples
-option.REFLECTION_SAMPLES.comment=Number of samples taken for rough surfaces. Lower sample count = more performance but more noise
+option.REFLECTION_SAMPLES.comment=Number of samples taken for reflections on rough surfaces. Lower sample count = more performance but more noise
 
 
 
@@ -335,6 +335,8 @@ option.ANIMATION_FRAMERATE.comment=The fixed-framerate to assume when animating 
 option.INFO=Ebin Resurrected
 value.INFO.0=By jbritain
 value.INFO.1=By BruceKnowsHow
+
+option.LABPBR_VERSION=labPBR Version
 
 option.VERSION=Version
 value.VERSION.0=SOURCE

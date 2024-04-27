@@ -160,3 +160,5 @@ const float zShrink = 4.0;
 #define FOV_TRUE_FIVES 0  // [0 5]
 
 #define FOG_ENABLED
+
+#define LABPBR_VERSION 1.3 // [1.3 1.3]
