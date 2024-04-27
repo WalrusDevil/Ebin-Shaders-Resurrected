@@ -88,8 +88,13 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 
 	if (isEyeInWater == 1) return;
-	
-	float nDotV = clamp01(dotNorm(-position[0], normal));
+
+	vec3 v = normalize(-position[0]);
+	vec3 n = normal;
+	vec3 roughN = normalize(v + n);
+	float nDotV = clamp01(dot(roughN, v));
+
+	//float nDotV = clamp01(dotNorm(-position[0], normal));
 
 	vec3 fresnel;
 
@@ -100,7 +105,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
   
 	
-	if (length(fresnel) < 0.0005 || roughness > ROUGHNESS_THRESHOLD) return;
+	if (length(fresnel) < 0.0005) return;
 	
 
 	mat2x3 refRay;
@@ -123,7 +128,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 				randomNormal *= -1;
 			}
 
-			offsetNormal = mix(normal, randomNormal, 1.0 - perceptualSmoothness);
+			offsetNormal = mix(normal, randomNormal, roughness);
 		}
 
 		refRay[0] = reflect(position[0], offsetNormal);
@@ -137,26 +142,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		
 		if (hit) {
 			reflection = GetColor(refCoord.st);
-			
-			vec3 refVPos = CalculateViewSpacePosition(refCoord);
-			
-			fogFactor = length(abs(position[0] - refVPos) / 500.0);
-			
-			float angleCoeff = clamp01(pow(offsetNormal.z + 0.15, 0.25) * 2.0) * 0.2 + 0.8;
-			float dist       = length8(abs(refCoord.st - vec2(0.5)));
-			float edge       = clamp01(1.0 - pow2(dist * 2.0 * angleCoeff));
-			fogFactor        = clamp01(fogFactor + pow(1.0 - edge, 10.0));
-			
-			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
 		} else {
-			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true);
-			transmit = vec3(1.0);
-
-			in_scatter *= skyLightmap;
+			reflection = clamp01(ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap);
 		}
 		
 		
-		reflection = reflection * transmit + in_scatter;
 		reflectionSum += reflection;
 
 		if (roughness == 0){
@@ -169,8 +159,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
 	
 	if (baseReflectance < 1.0){
-		float fadeFactor = clamp01(1 - (roughness - ROUGHNESS_THRESHOLD)/(1.0 - ROUGHNESS_THRESHOLD)); // fade out reflections above roughness threshold
-		color = mix(color, clamp01(reflectionSum), clamp01(fresnel * fadeFactor));
+		color = mix(color, clamp01(reflectionSum), clamp01(fresnel));
 		
 	}
 	

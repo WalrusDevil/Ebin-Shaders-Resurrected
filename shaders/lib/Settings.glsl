@@ -150,7 +150,7 @@ const float zShrink = 4.0;
 //#define EMISSION_MAPS
 
 #define REFLECTION_SAMPLES 4 // [1 2 4 8 16 32 64]
-#define ROUGHNESS_THRESHOLD 0.6 // [0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+
 
 //#define FOV_OVERRIDE
 
