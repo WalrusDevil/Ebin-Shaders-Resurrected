@@ -23,6 +23,8 @@ attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
 attribute vec4 mc_midTexCoord;
 
+uniform float rainStrength;
+
 uniform sampler2D lightmap;
 
 uniform mat4 gbufferModelViewInverse;
@@ -208,6 +210,22 @@ float getBaseReflectance(vec2 coord){
 	return 0;
 }
 
+float getPorosity(vec2 coord, bool isDielectric){
+	#ifndef SPECULARITY_MAPS
+		return 0;
+	#endif
+	if(!isDielectric){
+		return 0;
+	}
+	float porosity = GetTexture(specular, coord).b;
+
+	if (porosity > 0.25){ // subsurface scattering range
+		return 0;
+	}
+	
+	return porosity * 4;
+}
+
 float getEmission(vec2 coord){
 	#ifdef EMISSION_MAPS
 	float emission = GetTexture(specular, coord).a;
@@ -238,6 +256,14 @@ void main() {
 	float perceptualSmoothness				= getPerceptualSmoothness(coord);
 	float baseReflectance = getBaseReflectance(coord);
 	float emission 				= getEmission(coord);
+	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
+
+	if (porosity > 0){
+		baseReflectance = mix(baseReflectance, 0.2 * porosity, wetness);
+		perceptualSmoothness = mix(perceptualSmoothness, (1.0 - porosity), wetness);
+	}
+
+	diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - porosity) / 2) + 0.5), wetness);
 	
 	float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
 	

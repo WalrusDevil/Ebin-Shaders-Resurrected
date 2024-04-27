@@ -21,6 +21,8 @@ uniform vec3 previousCameraPosition;
 uniform float sunAngle;
 uniform float far;
 
+uniform float rainStrength;
+
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"

@@ -23,6 +23,8 @@ attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
 attribute vec4 mc_midTexCoord;
 
+uniform float rainStrength;
+
 uniform sampler2D lightmap;
 
 uniform mat4 gbufferModelViewInverse;
@@ -160,6 +162,7 @@ uniform ivec2 atlasSize;
 
 uniform float wetness;
 uniform float far;
+uniform float rainStrength;
 
 
 #include "/lib/Settings.glsl"
@@ -221,11 +224,17 @@ float GetSpecularity(vec2 coord) {
 }
 
 float getPerceptualSmoothness(vec2 coord){
+	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).r;
+	#endif
+	return 0;
 }
 
 float getBaseReflectance(vec2 coord){
+	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).g;
+	#endif
+	return 0;
 }
 
 

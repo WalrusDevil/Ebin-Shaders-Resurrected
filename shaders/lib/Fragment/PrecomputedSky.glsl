@@ -575,7 +575,7 @@ vec3 SkyAtmosphere(vec3 wDir, io vec3 transmit) {
 	vec3 inScatter = vec3(0.0);
 	inScatter += CalculateNightSky(wDir, transmit);
 	inScatter += PrecomputedSky(kCamera, wDir, 0.0, sunVector, transmit) * 0.1;
-	
+	inScatter = mix(inScatter, vec3(inScatter.b), rainStrength);
 	return inScatter;
 #else
 	return ComputeAtmosphericSky(wDir, transmit);
@@ -589,6 +589,7 @@ vec3 SkyAtmosphereToPoint(vec3 wPos0, vec3 wPos1, io vec3 transmit) {
 	vec3 inScatter = vec3(0.0);
 	inScatter += CalculateNightSky(wDir, transmitIgnore);
 	inScatter += PrecomputedSky(kCamera, wDir, 0.0, sunVector, transmitIgnore)*0.1;
+	inScatter = mix(inScatter, vec3(inScatter.b), rainStrength);
 	
 	float fog0 = CalculateFogFactor(wPos0);
 	float fog1 = CalculateFogFactor(wPos1);
