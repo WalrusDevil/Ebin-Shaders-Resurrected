@@ -22,6 +22,9 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 vec3 randomVector(int sampleCount){
 	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y);
   seed = seed * 720720u + uint(sampleCount);
+	#ifdef DYNAMIC_NOISE
+	seed += frameCounter;
+	#endif
 
 	float theta = acos(sqrt(prng(seed)));
 	float phi = 2 * PI * prng(seed+seed);

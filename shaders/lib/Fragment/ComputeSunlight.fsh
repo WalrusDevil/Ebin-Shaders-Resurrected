@@ -31,6 +31,9 @@ float shadowVisibility(sampler2D shadowMap, vec3 shadowPosition){
 
 mat2 getRandomRotation(vec2 offset){
 	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y) * 720720u;
+	#ifdef DYNAMIC_NOISE
+	seed += frameCounter;
+	#endif
 	float randomAngle = 2 * PI * prng(seed);
 	float cosTheta = cos(randomAngle);
 	float sinTheta = sin(randomAngle);

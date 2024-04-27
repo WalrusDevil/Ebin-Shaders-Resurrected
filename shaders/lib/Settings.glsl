@@ -162,3 +162,5 @@ const float zShrink = 4.0;
 #define FOG_ENABLED
 
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
+
+//#define DYNAMIC_NOISE
