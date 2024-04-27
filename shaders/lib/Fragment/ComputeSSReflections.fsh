@@ -152,11 +152,25 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		
 		if (hit) {
 			reflection = GetColor(refCoord.st);
+			
+			vec3 refVPos = CalculateViewSpacePosition(refCoord);
+			
+			fogFactor = length(abs(position[0] - refVPos) / 500.0);
+			
+			float angleCoeff = clamp01(pow(offsetNormal.z + 0.15, 0.25) * 2.0) * 0.2 + 0.8;
+			float dist       = length8(abs(refCoord.st - vec2(0.5)));
+			float edge       = clamp01(1.0 - pow2(dist * 2.0 * angleCoeff));
+			fogFactor        = clamp01(fogFactor + pow(1.0 - edge, 10.0));
+			
+			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
 		} else {
-			reflection = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap;
+			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap;
+			transmit = vec3(1.0);
+
+			in_scatter *= skyLightmap;
 		}
 		
-		
+		reflection = reflection * transmit + in_scatter;
 		reflectionSum += reflection;
 
 		if (roughness == 0){
