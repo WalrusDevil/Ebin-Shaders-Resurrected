@@ -89,10 +89,17 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	if (isEyeInWater == 1) return;
 
+	float nDotV;
+
 	vec3 v = normalize(-position[0]);
 	vec3 n = normal;
-	vec3 roughN = normalize(v + n);
-	float nDotV = clamp01(dot(roughN, v));
+	if (roughness > 0){
+		vec3 roughN = normalize(v + n);
+		nDotV = clamp01(dot(roughN, v));
+	} else {
+		nDotV = dot(n, v);
+	}
+	
 
 	//float nDotV = clamp01(dotNorm(-position[0], normal));
 
