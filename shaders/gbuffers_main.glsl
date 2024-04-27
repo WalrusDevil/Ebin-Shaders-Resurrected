@@ -259,8 +259,8 @@ void main() {
 	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
 
 	if (porosity > 0){
-		baseReflectance = mix(baseReflectance, 0.2 * porosity, wetness);
-		perceptualSmoothness = mix(perceptualSmoothness, (1.0 - porosity), wetness);
+		baseReflectance = mix(baseReflectance, 0.2 * porosity, wetness * vertLightmap.g);
+		perceptualSmoothness = mix(perceptualSmoothness, (1.0 - porosity), wetness * vertLightmap.g);
 	}
 
 	diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - porosity) / 2) + 0.5), wetness);

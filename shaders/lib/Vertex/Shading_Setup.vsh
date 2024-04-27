@@ -20,11 +20,11 @@ void SetupShading() {
 	vec3 transmit = vec3(1.0);
 	vec3 fakeTransmit = vec3(1.0);
 	SkyAtmosphere(sunVector, transmit);
-	//transmit /= mix(1.0, 8.0, rainStrength);
+	//transmit /= mix(1.0, 8.0, wetness);
 	sunlightColor = 7.0 * transmit + CalculateNightSky(sunVector, fakeTransmit) * 7.0 * (1.0 - timeHorizon) * isNight;
 
 	transmit = vec3(1.0);
-	skylightColor = SkyAtmosphere(normalize(vec3(0,1,0)), transmit) * 0.5 * mix(1.0, 0.5, rainStrength);
+	skylightColor = SkyAtmosphere(normalize(vec3(0,1,0)), transmit) * 0.5 * mix(1.0, 0.5, wetness);
 	
 	transmit = vec3(1.0);
 //	sunlightDay = GetSunAndSkyIrradiance(kPoint(vec3(0.0)), vec3(0,1,0), sunVector, skylightDay);

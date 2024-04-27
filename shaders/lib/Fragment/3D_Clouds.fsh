@@ -174,7 +174,7 @@ void CloudFBM1(cfloat speed) {
 
 void CloudLighting2(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, rainStrength);
+	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, wetness);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.5);
 	ambientColor *= 0.5 + timeHorizon * 0.5;

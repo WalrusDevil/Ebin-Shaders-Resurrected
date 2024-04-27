@@ -32,6 +32,7 @@ uniform mat4 gbufferModelViewInverse;
 uniform vec3  cameraPosition;
 uniform vec3  previousCameraPosition;
 uniform float far;
+uniform float wetness;
 
 
 #include "/lib/Settings.glsl"
