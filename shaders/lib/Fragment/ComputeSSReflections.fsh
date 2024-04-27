@@ -122,8 +122,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	vec3 refCoord;
 	
-	float sunlight = ComputeSunlight(position[1], GetLambertianShading(normal) * skyLightmap);
-	
 	
 	float fogFactor = 1.0;
 	

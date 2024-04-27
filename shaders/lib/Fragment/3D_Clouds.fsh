@@ -227,7 +227,7 @@ void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, 
 	cloud.a = clamp01(cloud.a);
 }
 
-//#define CLOUD3D
+#define CLOUD3D
 #define CLOUD3D_START_HEIGHT 400    // [260 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000]
 #define CLOUD3D_DEPTH        150    // [50 100 150 200 250 300 350 400 450 500]
 #define CLOUD3D_SAMPLES       10    // [3 4 5 6 7 8 9 10 15 20 25 30 40 50 100]

@@ -144,10 +144,10 @@ const float zShrink = 4.0;
 
 #define TEXTURE_PACK_RESOLUTION 16 // [16 32 64 128 256 512 1024 2048 4096]
 
-//#define NORMAL_MAPS
+#define NORMAL_MAPS
 //#define TERRAIN_PARALLAX
-//#define SPECULARITY_MAPS
-//#define EMISSION_MAPS
+#define SPECULARITY_MAPS
+#define EMISSION_MAPS
 
 #define REFLECTION_SAMPLES 4 // [1 2 4 8 16 32 64]
 
