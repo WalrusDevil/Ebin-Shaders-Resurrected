@@ -143,7 +143,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		if (hit) {
 			reflection = GetColor(refCoord.st);
 		} else {
-			reflection = clamp01(ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap);
+			reflection = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap;
 		}
 		
 		
@@ -159,7 +159,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
 	
 	if (baseReflectance < 1.0){
-		color = mix(color, clamp01(reflectionSum), clamp01(fresnel));
+		color = mix(color, reflectionSum, clamp01(fresnel));
 		
 	}
 	
