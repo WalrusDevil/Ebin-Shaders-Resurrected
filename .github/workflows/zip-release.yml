@@ -30,12 +30,12 @@ jobs:
           file: "Ebin-Resurrected-${{ github.event.release.tag_name }}.zip"
           asset_name: "Ebin-Resurrected-${{ github.event.release.tag_name }}.zip"
           tag: ${{ github.ref }}
-      - uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          # Only include this section if you wish to publish
-          # your assets on Modrinth.
-          modrinth-id: VP9picRm
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          files: "Ebin-Resurrected-${{ github.event.release.tag_name }}.zip"
-          loaders: optifine iris
-          game-versions: ">=1.17"
+      # - uses: Kir-Antipov/mc-publish@v3.3
+      #   with:
+      #     # Only include this section if you wish to publish
+      #     # your assets on Modrinth.
+      #     modrinth-id: VP9picRm
+      #     modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+      #     files: "Ebin-Resurrected-${{ github.event.release.tag_name }}.zip"
+      #     loaders: optifine iris
+      #     game-versions: ">=1.17"
