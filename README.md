@@ -28,7 +28,6 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Coloured Shadows
 - Penumbra Shadows
 - Improved Nether/End Support
-- Weather support
 
 ## Requirements
 - A relatively recent version of Iris or Optifine.
