@@ -22,6 +22,15 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 vec3 randomVector(int sampleCount){
 	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y);
   seed = seed * 720720u + uint(sampleCount);
+	seed += floatBitsToInt(
+	gbufferModelViewInverse[2].x +
+	gbufferModelViewInverse[2].y +
+	gbufferModelViewInverse[2].z +
+	cameraPosition.x +
+	cameraPosition.y +
+	cameraPosition.z
+	);
+
 	#ifdef DYNAMIC_NOISE
 	seed += frameCounter;
 	#endif

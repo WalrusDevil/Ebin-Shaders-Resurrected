@@ -31,6 +31,14 @@ float shadowVisibility(sampler2D shadowMap, vec3 shadowPosition){
 
 mat2 getRandomRotation(vec2 offset){
 	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y) * 720720u;
+	seed += floatBitsToInt(
+	gbufferModelViewInverse[2].x +
+	gbufferModelViewInverse[2].y +
+	gbufferModelViewInverse[2].z +
+	cameraPosition.x +
+	cameraPosition.y +
+	cameraPosition.z
+	);
 	#ifdef DYNAMIC_NOISE
 	seed += frameCounter;
 	#endif
