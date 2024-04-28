@@ -149,7 +149,7 @@ option.FOG_START=Fog Start
 
 screen.GI=Global Illumination
 
-option.GI_ENABLED=Global Illumination
+option.GI_ENABLED=Global Illumination (Experimental)
 
 option.PLAYER_GI_BOUNCE=Player GI Bounce
 option.PLAYER_GI_BOUNCE.comment=If this is enabled the player will cause GI to bounce off the player. This usually looks unnatural so it is off be default.

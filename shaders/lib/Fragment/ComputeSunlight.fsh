@@ -41,14 +41,14 @@ mat2 getRandomRotation(vec2 offset){
 }
 
 #if SHADOW_TYPE == 2
-	float ComputeShadows(vec3 shadowPosition, float biasCoeff) {
+	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
 		
 		cfloat range       = SHADOW_SOFTNESS;
 		cfloat interval    = 1.0 / range;
 		cfloat sampleCount = pow(range / interval * 2.0 + 1.0, 2.0);
 		
-		float sunlight = 0.0;
+		vec3 sunlight = vec3(0.0);
 		
 		for (float y = -range; y <= range; y += interval){
 			for (float x = -range; x <= range; x += interval){
@@ -58,10 +58,11 @@ mat2 getRandomRotation(vec2 offset){
 				float fullShadow = shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread);
 				float opaqueShadow = shadowVisibility(shadowtex1, shadowPosition + vec3(offset, 0) * spread);
 				float shadowTransparency = 1.0 - texture2D(shadowcolor0, shadowPosition.xy).a;
+				vec3 shadowColor = texture2D(shadowcolor0, shadowPosition.xy).rgb * shadowTransparency;
 
-				sunlight += mix(shadowTransparency * opaqueShadow, 1.0, fullShadow);
+				sunlight += mix(shadowColor * opaqueShadow, vec3(1.0), fullShadow);
 				#else
-				sunlight += shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread);
+				sunlight += vec3(shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread));
 				#endif
 			}
 		}
@@ -69,27 +70,27 @@ mat2 getRandomRotation(vec2 offset){
 		return sunlight / sampleCount;
 	}
 #else
-	#define ComputeShadows(shadowPosition, biasCoeff) shadowVisibility(shadowtex0, shadowPosition);
+	#define ComputeShadows(shadowPosition, biasCoeff) vec3(shadowVisibility(shadowtex0, shadowPosition));
 #endif
 
 
-float ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
-	if (sunlightCoeff <= 0.0) return sunlightCoeff;
+vec3 ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
+	if (sunlightCoeff <= 0.0) return vec3(sunlightCoeff);
 	
 	float distCoeff = GetDistanceCoeff(worldSpacePosition);
 	
-	if (distCoeff >= 1.0) return sunlightCoeff;
+	if (distCoeff >= 1.0) return vec3(sunlightCoeff);
 	
 	float biasCoeff;
 	
 	vec3 shadowPosition = BiasShadowProjection(projMAD(shadowProjection, transMAD(shadowViewMatrix, worldSpacePosition + gbufferModelViewInverse[3].xyz)), biasCoeff) * 0.5 + 0.5;
 	
-	if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return sunlightCoeff;
+	if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return vec3(sunlightCoeff);
 	
-	float sunlight = ComputeShadows(shadowPosition, biasCoeff);
-	      sunlight = mix(sunlight, 1.0, distCoeff);
+	vec3 sunlight = ComputeShadows(shadowPosition, biasCoeff);
+	      sunlight = mix(sunlight, vec3(1.0), distCoeff);
 	
-	return sunlightCoeff * pow(sunlight, mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1)));
+	return vec3(sunlightCoeff) * pow(sunlight, vec3(mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1))));
 }
 
 #endif

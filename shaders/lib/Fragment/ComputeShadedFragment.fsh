@@ -4,7 +4,7 @@
 #include "/lib/Fragment/PrecomputedSky.glsl"
 
 struct Shading { // Scalar light levels
-	float sunlight;
+	vec3 sunlight;
 	float skylight;
 	float caustics;
 	float torchlight;
@@ -173,8 +173,8 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	
 	shading.caustics = CalculateWaterCaustics(position[1], shading.skylight, mask.water);
 	
-	shading.sunlight  = GetLambertianShading(normal, lightVector, mask) * shading.skylight;
-	shading.sunlight  = ComputeSunlight(position[1], shading.sunlight);
+	shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
+	shading.sunlight  = vec3(ComputeSunlight(position[1], shading.sunlight.r));
 	shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	shading.sunlight *= mix(1.0, 0, wetness);
 	

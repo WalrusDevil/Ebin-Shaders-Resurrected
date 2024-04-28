@@ -14,7 +14,7 @@ vec3 ComputeGI(vec3 worldSpacePosition, vec3 normal, float skyLightmap, cfloat r
 	
 #ifdef GI_BOOST
 	float sunlight = GetLambertianShading(normal, worldLightVector, mask) * skyLightmap;
-	      sunlight = ComputeSunlight(worldSpacePosition, sunlight);
+	      //sunlight = ComputeSunlight(worldSpacePosition, sunlight);
 	
 	lightMult = (pow2(skyLightmap) * 0.9 + 0.1) * (1.0 - distCoeff) - sunlight * 4.0;
 #endif

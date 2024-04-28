@@ -25,7 +25,6 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
 ## Planned Features
-- Coloured Shadows
 - Penumbra Shadows
 - Improved Nether/End Support
 
