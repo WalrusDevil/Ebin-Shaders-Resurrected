@@ -44,12 +44,52 @@ mat2 getRandomRotation(vec2 offset){
 	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
 		
-		cfloat range       = SHADOW_SOFTNESS;
-		cfloat interval    = 1.0 / range;
-		cfloat sampleCount = pow(range / interval * 2.0 + 1.0, 2.0);
+		#ifdef VARIABLE_PENUMBRA_SHADOWS
+			float shadowDepthRange = 255; // distance that a depth of 1 indicates
+
+			float sunWidth = 0.9; // approximation of sun width if it was 100m away instead of several million km
+			float receiverDepth = shadowPosition.z * shadowDepthRange;
+			float blockerDepthSum;
+
+			float pixelsPerBlock = shadowMapResolution / shadowDistance;
+			float maxPenumbraWidth = 2 * pixelsPerBlock;
+
+
+			int blockerCount = 0;
+			float blockerSearchSamples = 4.0;
+			float blockerSearchInterval = maxPenumbraWidth / blockerSearchSamples;
+			for(float y = -maxPenumbraWidth; y < maxPenumbraWidth; y += blockerSearchInterval){
+				for(float x = -maxPenumbraWidth; x < maxPenumbraWidth; x += blockerSearchInterval){
+					float newBlockerDepth = texture2D(shadowtex0, shadowPosition.xy + vec2(x, y) * spread).r * shadowDepthRange;
+					if (newBlockerDepth < receiverDepth){
+						blockerDepthSum += newBlockerDepth;
+						blockerCount++;
+					}
+					
+				}
+			}
+
+			float blockerDepth = blockerDepthSum / blockerCount;
+
+
+
+			
+			float penumbraWidth = (receiverDepth - blockerDepth) * sunWidth / blockerDepth;
+			penumbraWidth = clamp(penumbraWidth, -maxPenumbraWidth, maxPenumbraWidth);
+
+			float range = max(SHADOW_SOFTNESS, penumbraWidth * pixelsPerBlock);
+		#else
+			float range       = SHADOW_SOFTNESS;
+		#endif
+
+		// float sampleCount = pow(range / interval * 2.0 + 1.0, 2.0);
+		float sampleCount = SHADOW_SAMPLES;
+		float interval = (range * 2) / sqrt(sampleCount);
+
 		
 		vec3 sunlight = vec3(0.0);
 		
+		int samples = 0;
 		for (float y = -range; y <= range; y += interval){
 			for (float x = -range; x <= range; x += interval){
 				vec2 offset = vec2(x, y);
@@ -64,10 +104,11 @@ mat2 getRandomRotation(vec2 offset){
 				#else
 				sunlight += vec3(shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread));
 				#endif
+				samples++;
 			}
 		}
 		
-		return sunlight / sampleCount;
+		return sunlight / samples;
 	}
 #else
 	#define ComputeShadows(shadowPosition, biasCoeff) vec3(shadowVisibility(shadowtex0, shadowPosition));

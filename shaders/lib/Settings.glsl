@@ -67,6 +67,8 @@ const float zShrink = 4.0;
 #define PLAYER_SHADOW
 #define TRANSPARENT_SHADOWS
 #define SHADOW_SOFTNESS 1 // [1 2 3 4 5 6 7 8]
+#define SHADOW_SAMPLES 16 // [4 8 16 32 64]
+#define VARIABLE_PENUMBRA_SHADOWS
 //#define LIMIT_SHADOW_DISTANCE
 
 //#define GI_ENABLED

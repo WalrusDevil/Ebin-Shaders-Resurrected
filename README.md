@@ -14,6 +14,7 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 
 ## Features
 - Sunlight Shadows / Shading
+- Variable Penumbra Shadows (PCSS)
 - Global Illumination
 - Bloom / Glow
 - Motion Blur
@@ -21,11 +22,10 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Procedural Water Waves
 - Screen Space Reflections
 - Terrain Parallax - 3D blocks with a supported texture pack
-- Multi-Layered Shading Pipeline - Everything is correctly shaded*, even behind semi-transparent blocks
+- Multi-Layered Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
 - Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
 ## Planned Features
-- Variable Penumbra Shadows
 - Improved Nether/End Support
 - Distant horizons support
 

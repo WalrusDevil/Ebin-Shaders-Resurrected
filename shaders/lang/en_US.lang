@@ -112,7 +112,13 @@ value.SHADOW_TYPE.1=Hard Shadows
 value.SHADOW_TYPE.2=Soft Shadows
 
 option.SHADOW_SOFTNESS=Soft Shadow Radius
-option.SHADOW_SOFTNESS.comment=Radius in which shadow samples are made. A higher radius results in more samples.
+option.SHADOW_SOFTNESS.comment=Radius in which shadow samples are made. Does not apply to variable penumbra shadows.
+
+option.VARIABLE_PENUMBRA_SHADOWS=PCSS Shadows
+option.VARIABLE_PENUMBRA_SHADOWS.comment=Makes shadows cast by further objects softer.
+
+option.SHADOW_SAMPLES=Shadow Samples
+option.SHADOW_SAMPLES.comment=Number of shadow samples.
 
 option.TRANSPARENT_SHADOWS=Transparent Shadows
 option.TRANSPARENT_SHADOWS.comment=Allows transparent objects to let light through in their shadows (does not currently support coloured shadows)
