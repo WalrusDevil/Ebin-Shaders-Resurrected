@@ -17,7 +17,7 @@ jobs:
       - uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: "value.VERSION.1=ROLLING"
-          replace: "value.VERSION.1=$(git rev-parse --short "$GITHUB_SHA")"
+          replace: value.VERSION.1=$(git rev-parse --short $GITHUB_SHA)
           regex: false
       - uses: vimtor/action-zip@v1.2
         with:
