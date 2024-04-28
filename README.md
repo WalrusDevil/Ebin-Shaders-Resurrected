@@ -25,8 +25,9 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
 ## Planned Features
-- Penumbra Shadows
+- Variable Penumbra Shadows
 - Improved Nether/End Support
+- Distant horizons support
 
 ## Requirements
 - A relatively recent version of Iris or Optifine.
@@ -50,7 +51,14 @@ If you are experiencing a problem with Ebin you consider to be a bug, create a n
 
 
 ## Thanks
-- [The shaderLABS Discord](https://discord.gg/RpzWN9S) members, for answering the many questions I've had in my time developing shaders, some of which were even constructive.
+- [The shaderLABS Discord](https://discord.gg/RpzWN9S) members, for answering the many questions I've had in my time developing shaders, some of which were even constructive. Particularly:
+  - Balint
+  - Jessie
+  - Null
+  - TimeTravelBeard
+  - Quadro
+  - BuilderB0y
+  - NinjaMike
 - [Sonic Ether](https://www.facebook.com/SonicEther/), creator of SEUS and inspiration for Ebin
 - [daxnitro](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272365), original creator of the Shaders Mod
 - [karyonix](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286604), longtime maintainer of the Shaders Mod
