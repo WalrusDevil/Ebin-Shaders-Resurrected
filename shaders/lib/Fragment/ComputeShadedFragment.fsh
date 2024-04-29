@@ -161,7 +161,7 @@ vec3 nightDesat(vec3 color, vec3 lightmap, cfloat mult, cfloat curve) {
 	return mix(desatColor, color, desatAmount);
 }
 
-vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position) {
+vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position, float materialAO) {
 	Shading shading;
 	
 #ifndef VARIABLE_WATER_HEIGHT
@@ -202,6 +202,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.ambient += nightVision * 50.0;
 	shading.ambient *= GI.a * 0.5 + 0.5;
 	shading.ambient *= 0.04 * AMBIENT_LIGHT_LEVEL;
+	shading.ambient *= materialAO;
 	#ifdef world2 // nether - no sunlight or skylight so boost ambient
 		shading.ambient *= 5;
 		shading.torchlight *= 2;

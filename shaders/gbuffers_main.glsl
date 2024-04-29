@@ -270,6 +270,7 @@ void main() {
 	float baseReflectance = getBaseReflectance(coord);
 	float emission 				= getEmission(coord);
 	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
+	float materialAO			= getMaterialAO(coord);
 
 	if (porosity > 0){
 		baseReflectance = mix(baseReflectance, 0.1 * porosity, wetness * vertLightmap.g);
@@ -281,7 +282,7 @@ void main() {
 	float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
 	
 	gl_FragData[0] = vec4(diffuse.rgb, 1.0);
-	gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), 0.0, 1.0);
+	gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
 	gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
 
 	exit();

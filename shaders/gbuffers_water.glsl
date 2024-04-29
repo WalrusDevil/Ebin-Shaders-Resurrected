@@ -216,6 +216,14 @@ vec3 GetTangentNormal() {
 	return vec3(0.5, 0.5, 1.0);
 }
 
+float getMaterialAO(vec2 coord){
+	#ifndef NORMAL_MAPS
+	return 0;
+	#endif
+
+	return GetTexture(normals, coord).z;
+}
+
 float GetSpecularity(vec2 coord) {
 	float specularity = 0.0;
 	
@@ -263,6 +271,7 @@ void main() {
 	float specularity 		= GetSpecularity(coord);
 	float perceptualSmoothness				= getPerceptualSmoothness(coord);
 	float baseReflectance = getBaseReflectance(coord);
+	float materialAO			= getMaterialAO(coord);
 	
 	specularity = clamp(specularity, 0.0, 1.0 - 1.0 / 255.0);
 	
@@ -279,7 +288,7 @@ void main() {
 		mask.water  = 1.0;
 	}
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position);
+	vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position, materialAO);
 	
 	vec2 encode;
 	encode.x = Encode4x8F(vec4(specularity, vertLightmap.g, mask.water, 0.1));

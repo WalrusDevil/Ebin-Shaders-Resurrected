@@ -114,6 +114,7 @@ float GetTransparentDepth(vec2 coord) {
 	return texture2D(depthtex1, coord).x;
 }
 
+
 float ExpToLinearDepth(float depth) {
 	return 2.0 * near * (far + near - depth * (far - near));
 }
@@ -142,6 +143,7 @@ void main() {
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
 	float emission			= texture(colortex9, texcoord).b;
+	float materialAO		= clamp01(texture(colortex4, texcoord).b);
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
 	
@@ -181,7 +183,7 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos);
+	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO);
 	
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	
