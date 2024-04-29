@@ -196,19 +196,24 @@ vec4 GetDiffuse(vec2 coord) {
 vec3 GetNormal(vec2 coord) {
 	vec3 normal = vec3(0.0, 0.0, 1.0);
 	
-#ifndef NORMAL_MAPS
-	normal = GetTexture(normals, coord).xyz * 2.0 - 1.0;
+#ifdef NORMAL_MAPS
+	normal = GetTexture(normals, coord).rgb;
+	normal = normal * 2.0 - 1.0;
+	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy));
 #endif
 	
 	return tbnMatrix * normal;
 }
 
+
 vec3 GetTangentNormal() {
-#ifndef NORMAL_MAPS
-	return vec3(0.5, 0.5, 1.0);
+#ifdef NORMAL_MAPS
+	vec3 normal = texture2D(normals, texcoord).rgb;
+	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy));
+	return normal;
 #endif
 	
-	return texture2D(normals, texcoord).rgb;
+	return vec3(0.5, 0.5, 1.0);
 }
 
 float GetSpecularity(vec2 coord) {

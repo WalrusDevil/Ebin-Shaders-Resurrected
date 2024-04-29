@@ -169,15 +169,27 @@ vec3 GetNormal(vec2 coord) {
 	vec3 normal = vec3(0.0, 0.0, 1.0);
 	
 #ifdef NORMAL_MAPS
-	normal = GetTexture(normals, coord).xyz * 2.0 - 1.0;
+	normal = GetTexture(normals, coord).rgb;
+	normal = normal * 2.0 - 1.0;
+	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy));
 #endif
 	
 	return tbnMatrix * normal;
 }
 
+float getMaterialAO(vec2 coord){
+	#ifndef NORMAL_MAPS
+	return 0;
+	#endif
+
+	return GetTexture(normals, coord).z;
+}
+
 vec3 GetTangentNormal() {
 #ifdef NORMAL_MAPS
-	return texture2D(normals, texcoord).rgb;
+	vec3 normal = texture2D(normals, texcoord).rgb;
+	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy));
+	return normal;
 #endif
 	
 	return vec3(0.5, 0.5, 1.0);
