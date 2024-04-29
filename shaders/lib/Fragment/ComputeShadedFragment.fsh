@@ -42,20 +42,20 @@ float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
 	// // falloff *= clamp01(vec2(dot(normal, lightPos[0]), dot(normal, lightPos[1])) * falloff) * 0.35 + 0.65;
 	// // falloff  = mix(falloff, vec2(1.0), handMask * vec2(greaterThan(viewSpacePosition.x * vec2(1.0, -1.0), vec2(0.0))));
 	
-	vec2 falloff = vec2(0);
+	float falloff;
 
 
 	if (length(viewSpacePosition) < heldBlockLightValue){
 		float dist = length(viewSpacePosition);
-		falloff = vec2(heldBlockLightValue, heldBlockLightValue2);
+		falloff = max(heldBlockLightValue, heldBlockLightValue2);
 		falloff = clamp01(falloff);
-		falloff = mix(falloff, vec2(0), dist / vec2(heldBlockLightValue, heldBlockLightValue2));
+		falloff = mix(falloff, 0, dist / max(heldBlockLightValue, heldBlockLightValue2));
 	}
 	
 	
 	
 	
-	return falloff.x + falloff.y;
+	return falloff;
 }
 
 #if defined composite1
@@ -186,19 +186,20 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 #endif
 
 	shading.torchlight  = torchLightmap;
-	shading.torchlight += GetHeldLight(position[0], normal, mask.hand);
+	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
 	shading.torchlight += mask.emissive * 50.0;
 	shading.torchlight *= GI.a;
 	//shading.torchlight = 2 * pow(shading.torchlight, 5.06);
 
-	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL/ 4));
+	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL));
 	
 	shading.ambient  = 0.5 + (1.0 - eyeBrightnessSmooth.g / 240.0) * 3.0;
 	shading.ambient += nightVision * 50.0;
 	shading.ambient *= GI.a * 0.5 + 0.5;
 	shading.ambient *= 0.04 * AMBIENT_LIGHT_LEVEL;
-	#ifndef world0
-		shading.ambient *= 3;
+	#ifdef world2 // nether - no sunlight or skylight so boost ambient
+		shading.ambient *= 5;
+		shading.torchlight *= 2;
 	#endif
 
 	shading.ambient = mix(shading.ambient, 1.0, emission);

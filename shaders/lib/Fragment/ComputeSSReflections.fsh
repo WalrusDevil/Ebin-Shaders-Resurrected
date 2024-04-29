@@ -169,12 +169,18 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			float edge       = clamp01(1.0 - pow2(dist * 2.0 * angleCoeff));
 			fogFactor        = clamp01(fogFactor + pow(1.0 - edge, 10.0));
 			
+			#ifndef world2
 			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
+			#endif
 		} else {
+			#ifndef world2
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap;
 			transmit = vec3(1.0);
 
 			in_scatter *= skyLightmap;
+			#else
+			reflection = mix(color, vec3(0.02, 0.02, 0), 0.5);
+			#endif
 		}
 		
 		reflection = reflection * transmit + in_scatter;

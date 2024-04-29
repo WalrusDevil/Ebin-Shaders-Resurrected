@@ -55,6 +55,7 @@ uniform sampler2D colortex3;
 uniform sampler2D gdepthtex;
 uniform sampler2D noisetex;
 uniform bool isEyeInWater;
+uniform vec3 fogColor;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferPreviousModelView;
@@ -186,6 +187,10 @@ void main() {
 	if (isEyeInWater){ // hacky water fog
 		color = mix(color, waterColor, CalculateFogFactor(vec3(0, 0, depth * far)));
 	}
+
+	#ifdef world2
+		color = mix(color, fogColor, 0.2 * CalculateFogFactor(vec3(0, 0, depth * far)));
+	#endif
 
 	color = MotionBlur(color, depth, mask.hand);
 	color =   GetBloom(color);
