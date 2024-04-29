@@ -4,4 +4,4 @@
 #define world2
 #define ShaderStage -1
 
-#include "/gbuffers_shadow.glsl"
+#include "/gbuffers_discard.glsl"

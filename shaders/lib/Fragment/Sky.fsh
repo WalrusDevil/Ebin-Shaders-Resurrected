@@ -98,6 +98,10 @@ vec3 ComputeClouds(vec3 wDir, vec3 wPos, io vec3 transmit) {
 }
 
 vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection) {
+	#ifndef world0
+		return vec3(0);
+	#endif
+
 	vec3 color = vec3(0.0);
 	color += ComputeClouds(wDir, wPos, transmit);
 	color += ComputeBackSky(wDir, wPos, transmit, sunlight, reflection);

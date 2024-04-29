@@ -169,21 +169,26 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		skyLightmap = 1.0 - clamp01(-(position[1].y + cameraPosition.y - WATER_HEIGHT) / UNDERWATER_LIGHT_DEPTH);
 #endif
 	
-	shading.skylight = pow2(skyLightmap);
-	
-	shading.caustics = CalculateWaterCaustics(position[1], shading.skylight, mask.water);
-	
-	shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
-	shading.sunlight  = vec3(ComputeSunlight(position[1], shading.sunlight.r));
-	shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
-	shading.sunlight *= mix(1.0, 0, wetness);
-	
-	shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
-	shading.skylight *= GI.a;
-	shading.skylight *= 2.0 * SKY_LIGHT_LEVEL;
-#ifdef GI_ENABLED
-	shading.skylight *= 0.9 * SKY_LIGHT_LEVEL;
-#endif
+	#ifdef world0
+		shading.skylight = pow2(skyLightmap);
+		
+		shading.caustics = CalculateWaterCaustics(position[1], shading.skylight, mask.water);
+		
+		shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
+		shading.sunlight  = vec3(ComputeSunlight(position[1], shading.sunlight.r));
+		shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
+		shading.sunlight *= mix(1.0, 0, wetness);
+		
+		shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
+		shading.skylight *= GI.a;
+		shading.skylight *= 2.0 * SKY_LIGHT_LEVEL;
+		#ifdef GI_ENABLED
+			shading.skylight *= 0.9 * SKY_LIGHT_LEVEL;
+		#endif
+	#else
+		shading.skylight = 0;
+		shading.sunlight = vec3(0);
+	#endif
 
 	shading.torchlight  = torchLightmap;
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
@@ -200,6 +205,9 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	#ifdef world2 // nether - no sunlight or skylight so boost ambient
 		shading.ambient *= 5;
 		shading.torchlight *= 2;
+	#endif
+	#ifdef world1 // the end
+		shading.ambient *= 3;
 	#endif
 
 	shading.ambient = mix(shading.ambient, 1.0, emission);
