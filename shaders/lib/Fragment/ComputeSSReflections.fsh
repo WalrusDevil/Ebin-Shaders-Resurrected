@@ -209,14 +209,24 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		reflection = reflection * transmit + in_scatter;
 		reflectionSum += reflection;
 
+		
+
 		if (roughness == 0){
 			break;
 		}
 	}
+
+	
 	
 	if (roughness > 0){
 		reflectionSum /= REFLECTION_SAMPLES;
 	}
+
+	#ifdef MULTIPLY_METAL_ALBEDO
+		if (baseReflectance >= (229.0 / 255.0)) {
+			reflectionSum *= color;
+		}
+	#endif
 	
 	if (baseReflectance < 1.0){
 		color = mix(color, reflectionSum, clamp01(fresnel));

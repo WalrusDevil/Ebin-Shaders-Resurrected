@@ -4,6 +4,7 @@
 varying vec3 color;
 varying vec2 texcoord;
 varying vec2 vertLightmap;
+varying flat ivec2 textureResolution;
 
 varying mat3 tbnMatrix;
 
@@ -13,6 +14,8 @@ varying vec3 worldDisplacement;
 
 flat varying float materialIDs;
 
+
+
 #include "/lib/Uniform/Shading_Variables.glsl"
 
 
@@ -21,7 +24,7 @@ flat varying float materialIDs;
 
 attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
-attribute vec4 mc_midTexCoord;
+attribute vec2 mc_midTexCoord;
 
 uniform float rainStrength;
 uniform float thunderStrength;
@@ -33,6 +36,7 @@ uniform mat4 gbufferModelViewInverse;
 uniform vec3  cameraPosition;
 uniform vec3  previousCameraPosition;
 uniform float far;
+
 
 
 #include "/lib/Settings.glsl"
@@ -83,6 +87,8 @@ mat3 CalculateTBN(vec3 worldPosition) {
 	return mat3(tangent, binormal, normal);
 }
 
+uniform ivec2 atlasSize;
+
 void main() {
 	materialIDs  = BackPortID(int(mc_Entity.x));
 	
@@ -109,6 +115,12 @@ void main() {
 	
 	tbnMatrix = CalculateTBN(worldSpacePosition);
 
+	// thanks to NinjaMike and Null
+	vec2 halfSize      = abs(texcoord - mc_midTexCoord.xy);
+	vec4 textureBounds = vec4(mc_midTexCoord.xy - halfSize, mc_midTexCoord.xy + halfSize);
+
+	textureResolution = ivec2(((textureBounds.zw - textureBounds.xy) * atlasSize) + vec2(0.5));
+
 }
 
 #endif
@@ -118,6 +130,8 @@ void main() {
 
 /***********************************************************************/
 #if defined fsh
+
+
 
 uniform sampler2D tex;
 uniform sampler2D normals;
@@ -144,7 +158,6 @@ uniform ivec2 atlasSize;
 
 uniform float wetness;
 uniform float far;
-
 
 #include "/lib/Settings.glsl"
 #include "/lib/Debug.glsl"

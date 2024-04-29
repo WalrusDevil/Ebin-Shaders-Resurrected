@@ -2,6 +2,9 @@ screen.TexturePack=PBR
 
 option.TEXTURE_PACK_RESOLUTION=Texture Resolution
 
+option.MULTIPLY_METAL_ALBEDO=Metal Albedo Tinting
+option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo colour. Disable if resource pack does not support this.
+
 option.NORMAL_MAPS=Normal Maps
 option.NORMAL_MAPS.comment=Use normal map data from resource pack
 

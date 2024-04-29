@@ -21,7 +21,11 @@ vec2 ComputeParallaxCoordinate(vec2 coord, vec3 position) {
 	
 	vec3 tangentRay = normalize(position) * tbnMatrix;
 
-	vec2 textureRes = vec2(TEXTURE_PACK_RESOLUTION);
+	
+
+	vec2 textureRes = textureResolution;
+
+	//vec2 textureRes = vec2(TEXTURE_PACK_RESOLUTION);
 	
 	if (atlasSize.x != atlasSize.y) {
 		tangentRay.x *= 0.5;
