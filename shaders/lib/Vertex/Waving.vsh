@@ -35,7 +35,9 @@ vec3 GetWavingLeaves(vec3 position) {
 	
 	vec3 wave = vec3(0.0);
 	
-	cfloat speed = 1.0;
+	float speed = 1.0;
+
+	//speed += mix(0.0, 0.5, thunderStrength);
 	
 	float intensity = (sin(((position.y + position.x) * 0.5 + TIME * PI / ((88.0)))) * 0.05 + 0.15) * 0.35;
 	

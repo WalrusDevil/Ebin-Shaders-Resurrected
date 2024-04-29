@@ -24,6 +24,7 @@ attribute vec4 at_tangent;
 attribute vec4 mc_midTexCoord;
 
 uniform float rainStrength;
+uniform float thunderStrength;
 
 uniform sampler2D lightmap;
 
