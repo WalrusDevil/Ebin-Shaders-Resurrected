@@ -93,6 +93,28 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	return false;
 }
 
+vec3 getMetalf0(float baseReflectance, vec3 color){
+	switch(int(baseReflectance * 255)){
+			case 230: // Iron
+					return vec3(0.24867, 0.22965, 0.21366);
+			case 231: // Gold
+					return vec3(0.88140, 0.57256, 0.11450);
+			case 232: // Aluminum
+					return vec3(0.81715, 0.82021, 0.83177);
+			case 233: // Chrome
+					return vec3(0.27446, 0.27330, 0.27357);
+			case 234: // Copper
+					return vec3(0.84430, 0.48677, 0.22164);
+			case 235: // Lead
+					return vec3(0.36501, 0.35675, 0.37653);
+			case 236: // Platinum
+					return vec3(0.42648, 0.37772, 0.31138);
+			case 237: // Silver
+					return vec3(0.91830, 0.89219, 0.83662);
+	}
+	return clamp01(color);
+}
+
 void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap) {
 	if (baseReflectance == 0) return;
 
@@ -120,7 +142,8 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	if (baseReflectance < (229.0 / 255.0)) {
 		fresnel = vec3(baseReflectance + (1 - (baseReflectance)) * pow(1 - nDotV, 5)); // schlick approximation
 	} else {
-		fresnel = color + (1.0 - color) * pow(1.0 - nDotV, 5.0);
+		vec3 metalReflectance = getMetalf0(baseReflectance, color);
+		fresnel = metalReflectance + (1 - (metalReflectance)) * pow(1 - nDotV, 5); // schlick approximation
 	}
   
 	
