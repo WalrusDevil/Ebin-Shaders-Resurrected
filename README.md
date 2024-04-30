@@ -1,44 +1,44 @@
 ![ebin-banner](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/358e8e8c-f5fe-45f8-8660-c3dfeadb2081)
 [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/ebin-resurrected)
 
-Ebin Resurrected is a vibrant and performant Minecraft shaderpack for use with the [OptiFine](https://optifine.net/home) and [Iris](https://irisshaders.dev/) mods.
+Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 
 **This repo contains the latest development versions of Ebin resurrected. To download stable releases, get them from [Modrinth](https://modrinth.com/mod/ebin-resurrected) or head over to the [releases tab](https://github.com/jbritain/Ebin-Shaders-Resurrected/latest).**
 
-[Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed almost entirely by BruceKnowsHow ([Github](https://github.com/BruceKnowsHow), [Youtube](https://www.youtube.com/user/MiningGodBruce)) throughout summer & fall of 2016. As development went on, Ebin became more of a platform for experimental low-level graphics optimizations and coding practices. Work slowed down and eventually stopped when Bruce discovered a tragic fact: sometimes it's not possible to write code that is both "fast" and "clean". It was resumed by jbritain in 2024 because he liked the shaderpack and couldn't be bothered making his own.
-
-This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and also improves upon some aspects of the shader, using more modern features.
+[Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed by [BruceKnowsHow](https://github.com/BruceKnowsHow) from 2016-2020. [jbritain](https://github.com/jbritain) resumed development of the shader in 2024 under the name 'Ebin Resurrected'. This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and also improves upon some aspects of the shader, using more modern features and standards.
 
 ## Community
 If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join the [Shaderlabs Discord server](https://discord.gg/SMgEpZe).
 
 ## Features
 - Sunlight Shadows / Shading
-- Variable Penumbra Shadows (PCSS)
-- Global Illumination
+- PCSS 'Variable Penumbra' Shadows with transparency.
 - Bloom / Glow
-- Motion Blur
-- Procedural 2D Clouds
+- Procedural 2D/3D Clouds
 - Procedural Water Waves
-- Screen Space Reflections
-- Terrain Parallax - 3D blocks with a supported texture pack
-- Multi-Layered Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
+### LabPBR Compliant
+  - Rough Screen Space Reflections - accurate specular reflections on all blocks.
+  - Normal Mapped Lighting.
+  - Terrain Parallax (POM).
+  - Material Ambient Occlusion.
+  - Hardcoded Metal Support.
+  - Porosity - materials look 'wet' in the rain.
+- Deferred Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
 - Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
 ## Planned Features
-- Improved Nether/End Support
-- Distant horizons support
+- Distant Horizons support
+- Emission
 
-## Requirements
-- A relatively recent version of Iris or Optifine.
-- OpenGL 4.1 compatible hardware
-
-## Installation
-
-1. Download and install a compatible version of Optifine or Iris
-2. If you haven't already, launch the game once to create the 'shaderpacks' folder, which is located adjacent to your "saves" folder
-3. Download the Ebin-Shaders .zip and place it into your 'shaderpacks' folder.
-
+## Compatibility
+### Hardware
+- Nvidia GeForce 400, AMD Radeon HD 5000, Intel HD 3rd gen **or later**. Any modern device should work fine.
+- Intel GPUs are untested and you may encounter issues.
+### Operating System
+- MacOS is **NOT SUPPORTED**.
+### Minecraft
+- Ebin Resurrected has been tested on Optifine and Iris and is known to work on versions as far back as 1.17. Older versions are **unsupported**, however as [Legacy Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) was still in development during this time, it should work for versions as far back as 1.7.
+  
 ## If you run into problems
 If you are experiencing a problem with Ebin you consider to be a bug, create a new [issue](https://github.com/jbritain/Ebin-Shaders-Resurrected/issues). Please read the issue guidelines before creating one and make sure somebody else hasn't raised the same issue already.
 
