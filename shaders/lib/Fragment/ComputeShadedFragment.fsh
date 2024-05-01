@@ -211,8 +211,6 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	#ifdef world1 // the end
 		shading.ambient *= 3;
 	#endif
-
-	shading.ambient = mix(shading.ambient, 1.0, emission);
 	
 	
 	Lightmap lightmap;
@@ -241,11 +239,12 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 #endif
 	
 	vec3 composite =
-	  diffuse * (lightmap.GI + lightmap.ambient)
+	  diffuse * (lightmap.GI + lightmap.ambient + emission * 16)
 	+ lightmap.sunlight   * mix(desatColor, diffuse, clamp01(pow(length(lightmap.sunlight  ) *  4.0, 0.1)))
 	+ lightmap.skylight   * mix(desatColor, diffuse, clamp01(pow(length(lightmap.skylight  ) * 25.0, 0.2)))
 	+ lightmap.torchlight * mix(desatColor, diffuse, clamp01(pow(length(lightmap.torchlight) *  1.0, 0.1)));
-	
+
+
 	return composite;
 }
 

@@ -253,7 +253,7 @@ float getPorosity(vec2 coord, bool isDielectric){
 }
 
 float getEmission(vec2 coord){
-	#ifdef EMISSION_MAPS
+	#ifdef EMISSION
 	float emission = GetTexture(specular, coord).a;
 	if (emission == 1.0) {
 		return 0;
