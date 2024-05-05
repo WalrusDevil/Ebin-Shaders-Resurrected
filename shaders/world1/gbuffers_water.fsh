@@ -6,4 +6,4 @@
 #define ShaderStage -1
 
 
-#include "/gbuffers_water.glsl"
+#include "/gbuffers_main.glsl"
