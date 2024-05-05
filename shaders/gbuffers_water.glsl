@@ -228,7 +228,7 @@ vec3 GetTangentNormal() {
 
 float getMaterialAO(vec2 coord){
 	#ifndef NORMAL_MAPS
-	return 0;
+	return 0.0;
 	#endif
 
 	return GetTexture(normals, coord).z;
@@ -252,14 +252,14 @@ float getPerceptualSmoothness(vec2 coord){
 	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).r;
 	#endif
-	return 0;
+	return 0.0;
 }
 
 float getBaseReflectance(vec2 coord){
 	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).g;
 	#endif
-	return 0;
+	return 0.0;
 }
 
 

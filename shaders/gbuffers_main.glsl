@@ -4,7 +4,7 @@
 varying vec3 color;
 varying vec2 texcoord;
 varying vec2 vertLightmap;
-varying flat ivec2 textureResolution;
+flat varying ivec2 textureResolution;
 
 varying mat3 tbnMatrix;
 
@@ -192,7 +192,7 @@ vec3 GetNormal(vec2 coord) {
 
 float getMaterialAO(vec2 coord){
 	#ifndef NORMAL_MAPS
-	return 0;
+	return 0.0;
 	#endif
 
 	return GetTexture(normals, coord).z;
@@ -226,27 +226,27 @@ float getPerceptualSmoothness(vec2 coord){
 	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).r;
 	#endif
-	return 0;
+	return 0.0;
 }
 
 float getBaseReflectance(vec2 coord){
 	#ifdef SPECULARITY_MAPS
 	return GetTexture(specular, coord).g;
 	#endif
-	return 0;
+	return 0.0;
 }
 
 float getPorosity(vec2 coord, bool isDielectric){
 	#ifndef SPECULARITY_MAPS
-		return 0;
+		return 0.0;
 	#endif
 	if(!isDielectric){
-		return 0;
+		return 0.0;
 	}
 	float porosity = GetTexture(specular, coord).b;
 
 	if (porosity > 0.25){ // subsurface scattering range
-		return 0;
+		return 0.0;
 	}
 	
 	return porosity * 4;
@@ -256,11 +256,11 @@ float getEmission(vec2 coord){
 	#ifdef EMISSION
 	float emission = GetTexture(specular, coord).a;
 	if (emission == 1.0) {
-		return 0;
+		return 0.0;
 	}
 	return emission;
 	#endif
-	return 0;
+	return 0.0;
 }
 
 
