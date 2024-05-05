@@ -136,7 +136,7 @@ vec3 ColorSaturate(vec3 base, float saturation) {
 }
 
 cvec3 nightColor = vec3(0.25, 0.35, 0.7);
-cvec3 torchColor = vec3(0.5, 0.22, 0.05);
+cvec3 torchColor = vec3(0.3, 0.22, 0.2);
 
 vec3 LightDesaturation(vec3 color, float torchlight, float skylight, float emissive) {
 //	if (emissive > 0.5) return vec3(color);
