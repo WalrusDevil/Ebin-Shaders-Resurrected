@@ -190,7 +190,7 @@ void main() {
 		backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 	}
 	
-	if (true || cameraPosition.y >= CLOUD_HEIGHT_2D) { // Above clouds
+	if (true) { // this stuff has to be in a different scope because it was designed that way
 		vec3 alpha = vec3(1.0);
 		vec3 fogTransmit = vec3(1.0);
 		vec3 color = vec3(0.0);
@@ -205,11 +205,6 @@ void main() {
 		gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
 		exit();
 		return;
-		
-	} else if (isEyeInWater == 0) { // Below clouds and above water (common case)
-		
-	} else if (isEyeInWater == 1) { // Underwater
-		
 	}
 }
 
