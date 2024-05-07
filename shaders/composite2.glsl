@@ -140,15 +140,15 @@ vec3 ComputeReflectiveSurface(float depth0, float depth1, mat2x3 frontPos, mat2x
 
 	if (depth1 < 1.0) {
 		if (mask.water == 1.0)
-			WaterDepthFog(frontPos[0], backPos[0] * (1-isEyeInWater), alpha);
+			WaterDepthFog(frontPos[0], backPos[0] * (1-isEyeInWater), alpha); // surface, behind water
 		
 		color += texture2D(colortex1, texcoord).rgb * alpha;
 		
 		alpha *= 0.0;
 	}
 
-	if (mask.water == 1.0 && depth1 >= 1.0 && isEyeInWater == 0)
-		alpha *= 0.0;
+	if (mask.water == 1.0 && depth1 >= 1.0 && isEyeInWater == 0) // sky, behind water
+		alpha *= 0.1;
 
 	if (depth0 < 1.0)
 		ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
