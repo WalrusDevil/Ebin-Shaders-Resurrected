@@ -147,7 +147,7 @@ vec3 ComputeReflectiveSurface(float depth0, float depth1, mat2x3 frontPos, mat2x
 		alpha *= 0.0;
 	}
 
-	if (mask.water == 1.0 && depth1 >= 1.0)
+	if (mask.water == 1.0 && depth1 >= 1.0 && isEyeInWater == 0)
 		alpha *= 0.0;
 
 	if (depth0 < 1.0)
@@ -183,7 +183,7 @@ void main() {
 	
 	if (mask.transparent > 0.5) {
 		depth1     = (mask.hand > 0.5 ? 0.55 : GetTransparentDepth(texcoord));
-		alpha      = texture2D(colortex3, texcoord).a;
+		//alpha      = texture2D(colortex3, texcoord).a;
 		baseReflectance = ScreenTex(colortex8).g;
 		perceptualSmoothness = ScreenTex(colortex8).r;
 		backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
