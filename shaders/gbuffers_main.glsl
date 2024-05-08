@@ -206,6 +206,14 @@ float LOD;
 #else
 	#define GetTexture(x, y) texture2D(x, y)
 #endif
+	
+// if I change the above if statement to an 'if defined', the terrain parallax option disappears from the options menu
+// so instead I'm just doing the check here
+// because parallax is disabled on transparent stuff, the LOD causes weird artefacts on things like nether portals
+#ifdef gbuffers_water
+	#define GetTexture(x, y) texture2D(x, y)
+#endif
+
 
 vec4 GetDiffuse(vec2 coord) {
 	return vec4(color.rgb, 1.0) * GetTexture(tex, coord);
