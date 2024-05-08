@@ -73,7 +73,7 @@ vec3 GetWorldSpacePosition() {
 	
 #if  defined gbuffers_water || defined gbuffers_textured
 	position -= gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.00005 * float(abs(mc_Entity.x - 8.5) > 0.6));
-#elif defined gbuffers_spidereyes
+#elif defined gbuffers_spidereyess
 	position += gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.0002);
 #endif
 	
@@ -286,6 +286,10 @@ float getPorosity(vec2 coord, bool isDielectric){
 }
 
 float getEmission(vec2 coord){
+	#ifdef gbuffers_spidereyes
+	return 1.0;
+	#endif
+
 	#ifdef EMISSION
 	float emission = GetTexture(specular, coord).a;
 	if (emission == 1.0) {
