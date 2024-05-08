@@ -121,7 +121,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	float roughness = pow(1.0 - perceptualSmoothness, 2.0);
 	
 
-	if (isEyeInWater == 1) return;
+	//if (isEyeInWater == 1) return;
 
 	float nDotV;
 
@@ -200,7 +200,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap;
 			transmit = vec3(1.0);
 
-			in_scatter *= skyLightmap;
+			in_scatter *= skyLightmap * (1.0 - isEyeInWater);
 			#else
 			reflection = mix(color, vec3(0.02, 0.02, 0), 0.5);
 			#endif
