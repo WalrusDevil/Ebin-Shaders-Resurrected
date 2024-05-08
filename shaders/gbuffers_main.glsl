@@ -45,8 +45,13 @@ uniform float wetness;
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 
-#if defined gbuffers_water
+#if defined gbuffers_water || defined gbuffers_textured
 uniform sampler3D gaux1;
+
+uniform mat4 shadowModelView;
+uniform mat4 shadowModelViewInverse;
+
+uniform float sunAngle;
 
 #include "/UserProgram/centerDepthSmooth.glsl"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
@@ -66,7 +71,7 @@ vec2 GetDefaultLightmap() {
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
 	
-#if  defined gbuffers_water
+#if  defined gbuffers_water || defined gbuffers_textured
 	position -= gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.00005 * float(abs(mc_Entity.x - 8.5) > 0.6));
 #elif defined gbuffers_spidereyes
 	position += gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.0002);
@@ -131,7 +136,7 @@ void main() {
 	
 	tbnMatrix = CalculateTBN(worldSpacePosition);
 
-	#ifdef gbuffers_water
+	#if defined gbuffers_water || defined gbuffers_textured
 		SetupShading();
 	#endif
 
@@ -295,7 +300,7 @@ float getEmission(vec2 coord){
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
-#ifdef gbuffers_water
+#if defined gbuffers_water || defined gbuffers_textured
 /* DRAWBUFFERS:038 */
 #else
 /* DRAWBUFFERS:149 */
@@ -317,9 +322,10 @@ void main() {
 	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
 	float materialAO			= getMaterialAO(coord);
 
-	#ifdef gbuffers_water
+	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
 		
+		#ifdef gbuffers_water
 		if (materialIDs == 4.0) {
 			if (!gl_FrontFacing) discard;
 			
@@ -330,6 +336,8 @@ void main() {
 			baseReflectance = 0.02;
 			mask.water  = 1.0;
 		}
+		#endif
+		
 
 		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position, materialAO);
 

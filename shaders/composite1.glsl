@@ -176,7 +176,10 @@ void main() {
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 	
-	if (depth1 - mask.hand >= 1.0) { exit(); return; }
+	if (depth1 - mask.hand >= 1.0) {
+		 exit(); 
+		 return; 
+	}
 	
 	
 	vec3 diffuse = GetDiffuse(texcoord);
