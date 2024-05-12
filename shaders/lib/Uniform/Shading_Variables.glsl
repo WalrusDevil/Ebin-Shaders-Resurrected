@@ -7,5 +7,4 @@ flat varying float timeNight;
 flat varying float timeHorizon;
 
 flat varying vec3  sunlightColor;
-flat varying vec3 moonlightColor;
 flat varying vec3  skylightColor;

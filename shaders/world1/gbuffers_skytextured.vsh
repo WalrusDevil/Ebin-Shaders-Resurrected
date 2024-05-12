@@ -4,4 +4,4 @@
 #define world1
 #define ShaderStage -2
 
-#include "/skytextured.glsl"
+#include "/gbuffers_discard.glsl"

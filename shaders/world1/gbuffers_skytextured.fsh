@@ -1,7 +1,7 @@
 #include "/lib/GLSL_Version.glsl"
 #define gbuffers_skytextured
 #define fsh
-#define world1
+#define world0
 #define ShaderStage -1
 
-#include "/skytextured.glsl"
+#include "/gbuffers_discard.glsl"
