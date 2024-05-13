@@ -8,6 +8,7 @@ flat varying ivec2 textureResolution;
 
 varying mat3 tbnMatrix;
 
+varying vec3 preAcidWorldSpacePosition;
 varying mat2x3 position;
 
 varying vec3 worldDisplacement;
@@ -95,8 +96,10 @@ mat3 CalculateTBN(vec3 worldPosition) {
 	vec3 tangent  = normalize(at_tangent.xyz);
 	vec3 binormal = normalize(-cross(gl_Normal, at_tangent.xyz));
 	
-	tangent  += CalculateVertexDisplacements(worldPosition +  tangent) - worldDisplacement;
-	binormal += CalculateVertexDisplacements(worldPosition + binormal) - worldDisplacement;
+	#if defined gbuffers_water || defined gbuffers_textured
+		tangent  += CalculateVertexDisplacements(worldPosition +  tangent) - worldDisplacement;
+		binormal += CalculateVertexDisplacements(worldPosition + binormal) - worldDisplacement;
+	#endif
 	
 	tangent  = normalize(mat3(gbufferModelViewInverse) * gl_NormalMatrix *  tangent);
 	binormal =           mat3(gbufferModelViewInverse) * gl_NormalMatrix * binormal ;
@@ -128,6 +131,8 @@ void main() {
 	
 	worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
 	
+	preAcidWorldSpacePosition = worldSpacePosition;
+
 	position[1] = worldSpacePosition + worldDisplacement;
 	position[0] = position[1] * mat3(gbufferModelViewInverse);
 	
@@ -313,9 +318,9 @@ float getEmission(vec2 coord){
 #include "/lib/Misc/Euclid.glsl"
 
 #if defined gbuffers_water || defined gbuffers_textured
-/* DRAWBUFFERS:038 */
+/* RENDERTARGETS:0,3,8 */
 #else
-/* DRAWBUFFERS:149 */
+/* RENDERTARGETS:1,4,9,10 */
 #endif
 
 #include "/lib/Exit.glsl"
@@ -356,7 +361,7 @@ void main() {
 		#endif
 		
 
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position, materialAO);
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position, materialAO, preAcidWorldSpacePosition);
 
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(specularity, vertLightmap.g, mask.water, 0.1));
@@ -370,8 +375,6 @@ void main() {
 		gl_FragData[0] = vec4(encode, 0.0, 1.0);
 		gl_FragData[1] = vec4(composite, diffuse.a);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, 0.0, 1.0);
-
-		exit();
 	#else
 
 		if (porosity > 0){
@@ -387,10 +390,10 @@ void main() {
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
 		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
-
-		exit();
-
+		gl_FragData[3] = vec4(preAcidWorldSpacePosition, 1.0);
 	#endif
+
+	exit();
 }
 
 #endif

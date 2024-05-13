@@ -57,6 +57,7 @@ uniform sampler2D colortex3;
 uniform sampler2D colortex4;
 uniform sampler3D colortex7;
 uniform sampler2D colortex9;
+uniform sampler2D colortex10;
 
 #if defined COMPOSITE0_ENABLED
 const bool colortex5MipmapEnabled = true;
@@ -144,6 +145,8 @@ void main() {
 	float skyLightmap   = decode4.a;
 	float emission			= texture(colortex9, texcoord).b;
 	float materialAO		= clamp01(texture(colortex4, texcoord).b);
+
+	vec3 preAcidWorldSpacePosition = texture(colortex10, texcoord).rgb;
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
 	
@@ -186,7 +189,7 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO);
+	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, preAcidWorldSpacePosition);
 	
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	

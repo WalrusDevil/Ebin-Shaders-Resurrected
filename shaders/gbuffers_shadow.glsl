@@ -142,7 +142,7 @@ void main() {
 	
 	
 	vec3 position  = GetWorldSpacePositionShadow();
-	     position += CalculateVertexDisplacements(position);
+	     //position += CalculateVertexDisplacements(position);
 	
 	gl_Position = ProjectShadowMap(position.xyzz);
 	
