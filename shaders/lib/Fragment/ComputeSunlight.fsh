@@ -122,6 +122,24 @@ mat2 getRandomRotation(vec2 offset){
 	#define ComputeShadows(shadowPosition, biasCoeff) vec3(shadowVisibility(shadowtex0, shadowPosition));
 #endif
 
+float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
+	if (sunlightCoeff <= 0.0) return sunlightCoeff;
+
+	float distCoeff = GetDistanceCoeff(worldSpacePosition);
+	
+	if (distCoeff >= 1.0) return sunlightCoeff;
+	
+	float biasCoeff;
+	
+	vec3 shadowPosition = BiasShadowProjection(projMAD(shadowProjection, transMAD(shadowViewMatrix, worldSpacePosition + gbufferModelViewInverse[3].xyz)), biasCoeff) * 0.5 + 0.5;
+	
+	if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return sunlightCoeff;
+	
+	float sunlight = shadowVisibility(shadowtex0, shadowPosition);
+	sunlight = mix(sunlight, 1.0, distCoeff);
+
+	return sunlightCoeff * pow(sunlight, mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1)));
+}
 
 vec3 ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
 	if (sunlightCoeff <= 0.0) return vec3(sunlightCoeff);

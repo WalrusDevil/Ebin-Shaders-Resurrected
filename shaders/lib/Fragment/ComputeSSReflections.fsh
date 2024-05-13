@@ -200,7 +200,9 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true) * skyLightmap;
 			transmit = vec3(1.0);
 
-			in_scatter *= skyLightmap * (1.0 - isEyeInWater);
+			float sunlight = ComputeSunlightFast(position[1], GetLambertianShading(normal) * skyLightmap);//length(ComputeSunlight(position[1], GetLambertianShading(normal) * skyLightmap));
+
+			in_scatter *= sunlight * (1.0 - isEyeInWater);
 			#else
 			reflection = mix(color, vec3(0.02, 0.02, 0), 0.5);
 			#endif
