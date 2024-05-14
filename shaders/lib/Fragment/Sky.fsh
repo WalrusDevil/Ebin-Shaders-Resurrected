@@ -75,13 +75,13 @@ float CalculateCloudPhase(float vDotL){
 }
 
 
-vec3 ComputeBackSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection) {
+vec3 ComputeBackSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor) {
 	vec3 color = vec3(0.0);
 	color += SkyAtmosphere(wDir, transmit);
 	
 	color += CalculateNightSky(wDir, transmit);
-	color += ComputeSunspot(wDir, transmit) * 16.0;
-	color += ComputeSunspot(-wDir, transmit) * 16.0 * vec3(0.3, 0.7, 8.0);
+	color += ComputeSunspot(wDir, transmit) * 16.0 * sunFactor;
+	color += ComputeSunspot(-wDir, transmit) * 16.0 * vec3(0.3, 0.7, 8.0) * sunFactor;
 	color += CalculateStars(wDir, transmit, reflection);
 	
 	return color;
@@ -97,14 +97,14 @@ vec3 ComputeClouds(vec3 wDir, vec3 wPos, io vec3 transmit) {
 	return color;
 }
 
-vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection) {
+vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor) {
 	#ifndef world0
 		return vec3(0);
 	#endif
 
 	vec3 color = vec3(0.0);
 	color += ComputeClouds(wDir, wPos, transmit);
-	color += ComputeBackSky(wDir, wPos, transmit, sunlight, reflection);
+	color += ComputeBackSky(wDir, wPos, transmit, sunlight, reflection, sunFactor);
 	
 	return color;
 }

@@ -199,7 +199,7 @@ void main() {
 		color = fog + ComputeReflectiveSurface(depth0, depth1, frontPos, backPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, mask, alpha, fogTransmit);
 		
 		if (alpha.r + alpha.g + alpha.b > 0.0) {
-			color += ComputeSky(normalize(frontPos[1]), vec3(0.0), alpha, 1.0, false);
+			color += ComputeSky(normalize(frontPos[1]), vec3(0.0), alpha, 1.0, false, 1.0);
 		}
 		
 		gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
