@@ -22,10 +22,10 @@ option.DYNAMIC_NOISE=Dynamic Noise
 option.DYNAMIC_NOISE.comment=Use different noise every frame for reflections and shadows. Useful if you're blending frames in post.
 
 screen.FOV=FOV Override
-screen.FOV.comment=FOV Override can mitigate chunk-rendering issues with large scale terrain deformation
+screen.FOV.comment=FOV Override can mitigate chunk-rendering issues with large scale terrain deformation.
 
 option.FOV_OVERRIDE=FOV Override
-option.FOV_OVERRIDE.comment=Manually override the FOV from the in-game setting. Set the in-game FOV higher than your actual FOV to reduce chunk artifacts with large-scale vertex deformations
+option.FOV_OVERRIDE.comment=Manually override the FOV from the in-game setting. Set the in-game FOV higher than your actual FOV to reduce chunk artifacts with large-scale vertex deformations. May cause crashes on AMD!
 
 option.FOV_DEFAULT_TENS=In-game FOV
 option.FOV_TRUE_TENS=Actual FOV
