@@ -119,6 +119,12 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	if (baseReflectance == 0) return;
 
 	float roughness = pow(1.0 - perceptualSmoothness, 2.0);
+
+	if(roughness > ROUGH_REFLECTION_THRESHOLD){
+		return;
+	}
+
+	
 	
 
 	//if (isEyeInWater == 1) return;
@@ -148,7 +154,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
   
 	
 	if (length(fresnel) < 0.0005) return;
-	
 
 	mat2x3 refRay;
 	
@@ -197,8 +202,8 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			#endif
 		} else {
 			#ifndef world2
-			float sunlight = ComputeSunlightFast(position[1], 1.0);
-			if (roughness > 0.5){
+			float sunlight = ComputeSunlightFast(position[1], GetLambertianShading(normal) * skyLightmap);
+			if (roughness > 0.5){ // don't reflect sun on rough surfaces as it causes visual noise
 				sunlight = 0;
 			}
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunlight) * GetLambertianShading(normal) * skyLightmap;

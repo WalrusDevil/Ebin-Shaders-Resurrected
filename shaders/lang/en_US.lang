@@ -18,6 +18,9 @@ option.Emission.comment=Makes some objects glow in the dark
 option.REFLECTION_SAMPLES=Rough Reflection Samples
 option.REFLECTION_SAMPLES.comment=Number of samples taken for reflections on rough surfaces. Lower sample count = more performance but more noise
 
+option.ROUGH_REFLECTION_THRESHOLD=Rough Reflection Threshold
+option.ROUGH_REFLECTION_THRESHOLD.comment=Materials with a roughness value greater than the threshold will not reflect. Higher values have a higher performance cost and may cause visual noise.
+
 option.DYNAMIC_NOISE=Dynamic Noise
 option.DYNAMIC_NOISE.comment=Use different noise every frame for reflections and shadows. Useful if you're blending frames in post.
 
@@ -162,7 +165,7 @@ option.FOG_START=Fog Start
 
 screen.GI=Global Illumination
 
-option.GI_ENABLED=Global Illumination (Experimental)
+option.GI_ENABLED=Global Illumination
 
 option.PLAYER_GI_BOUNCE=Player GI Bounce
 option.PLAYER_GI_BOUNCE.comment=If this is enabled the player will cause GI to bounce off the player. This usually looks unnatural so it is off be default.
