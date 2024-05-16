@@ -1,3 +1,7 @@
+#ifndef UTILITY_GLSL
+#define UTILITY_GLSL
+
+
 cfloat PI  = radians(180.0);
 cfloat HPI = radians( 90.0);
 cfloat TAU = radians(360.0);
@@ -100,3 +104,4 @@ vec3 rgb(vec3 c) {
 	
 	return c.z * mix(K.xxx, clamp01(p - K.xxx), c.y);
 }
+#endif

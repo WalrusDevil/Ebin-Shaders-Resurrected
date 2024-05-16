@@ -1,3 +1,6 @@
+#ifndef TERRAIN_DEFORMATION_GLSL
+#define TERRAIN_DEFORMATION_GLSL
+
 vec3 UserDeformation(vec3 position) {
 	position.y -= 20.0;
 #if !defined gbuffers_shadow
@@ -18,7 +21,7 @@ vec3 Globe(vec3 position, cfloat radius) {
 }
 
 vec3 Acid(vec3 position) {
-	position.xy = rotate(position.xy, sin(length2(position.xz) * 0.00005) * 0.8);
+	position.zy = rotate(position.zy, sin(length2(position.zx) * 0.00005) * 0.8);
 	
 	return position;
 }
@@ -53,3 +56,5 @@ vec3 TerrainDeformation(vec3 position) {
 	
 	return position;
 }
+
+#endif

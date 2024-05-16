@@ -7,6 +7,9 @@ varying vec2 vertLightmap;
 
 flat varying vec3 vertNormal;
 
+varying vec3 prePortalWorldSpacePositionShadow;
+varying vec3 midblock;
+
 
 /***********************************************************************/
 #if defined vsh
@@ -29,12 +32,16 @@ uniform float thunderStrength;
 
 float materialIDs;
 
+attribute vec3 at_midBlock;
+
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 
 #include "/UserProgram/centerDepthSmooth.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
+
+#include "/lib/Acid/portals.glsl"
 
 vec2 GetDefaultLightmap() {
 	vec2 lightmapCoord = mat2(gl_TextureMatrix[1]) * gl_MultiTexCoord1.st;
@@ -119,6 +126,7 @@ bool CullVertex(vec3 wPos) {
 }
 
 void main() {
+	midblock = at_midBlock;
 	if (mc_Entity.x == 66) { gl_Position = vec4(-1.0); return; }
 	
 	materialIDs = BackPortID(int(mc_Entity.x));
@@ -142,6 +150,11 @@ void main() {
 	
 	
 	vec3 position  = GetWorldSpacePositionShadow();
+	prePortalWorldSpacePositionShadow = position + cameraPosition;
+	position += cameraPosition;
+	doPortals(position, at_midBlock);
+	position -= cameraPosition;
+
 	     //position += CalculateVertexDisplacements(position);
 	
 	gl_Position = ProjectShadowMap(position.xyzz);
@@ -172,9 +185,15 @@ void main() {
 #if defined fsh
 
 uniform sampler2D tex;
+uniform vec3 cameraPosition;
+
+#include "/lib/Acid/portals.glsl"
 
 void main() {
 	vec4 diffuse = color * texture2D(tex, texcoord);
+
+
+	doPortals(prePortalWorldSpacePositionShadow, midblock);
 	
 	gl_FragData[0] = diffuse;
 	gl_FragData[1] = vec4(vertNormal.xy * 0.5 + 0.5, 0.0, 1.0);

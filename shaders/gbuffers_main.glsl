@@ -7,8 +7,9 @@ varying vec2 vertLightmap;
 flat varying ivec2 textureResolution;
 
 varying mat3 tbnMatrix;
-
+varying vec3 prePortalWorldSpacePosition;
 varying vec3 preAcidWorldSpacePosition;
+varying vec3 midblock;
 varying mat2x3 position;
 
 varying vec3 worldDisplacement;
@@ -26,6 +27,7 @@ flat varying float materialIDs;
 attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
 attribute vec2 mc_midTexCoord;
+attribute vec3 at_midBlock;
 
 uniform float rainStrength;
 uniform float thunderStrength;
@@ -45,6 +47,7 @@ uniform float wetness;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
+#include "/lib/Acid/portals.glsl"
 
 #if defined gbuffers_water || defined gbuffers_textured
 uniform sampler3D gaux1;
@@ -69,7 +72,7 @@ vec2 GetDefaultLightmap() {
 
 #include "/block.properties"
 
-vec3 GetWorldSpacePosition() {
+vec3 GetWorldSpacePosition() { // this is actually player space, bruce
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
 	
 #if  defined gbuffers_water || defined gbuffers_textured
@@ -78,7 +81,9 @@ vec3 GetWorldSpacePosition() {
 	position += gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.0002);
 #endif
 	
-	return mat3(gbufferModelViewInverse) * position;
+	vec3 playerSpacePos = mat3(gbufferModelViewInverse) * position;
+
+	return playerSpacePos;
 }
 
 vec4 ProjectViewSpace(vec3 viewSpacePosition) {
@@ -114,6 +119,7 @@ mat3 CalculateTBN(vec3 worldPosition) {
 uniform ivec2 atlasSize;
 
 void main() {
+	midblock = at_midBlock;
 	materialIDs  = BackPortID(int(mc_Entity.x));
 	
 #ifdef HIDE_ENTITIES
@@ -128,6 +134,13 @@ void main() {
 	
 	show(int(mc_Entity.x) == 9)
 	vec3 worldSpacePosition = GetWorldSpacePosition();
+
+	prePortalWorldSpacePosition = worldSpacePosition + cameraPosition;
+
+	// temporarily transform to actual world space for portal calculations
+	worldSpacePosition += cameraPosition;
+	doPortals(worldSpacePosition, at_midBlock);
+	worldSpacePosition -= cameraPosition;
 	
 	worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
 	
@@ -197,6 +210,7 @@ uniform float far;
 #include "/lib/Uniform/Projection_Matrices.fsh"
 #include "/lib/Misc/CalculateFogfactor.glsl"
 #include "/lib/Fragment/Masks.fsh"
+#include "/lib/Acid/portals.glsl"
 
 uniform sampler3D gaux1;
 
@@ -315,7 +329,6 @@ float getEmission(vec2 coord){
 
 
 #include "/lib/Fragment/TerrainParallax.fsh"
-#include "/lib/Misc/Euclid.glsl"
 
 #if defined gbuffers_water || defined gbuffers_textured
 /* RENDERTARGETS:0,3,8 */
@@ -326,8 +339,17 @@ float getEmission(vec2 coord){
 #include "/lib/Exit.glsl"
 
 void main() {
-	if (CalculateFogFactor(position[0]) >= 1.0)
-		{ discard; }
+	if(midblock == vec3(0)){
+		discard;
+	}
+
+	if (CalculateFogFactor(position[0]) >= 1.0){
+		discard;
+	}
+
+	doPortals(prePortalWorldSpacePosition, midblock);
+
+	
 	
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
 	vec4  diffuse     		= GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
