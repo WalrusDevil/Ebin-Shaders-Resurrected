@@ -96,21 +96,21 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 vec3 getMetalf0(float baseReflectance, vec3 color){
 	switch(int(baseReflectance * 255)){
 			case 230: // Iron
-					return vec3(0.24867, 0.22965, 0.21366);
+					return vec3(0.78, 0.77, 0.74);
 			case 231: // Gold
-					return vec3(0.88140, 0.57256, 0.11450);
+					return vec3(1.00, 0.90, 0.61);
 			case 232: // Aluminum
-					return vec3(0.81715, 0.82021, 0.83177);
+					return vec3(1.00, 0.98, 1.00);
 			case 233: // Chrome
-					return vec3(0.27446, 0.27330, 0.27357);
+					return vec3(0.77, 0.80, 0.79);
 			case 234: // Copper
-					return vec3(0.84430, 0.48677, 0.22164);
+					return vec3(1.00, 0.89, 0.73);
 			case 235: // Lead
-					return vec3(0.36501, 0.35675, 0.37653);
+					return vec3(0.79, 0.87, 0.85);
 			case 236: // Platinum
-					return vec3(0.42648, 0.37772, 0.31138);
+					return vec3(0.92, 0.90, 0.83);
 			case 237: // Silver
-					return vec3(0.91830, 0.89219, 0.83662);
+					return vec3(1.00, 1.00, 0.91);
 	}
 	return clamp01(color);
 }
