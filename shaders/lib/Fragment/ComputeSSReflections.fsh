@@ -202,11 +202,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			#endif
 		} else {
 			#ifndef world2
-			float sunlight = ComputeSunlightFast(position[1], GetLambertianShading(normal) * skyLightmap);
+			float sunlight = ComputeSunlightFast(position[1], skyLightmap);
 			if (roughness > 0.5){ // don't reflect sun on rough surfaces as it causes visual noise
 				sunlight = 0;
 			}
-			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunlight) * GetLambertianShading(normal) * skyLightmap;
+			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, 1.0) * skyLightmap;
 			transmit = vec3(1.0);
 	
 			//length(ComputeSunlight(position[1], GetLambertianShading(normal) * skyLightmap));
