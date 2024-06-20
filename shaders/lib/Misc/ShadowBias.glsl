@@ -2,9 +2,9 @@
 #define SHADOWBIAS_GLSL
 
 float GetDistanceCoeff(vec3 position) {
-#ifndef LIMIT_SHADOW_DISTANCE
-	return 0.0;
-#endif
+// #ifndef LIMIT_SHADOW_DISTANCE
+// 	return 0.0;
+// #endif
 	
 	return pow2(clamp01(length(position) / shadowDistance * 10.0 - 9.0));
 }

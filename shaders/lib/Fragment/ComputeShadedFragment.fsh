@@ -136,7 +136,11 @@ vec3 ColorSaturate(vec3 base, float saturation) {
 }
 
 cvec3 nightColor = vec3(0.25, 0.35, 0.7);
+#ifdef WARM_TORCHLIGHT
+cvec3 torchColor = vec3(1.0, 0.26, 0.05);
+#else
 cvec3 torchColor = vec3(0.3, 0.22, 0.2);
+#endif
 
 vec3 LightDesaturation(vec3 color, float torchlight, float skylight, float emissive) {
 //	if (emissive > 0.5) return vec3(color);
@@ -177,7 +181,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
 		shading.sunlight  = vec3(ComputeSunlight(preAcidWorldSpacePosition, shading.sunlight.r));
 		shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
-		shading.sunlight *= mix(1.0, 0, wetness);
+		shading.sunlight *= mix(1.0, 0.0, wetness);
 		
 		shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
 		shading.skylight *= GI.a;
@@ -197,6 +201,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	//shading.torchlight = 2 * pow(shading.torchlight, 5.06);
 
 	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL));
+
 	
 	shading.ambient  = 0.5 + (1.0 - eyeBrightnessSmooth.g / 240.0) * 3.0;
 	shading.ambient += nightVision * 50.0;
@@ -205,7 +210,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.ambient = mix(shading.ambient, shading.ambient / 2.0, materialAO);
 	#ifdef world2 // nether - no sunlight or skylight so boost ambient
 		shading.ambient *= 3;
-		shading.ambient = clamp(shading.ambient, 0.2, 1);
+		shading.ambient = clamp(shading.ambient, 0.2, 1.0);
 		shading.torchlight *= 2;
 	#endif
 	#ifdef world1 // the end
@@ -235,7 +240,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	
 #define LIGHT_DESATURATION
 #ifndef LIGHT_DESATURATION
-//	desatColor = diffuse;
+	desatColor = diffuse;
 #endif
 	
 	vec3 composite =

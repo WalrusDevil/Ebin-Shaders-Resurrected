@@ -155,7 +155,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
 	if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return vec3(sunlightCoeff);
 	
 	vec3 sunlight = ComputeShadows(shadowPosition, biasCoeff);
-	      sunlight = mix(sunlight, vec3(1.0), distCoeff);
+	      sunlight = mix(sunlight, vec3(sunlightCoeff), distCoeff);
 	
 	return vec3(sunlightCoeff) * pow(sunlight, vec3(mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1))));
 }
