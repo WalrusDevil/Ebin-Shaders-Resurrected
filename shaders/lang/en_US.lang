@@ -349,6 +349,9 @@ option.FRAMERATE_BOUND_TIME.comment=Animate based on number of output frames, in
 option.ANIMATION_FRAMERATE=Animation Framerate
 option.ANIMATION_FRAMERATE.comment=The fixed-framerate to assume when animating based on framerate.
 
+option.WARM_TORCHLIGHT=Warm Torchlight
+option.WARM_TORCHLIGHT.comment=Whether the torchlight (and other artificial light) is warm, or neutral.
+
 option.INFO=Ebin Resurrected
 value.INFO.0=By jbritain
 value.INFO.1=By BruceKnowsHow

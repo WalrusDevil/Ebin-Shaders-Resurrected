@@ -169,3 +169,5 @@ const float zShrink = 4.0;
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
 
 //#define DYNAMIC_NOISE
+
+#define WARM_TORCHLIGHT
