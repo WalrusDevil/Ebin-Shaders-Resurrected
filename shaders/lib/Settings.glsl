@@ -152,6 +152,7 @@ const float zShrink = 4.0;
 //#define TERRAIN_PARALLAX
 #define SPECULARITY_MAPS
 #define EMISSION
+#define AUTO_LIGHT_SOURCE_EMISSION
 #define ROUGH_REFLECTION_THRESHOLD 0.5 // [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 #define REFLECTION_SAMPLES 4 // [1 2 4 8 16 32 64]

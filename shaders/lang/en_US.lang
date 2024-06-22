@@ -1,7 +1,10 @@
-screen.TexturePack=PBR
+screen.TexturePack=Materials
 
 option.TEXTURE_PACK_RESOLUTION=Texture Resolution
 value.TEXTURE_PACK_RESOLUTION.0=Auto
+
+option.AUTO_LIGHT_SOURCE_EMISSION=Automatic Light Source Emission
+option.AUTO_LIGHT_SOURCE_EMISSION.comment=Guess which pixels on light sources 'emit' the light and add emission to them.
 
 option.MULTIPLY_METAL_ALBEDO=Metal Albedo Tinting
 option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo colour. Disable if resource pack does not support this.

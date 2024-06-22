@@ -324,16 +324,24 @@ float getEmission(vec2 coord){
 	}
 	#endif
 
+	#define LUMA_THRESHOLD 0.8
+	#define SAT_THRESHOLD 0.6
+
+	#ifdef AUTO_LIGHT_SOURCE_EMISSION
 	if(materialIDs == 3.0){ // light sources
 		vec3 color = GetTexture(tex, coord).rgb;
 
-		float luminance = (color.r+color.r+color.b+color.g+color.g+color.g) / 6;
-
+		vec3 hsvcol = hsv(color);
+		float luma = hsvcol.b;
+		float sat = hsvcol.g;
 		
-		luminance *= blocklight;
-
-		return luminance;
+		if(luma < LUMA_THRESHOLD){
+			return smoothstep(SAT_THRESHOLD, 1.0, sat) * blocklight;
+		}
+		// if brightness more than 0.7, just use brightness
+		return luma * blocklight;
 	}
+	#endif
 
 	return 0.0;
 }
@@ -377,6 +385,13 @@ void main() {
 			perceptualSmoothness = 1;
 			baseReflectance = 0.02;
 			mask.water  = 1.0;
+		}
+
+		if(materialIDs == 5.0){
+			specularity = 1.0;
+			perceptualSmoothness = 0.9;
+			baseReflectance = 0.02;
+			emission = 0.5;
 		}
 		#endif
 
