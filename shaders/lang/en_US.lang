@@ -112,6 +112,7 @@ screen.Shadows=Shadows
 option.sunPathRotation=Sun Path Rotation
 
 option.shadowMapResolution=Shadow Map Resolution
+option.shadowDistance=Shadow Distance
 
 option.SHADOW_MAP_BIAS=Shadow Map Bias
 option.SHADOW_MAP_BIAS.comment=Higher values make nearby shadows look better, at the cost of making farther off shadows look worse
