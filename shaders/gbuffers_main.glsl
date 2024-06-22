@@ -15,6 +15,8 @@ varying vec3 worldDisplacement;
 
 flat varying float materialIDs;
 
+varying float blocklight;
+
 
 
 #include "/lib/Uniform/Shading_Variables.glsl"
@@ -26,6 +28,7 @@ flat varying float materialIDs;
 attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
 attribute vec2 mc_midTexCoord;
+attribute vec4 at_midBlock;
 
 uniform float rainStrength;
 uniform float thunderStrength;
@@ -114,6 +117,8 @@ mat3 CalculateTBN(vec3 worldPosition) {
 uniform ivec2 atlasSize;
 
 void main() {
+	
+
 	materialIDs  = BackPortID(int(mc_Entity.x));
 	
 #ifdef HIDE_ENTITIES
@@ -125,6 +130,12 @@ void main() {
 	color        = abs(mc_Entity.x - 10.5) > 0.6 ? gl_Color.rgb : vec3(1.0);
 	texcoord     = gl_MultiTexCoord0.st;
 	vertLightmap = GetDefaultLightmap();
+
+	#ifdef IRIS_FEATURE_BLOCK_EMISSION_ATTRIBUTE
+	blocklight = at_midBlock.w;
+	#else
+	blocklight = vertLightmap.r;
+	#endif
 	
 	show(int(mc_Entity.x) == 9)
 	vec3 worldSpacePosition = GetWorldSpacePosition();
@@ -308,8 +319,22 @@ float getEmission(vec2 coord){
 	if (emission == 1.0) {
 		return 0.0;
 	}
-	return emission;
+	if (emission != 0.0){
+		return emission;
+	}
 	#endif
+
+	if(materialIDs == 3.0){ // light sources
+		vec3 color = GetTexture(tex, coord).rgb;
+
+		float luminance = (color.r+color.r+color.b+color.g+color.g+color.g) / 6;
+
+		
+		luminance *= blocklight;
+
+		return luminance;
+	}
+
 	return 0.0;
 }
 
@@ -361,7 +386,7 @@ void main() {
 		#endif
 		
 
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), 0, position, materialAO, preAcidWorldSpacePosition);
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, preAcidWorldSpacePosition);
 
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(specularity, vertLightmap.g, mask.water, 0.1));

@@ -137,9 +137,9 @@ vec3 ColorSaturate(vec3 base, float saturation) {
 
 cvec3 nightColor = vec3(0.25, 0.35, 0.7);
 #ifdef WARM_TORCHLIGHT
-cvec3 torchColor = vec3(1.0, 0.26, 0.05);
+cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #else
-cvec3 torchColor = vec3(0.3, 0.22, 0.2);
+cvec3 torchColor = vec3(0.3, 0.22, 0.2) / 0.42;
 #endif
 
 vec3 LightDesaturation(vec3 color, float torchlight, float skylight, float emissive) {

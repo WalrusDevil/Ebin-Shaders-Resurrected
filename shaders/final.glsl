@@ -189,7 +189,7 @@ void main() {
 	}
 
 	#ifdef world2
-		color = mix(color, fogColor, 0.2 * CalculateFogFactor(vec3(0, 0, depth * far)));
+		color = mix(color, fogColor, pow(CalculateFogFactor(vec3(0, 0, depth * far)), 64.0));
 	#endif
 
 	color = MotionBlur(color, depth, mask.hand);
