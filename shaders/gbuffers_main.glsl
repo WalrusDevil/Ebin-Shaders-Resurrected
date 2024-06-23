@@ -340,6 +340,7 @@ float getEmission(vec2 coord){
 		}
 		// if brightness more than 0.7, just use brightness
 		return luma * blocklight;
+		// return pow(max(max(albedo.r, albedo.g), albedo.b), 4.0) * 0.4;
 	}
 	#endif
 
@@ -351,9 +352,9 @@ float getEmission(vec2 coord){
 #include "/lib/Misc/Euclid.glsl"
 
 #if defined gbuffers_water || defined gbuffers_textured
-/* RENDERTARGETS:0,3,8 */
+/* RENDERTARGETS:0,3,8,11 */
 #else
-/* RENDERTARGETS:1,4,9,10 */
+/* RENDERTARGETS:1,4,9,10,11 */
 #endif
 
 #include "/lib/Exit.glsl"
@@ -432,6 +433,14 @@ void main() {
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
 		gl_FragData[3] = vec4(preAcidWorldSpacePosition, 1.0);
 	#endif
+
+	vec3 blockLightColor = vec3(0.0);
+	if(materialIDs == 3.0){
+		blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
+	}
+
+	gl_FragData[4] = vec4(blockLightColor, 1.0);
+
 
 	exit();
 }

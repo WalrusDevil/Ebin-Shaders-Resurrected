@@ -37,7 +37,7 @@ void main() {
 	texcoord    = gl_MultiTexCoord0.st;
 	gl_Position = ftransform();
 	
-	gl_Position.xy = ((gl_Position.xy * 0.5 + 0.5) * COMPOSITE0_SCALE) * 2.0 - 1.0;
+	//gl_Position.xy = ((gl_Position.xy * 0.5 + 0.5) * COMPOSITE0_SCALE) * 2.0 - 1.0;
 	
 	
 	SetupProjection();
@@ -71,13 +71,20 @@ uniform sampler2D shadowcolor1;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowcolor0;
+uniform sampler2D colortex11;
+uniform sampler2D colortex12;
+uniform sampler2D depthtex0;
 
 uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferPreviousModelView;
+uniform mat4 gbufferPreviousProjection;
 uniform mat4 shadowProjection;
 uniform mat4 shadowProjectionInverse;
 
 uniform vec3 cameraPosition;
+uniform vec3 previousCameraPosition;
 
+uniform float aspectRatio;
 uniform float near;
 uniform float far;
 uniform float viewWidth;
@@ -117,11 +124,94 @@ vec2 GetDitherred2DNoise(vec2 coord, float n) { // Returns a random noise patter
 	return texelFetch(noisetex, ivec2(coord), 0).xy;
 }
 
+float ExpToLinearDepth(float depth) {
+	return 2.0 * near * (far + near - depth * (far - near));
+}
+
+float GetLinearDepth(float depth) {
+   return (2.0 * near) / (far + near - depth * (far - near));
+}
+
+//Dithering from Jodie
+float Bayer2(vec2 a) {
+    a = floor(a);
+    return fract(a.x * 0.5 + a.y * a.y * 0.75);
+}
+
+#define Bayer4(a) (Bayer2(a * 0.5) * 0.25 + Bayer2(a))
+#define Bayer8(a) (Bayer4(a * 0.5) * 0.25 + Bayer2(a))
+
+
+// from BSL
+vec2 Reprojection(vec3 pos) {
+	pos = pos * 2.0 - 1.0;
+
+	vec4 viewPosPrev = gbufferProjectionInverse * vec4(pos, 1.0);
+	viewPosPrev /= viewPosPrev.w;
+	viewPosPrev = gbufferModelViewInverse * viewPosPrev;
+
+	vec3 cameraOffset = cameraPosition - previousCameraPosition;
+	cameraOffset *= float(pos.z > 0.56);
+
+	vec4 previousPosition = viewPosPrev + vec4(cameraOffset, 0.0);
+	previousPosition = gbufferPreviousModelView * previousPosition;
+	previousPosition = gbufferPreviousProjection * previousPosition;
+	return previousPosition.xy / previousPosition.w * 0.5 + 0.5;
+}
+
+vec2 OffsetDist(float x) {
+	float n = fract(x * 8.0) * 6.283;
+    return vec2(cos(n), sin(n)) * x * x;
+}
+
+vec3 GetMultiColoredBlocklight(vec2 coord, float z, float dither) {
+	vec2 prevCoord = Reprojection(vec3(coord, z));
+	float lz = GetLinearDepth(z);
+
+	float distScale = clamp((far - near) * lz + near, 4.0, 128.0);
+	float fovScale = gbufferProjection[1][1] / 1.37;
+
+	vec2 blurstr = vec2(1.0 / aspectRatio, 1.0) * 2.5 * fovScale / distScale;
+	
+	vec3 lightAlbedo = texture2D(colortex11, coord).rgb;
+	vec3 previousColoredLight = vec3(0.0);
+
+	// #ifdef MCBL_ANTI_BLEED
+	float linearZ = GetLinearDepth(z);
+	// #endif
+
+	float mask = clamp(2.0 - 2.0 * max(abs(prevCoord.x - 0.5), abs(prevCoord.y - 0.5)), 0.0, 1.0);
+
+	for(int i = 0; i < 4; i++) {
+		vec2 offset = OffsetDist((dither + i) * 0.25) * blurstr;
+		offset = floor(offset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
+
+		// #ifdef MCBL_ANTI_BLEED
+		vec2 sampleZPos = coord + offset;
+		float sampleZ0 = texture2D(depthtex0, sampleZPos).r;
+		float sampleZ1 = texture2D(depthtex1, sampleZPos).r;
+		float linearSampleZ = GetLinearDepth(sampleZ1 >= 1.0 ? sampleZ0 : sampleZ1);
+
+		float sampleWeight = clamp(abs(linearZ - linearSampleZ) * far / 16.0, 0.0, 1.0);
+		sampleWeight = 1.0 - sampleWeight * sampleWeight;
+		// #else
+		// float sampleWeight = 1.0;
+		// #endif
+
+		previousColoredLight += texture2D(colortex12, prevCoord.xy + offset).rgb * sampleWeight;
+	}
+
+	previousColoredLight *= 0.25;
+	previousColoredLight *= previousColoredLight * mask;
+
+	return sqrt(mix(previousColoredLight, lightAlbedo * lightAlbedo / 0.1, 0.1));
+}
+
 #include "/lib/Fragment/ComputeGI.fsh"
 #include "/lib/Fragment/ComputeSSAO.fsh"
 #include "/lib/Fragment/ComputeVolumetricLight.fsh"
 
-/* DRAWBUFFERS:56 */
+/* RENDERTARGETS:5,6,12 */
 #include "/lib/Exit.glsl"
 
 void main() {
@@ -178,6 +268,16 @@ void main() {
 	vec3 GI = ComputeGI(backPos[1], normal, skyLightmap, GI_RADIUS * 2.0, noise2D, mask);
 	
 	gl_FragData[0] = vec4(sqrt(GI * 0.2), AO);
+
+	vec3 blockLightColor = GetMultiColoredBlocklight(texcoord, depth0, Bayer8(gl_FragCoord.xy));
+
+	if(blockLightColor == vec3(0.0)){
+		gl_FragData[2] = vec4(0.0);
+	} else {
+		gl_FragData[2] = vec4(blockLightColor, 1.0);
+	}
+
+	
 	
 	exit();
 }

@@ -71,15 +71,21 @@ uniform sampler2D noisetex;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowcolor0;
+uniform sampler2D colortex11;
+uniform sampler2D colortex12;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
+uniform mat4 gbufferPreviousModelView;
+uniform mat4 gbufferPreviousProjection;
 
+uniform vec3 previousCameraPosition;
 uniform vec3 cameraPosition;
 uniform vec3 upPosition;
 
 uniform vec2 pixelSize;
+uniform float aspectRatio;
 
 uniform float viewWidth;
 uniform float viewHeight;
@@ -126,13 +132,55 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
 }
 
+// from BSL
+float GetLuminance(vec3 color) {
+	return dot(color,vec3(0.299, 0.587, 0.114));
+}
+
+vec2 Reprojection(vec3 pos) {
+	pos = pos * 2.0 - 1.0;
+
+	vec4 viewPosPrev = gbufferProjectionInverse * vec4(pos, 1.0);
+	viewPosPrev /= viewPosPrev.w;
+	viewPosPrev = gbufferModelViewInverse * viewPosPrev;
+
+	vec3 cameraOffset = cameraPosition - previousCameraPosition;
+	cameraOffset *= float(pos.z > 0.56);
+
+	vec4 previousPosition = viewPosPrev + vec4(cameraOffset, 0.0);
+	previousPosition = gbufferPreviousModelView * previousPosition;
+	previousPosition = gbufferPreviousProjection * previousPosition;
+	return previousPosition.xy / previousPosition.w * 0.5 + 0.5;
+}
+
+const bool colortex12MipmapEnabled = true;
+
+vec3 ApplyMultiColoredBlocklight(vec3 blocklightCol, vec3 screenPos) {
+	if (screenPos.z > 0.56) {
+		screenPos.xy = Reprojection(screenPos);
+	}
+	vec3 coloredLight = texture2DLod(colortex12, screenPos.xy, 2).rgb;
+	
+	vec3 coloredLightNormalized = normalize(coloredLight + 0.00001);
+	coloredLightNormalized *= GetLuminance(blocklightCol) / GetLuminance(coloredLightNormalized);
+	float coloredLightMix = min((coloredLight.r + coloredLight.g + coloredLight.b) * 2048.0, 1.0);
+	
+	return mix(blocklightCol, coloredLightNormalized, coloredLightMix);
+}
+
+#define BLOCKLIGHT_OVERRIDE
+vec3 blockLightOverrideColor;
+
 #include "/lib/Fragment/ComputeShadedFragment.fsh"
+
+
+
 #include "/lib/Fragment/BilateralUpsample.fsh"
 
 #include "/lib/Misc/CalculateFogfactor.glsl"
 #include "/lib/Fragment/WaterDepthFog.fsh"
 
-/* DRAWBUFFERS:1465 */
+/* RENDERTARGETS:1,4,6,5,13 */
 #include "/lib/Exit.glsl"
 
 void main() {
@@ -149,6 +197,9 @@ void main() {
 	vec3 preAcidWorldSpacePosition = texture(colortex10, texcoord).rgb;
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
+
+	blockLightOverrideColor = ApplyMultiColoredBlocklight(torchColor, vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z));
+	gl_FragData[4] = vec4(blockLightOverrideColor, 1.0);
 	
 	vec3 wNormal = DecodeNormal(texture4.g, 11);
 	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
@@ -192,6 +243,8 @@ void main() {
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, preAcidWorldSpacePosition);
 	
 	gl_FragData[0] = vec4(max0(composite), 1.0);
+
+	
 	
 	exit();
 }
