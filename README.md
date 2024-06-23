@@ -29,7 +29,7 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 
 ## Planned Features
 - Distant Horizons support
-- Emission
+- End skybox
 
 ## Compatibility
 ### Hardware
