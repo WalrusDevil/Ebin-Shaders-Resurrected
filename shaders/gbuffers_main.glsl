@@ -309,6 +309,8 @@ float getPorosity(vec2 coord, bool isDielectric){
 	return porosity * 4;
 }
 
+bool handLight = false;
+
 float getEmission(vec2 coord){
 	#ifdef gbuffers_spidereyes
 	return 1.0;
@@ -328,7 +330,10 @@ float getEmission(vec2 coord){
 	#define SAT_THRESHOLD 0.6
 
 	#ifdef AUTO_LIGHT_SOURCE_EMISSION
-	if(materialIDs == 3.0){ // light sources
+
+	
+
+	if(materialIDs == 3.0 || handLight){ // light sources
 		vec3 color = GetTexture(tex, coord).rgb;
 
 		vec3 hsvcol = hsv(color);
@@ -360,6 +365,14 @@ float getEmission(vec2 coord){
 #include "/lib/Exit.glsl"
 
 void main() {
+	
+
+	#ifdef gbuffers_hand
+	if(heldBlockLightValue + heldBlockLightValue2 > 0){
+		handLight = true;
+	}
+	#endif
+
 	if (CalculateFogFactor(position[0]) >= 1.0)
 		{ discard; }
 	
@@ -446,7 +459,7 @@ void main() {
 		gl_FragData[3] = vec4(preAcidWorldSpacePosition, 1.0);
 
 		vec3 blockLightColor = vec3(0.0);
-		if(materialIDs == 3.0 || materialIDs == 5.0){
+		if(materialIDs == 3.0 || materialIDs == 5.0 || handLight){
 			blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
 		}
 
