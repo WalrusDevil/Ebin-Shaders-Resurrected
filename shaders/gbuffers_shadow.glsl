@@ -146,7 +146,7 @@ void main() {
 	
 	gl_Position = ProjectShadowMap(position.xyzz);
 	
-	if (CullVertex(position)) { gl_Position.z += 100000.0; return; }
+	// if (CullVertex(position)) { gl_Position.z += 100000.0; return; }
 	
 	
 	color.rgb *= clamp01(vertNormal.z);
