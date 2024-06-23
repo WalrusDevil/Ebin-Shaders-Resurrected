@@ -356,6 +356,9 @@ option.ANIMATION_FRAMERATE.comment=The fixed-framerate to assume when animating 
 option.WARM_TORCHLIGHT=Warm Torchlight
 option.WARM_TORCHLIGHT.comment=Whether the torchlight (and other artificial light) is warm, or neutral.
 
+option.COLORED_BLOCKLIGHT=Colored Blocklight
+option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on light sources onscreen.
+
 option.INFO=Ebin Resurrected
 value.INFO.0=By jbritain
 value.INFO.1=By BruceKnowsHow

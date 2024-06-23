@@ -100,3 +100,7 @@ vec3 rgb(vec3 c) {
 	
 	return c.z * mix(K.xxx, clamp01(p - K.xxx), c.y);
 }
+
+float getLuminance(vec3 color) {
+	return dot(color, lumaCoeff);
+}

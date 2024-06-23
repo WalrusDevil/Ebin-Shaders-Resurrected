@@ -11,6 +11,7 @@ Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join the [Shaderlabs Discord server](https://discord.gg/SMgEpZe).
 
 ## Features
+- Screen Space Multicoloured Blocklight
 - Sunlight Shadows / Shading
 - PCSS 'Variable Penumbra' Shadows with transparency.
 - Bloom / Glow
@@ -44,9 +45,9 @@ If you are experiencing a problem with Ebin you consider to be a bug, create a n
 
 ## Team
 - [jbritain](https://github.com/jbritain): Maintainer
+- [BruceKnowsHow](https://github.com/BruceKnowsHow): Original Developer (no longer involved in the shader)
 
 ## Contributors
-- [BruceKnowsHow](https://github.com/BruceKnowsHow): Original Developer
 - [dotModded](https://github.com/dotModded), [DethRaid](https://github.com/DethRaid), [zombye](https://github.com/zombye)
 
 
@@ -59,6 +60,7 @@ If you are experiencing a problem with Ebin you consider to be a bug, create a n
   - Quadro
   - BuilderB0y
   - NinjaMike
+- [Capt Tatsu](https://bitslablab.com/), whose shader, [BSL](https://bitslablab.com/bslshaders/) I ported the multicoloured blocklight code from.
 - [Sonic Ether](https://www.facebook.com/SonicEther/), creator of SEUS and inspiration for Ebin
 - [daxnitro](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272365), original creator of the Shaders Mod
 - [karyonix](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286604), longtime maintainer of the Shaders Mod

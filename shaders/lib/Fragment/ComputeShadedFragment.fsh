@@ -115,7 +115,7 @@ vec3 ColorSaturate(vec3 base, float saturation) {
 }
 
 cvec3 nightColor = vec3(0.25, 0.35, 0.7);
-#ifdef WARM_TORCHLIGHT
+#ifndef COLORED_BLOCKLIGHT
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #else
 cvec3 torchColor = vec3(0.3, 0.22, 0.2) / 0.42;
@@ -208,7 +208,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	
 	lightmap.ambient = vec3(shading.ambient) * vec3(1.0, 1.2, 1.4);
 	
-	#ifdef BLOCKLIGHT_OVERRIDE
+	#ifdef COLORED_BLOCKLIGHT
 	lightmap.torchlight = shading.torchlight * blockLightOverrideColor;
 	#else
 	lightmap.torchlight = shading.torchlight * torchColor;

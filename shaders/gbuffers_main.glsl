@@ -388,11 +388,11 @@ void main() {
 			mask.water  = 1.0;
 		}
 
-		if(materialIDs == 5.0){
+		if(materialIDs == 5.0){ // nether portal
 			specularity = 1.0;
 			perceptualSmoothness = 0.9;
 			baseReflectance = 0.02;
-			emission = 0.5;
+			emission = 0.7;
 		}
 		#endif
 
@@ -416,6 +416,18 @@ void main() {
 		gl_FragData[0] = vec4(encode, 0.0, 1.0);
 		gl_FragData[1] = vec4(composite, diffuse.a);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, 0.0, 1.0);
+		vec3 blockLightColor = vec3(0.0);
+		if(materialIDs == 3.0 || materialIDs == 5.0){
+			blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
+		}
+
+		
+
+		if(emission == 0.0){
+			gl_FragData[3] = vec4(0);
+		} else {
+			gl_FragData[3] = vec4(blockLightColor, 1.0);
+		}
 	#else
 
 		if (porosity > 0){
@@ -432,14 +444,22 @@ void main() {
 		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
 		gl_FragData[3] = vec4(preAcidWorldSpacePosition, 1.0);
+
+		vec3 blockLightColor = vec3(0.0);
+		if(materialIDs == 3.0 || materialIDs == 5.0){
+			blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
+		}
+
+		
+
+		if(emission == 0.0){
+			gl_FragData[4] = vec4(0);
+		} else {
+			gl_FragData[4] = vec4(blockLightColor, 1.0);
+		}
 	#endif
 
-	vec3 blockLightColor = vec3(0.0);
-	if(materialIDs == 3.0){
-		blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
-	}
-
-	gl_FragData[4] = vec4(blockLightColor, 1.0);
+	
 
 
 	exit();
