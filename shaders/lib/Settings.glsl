@@ -113,7 +113,7 @@ const float zShrink = 4.0;
 #define WAVING_LEAVES
 #define WAVING_WATER
 
-#define COMPOSITE0_SCALE 0.50 // [0.25 0.33 0.40 0.50 0.60 0.75 1.00]
+#define COMPOSITE0_SCALE 1.0
 #define COMPOSITE0_NOISE
 
 #define CLOUDS_2D

@@ -49,7 +49,7 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-#define DEBUG_TEXTURE colortex11
+#define DEBUG_TEXTURE colortex12
 // #define DEBUG_ENABLE
 
 uniform sampler2D DEBUG_TEXTURE;

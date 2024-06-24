@@ -77,7 +77,7 @@ vec3 GetWorldSpacePosition() {
 	
 #if  defined gbuffers_water || defined gbuffers_textured
 	position -= gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.00005 * float(abs(mc_Entity.x - 8.5) > 0.6));
-#elif defined gbuffers_spidereyess
+#elif defined gbuffers_spidereyes
 	position += gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.0002);
 #endif
 	
@@ -356,6 +356,10 @@ float getEmission(vec2 coord){
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
+// #if defined gbuffers_textured
+// /* RENDERTARGETS:0,3,8,11 */
+// #endif
+
 #if defined gbuffers_water || defined gbuffers_textured
 /* RENDERTARGETS:0,3,8,11 */
 #else
@@ -435,12 +439,13 @@ void main() {
 		}
 
 		
-
+		#ifndef gbuffers_textured
 		if(emission == 0.0){
 			gl_FragData[3] = vec4(0);
 		} else {
 			gl_FragData[3] = vec4(blockLightColor, 1.0);
 		}
+		#endif
 	#else
 
 		if (porosity > 0){
