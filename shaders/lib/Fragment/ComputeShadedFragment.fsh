@@ -26,12 +26,13 @@ struct Lightmap { // Vector light levels with color
 float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
 	float falloff;
 
+	float light = max(heldBlockLightValue, heldBlockLightValue2);
 
-	if (length(viewSpacePosition) < heldBlockLightValue){
+	if (length(viewSpacePosition) < light){
 		float dist = length(viewSpacePosition);
-		falloff = max(heldBlockLightValue, heldBlockLightValue2);
+		falloff = light;
 		falloff = clamp01(falloff);
-		falloff = mix(falloff, 0, dist / max(heldBlockLightValue, heldBlockLightValue2));
+		falloff = mix(falloff, 0, dist / light);
 	}
 	
 	return falloff;
