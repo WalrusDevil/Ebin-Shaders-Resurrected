@@ -197,11 +197,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			float edge       = clamp01(1.0 - pow2(dist * 2.0 * angleCoeff));
 			fogFactor        = clamp01(fogFactor + pow(1.0 - edge, 10.0));
 			
-			#ifndef world2
+			#ifndef worldm1
 			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
 			#endif
 		} else {
-			#ifndef world2
+			#ifndef worldm1
 			float sunlight = ComputeSunlightFast(position[1], skyLightmap);
 			if (roughness > 0.5){ // don't reflect sun on rough surfaces as it causes visual noise
 				sunlight = 0;

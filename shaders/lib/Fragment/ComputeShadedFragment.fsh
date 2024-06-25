@@ -186,7 +186,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.ambient *= GI.a * 0.5 + 0.5;
 	shading.ambient *= 0.04 * AMBIENT_LIGHT_LEVEL;
 	shading.ambient = mix(shading.ambient, shading.ambient / 2.0, materialAO);
-	#ifdef world2 // nether - no sunlight or skylight so boost ambient
+	#ifdef worldm1 // nether - no sunlight or skylight so boost ambient
 		shading.ambient *= 3;
 		shading.ambient = clamp(shading.ambient, 0.2, 1.0);
 		shading.torchlight *= 2;

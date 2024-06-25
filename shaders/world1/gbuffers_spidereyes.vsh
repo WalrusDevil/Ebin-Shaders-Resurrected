@@ -1,7 +1,8 @@
+
 #include "/lib/GLSL_Version.glsl"
-#define gbuffers_water
+#define gbuffers_spidereyes
 #define vsh
-#define worldm1
+#define world1
 #define ShaderStage -2
 
 

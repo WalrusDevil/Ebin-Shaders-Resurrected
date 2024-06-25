@@ -49,7 +49,7 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-#define DEBUG_TEXTURE colortex12
+#define DEBUG_TEXTURE shadowtex0
 // #define DEBUG_ENABLE
 
 uniform sampler2D DEBUG_TEXTURE;
@@ -193,7 +193,7 @@ void main() {
 		color = mix(color, waterColor, CalculateFogFactor(vec3(0, 0, depth * far)));
 	}
 
-	#ifdef world2
+	#ifdef worldm1
 		color = mix(color, fogColor, pow(CalculateFogFactor(vec3(0, 0, depth * far)), 64.0));
 	#endif
 

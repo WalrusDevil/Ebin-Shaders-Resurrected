@@ -97,9 +97,17 @@ vec3 ComputeClouds(vec3 wDir, vec3 wPos, io vec3 transmit) {
 	return color;
 }
 
+vec3 computeEndSky(vec3 wDir){
+	return mix(vec3(0.333, 0.212, 0.49) * 0.2, vec3(0.486, 0.349, 0.561), dot(normalize(wDir), vec3(0, 1, 0)));
+}
+
 vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor) {
-	#ifndef world0
+	#ifdef worldm1
 		return vec3(0);
+	#endif
+
+	#ifdef world1
+		return computeEndSky(wDir);
 	#endif
 
 	vec3 color = vec3(0.0);

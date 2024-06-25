@@ -2,7 +2,7 @@
 #include "/lib/GLSL_Version.glsl"
 #define composite1
 #define vsh
-#define world2
+#define worldm1
 #define ShaderStage 10
 
 #include "/composite1.glsl"
