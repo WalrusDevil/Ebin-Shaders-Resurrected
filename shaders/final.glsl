@@ -98,12 +98,12 @@ vec3 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 	return projMAD(projMatrix, viewSpacePosition) / -viewSpacePosition.z;
 }
 
-vec3 MotionBlur(vec3 color, float depth, float handMask) {
+vec3 MotionBlur(vec3 color, float depth) {
 #ifndef MOTION_BLUR
 	return color;
 #endif
 	
-	if (handMask > 0.5) return color;
+	if (depth < 0.56) return color;
 	
 	vec3 position = vec3(texcoord, depth) * 2.0 - 1.0; // Signed [-1.0 to 1.0] screen space position
 	
@@ -197,7 +197,7 @@ void main() {
 		color = mix(color, fogColor, pow(CalculateFogFactor(vec3(0, 0, depth * far)), 64.0));
 	#endif
 
-	color = MotionBlur(color, depth, mask.hand);
+	color = MotionBlur(color, depth);
 	color =   GetBloom(color);
 	color =   Vignette(color);
 	color =    Tonemap(color);
