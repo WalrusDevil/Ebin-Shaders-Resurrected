@@ -1,5 +1,7 @@
 #include "/lib/Syntax.glsl"
 
+#include "/lib/Settings.glsl"
+
 
 varying vec4 color;
 varying vec2 texcoord;
@@ -29,7 +31,6 @@ uniform float thunderStrength;
 
 float materialIDs;
 
-#include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 
 #include "/UserProgram/centerDepthSmooth.glsl"
@@ -119,6 +120,11 @@ bool CullVertex(vec3 wPos) {
 }
 
 void main() {
+	#ifndef SHADOWS
+		gl_Position = ftransform();
+		return;
+	#endif
+
 	if (mc_Entity.x == 66) { gl_Position = vec4(-1.0); return; }
 	
 	materialIDs = BackPortID(int(mc_Entity.x));
@@ -174,6 +180,10 @@ void main() {
 uniform sampler2D tex;
 
 void main() {
+	#ifndef SHADOWS
+	discard;
+	#endif
+
 	vec4 diffuse = color * texture2D(tex, texcoord);
 	
 	gl_FragData[0] = diffuse;

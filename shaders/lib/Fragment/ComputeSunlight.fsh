@@ -48,7 +48,7 @@ mat2 getRandomRotation(vec2 offset){
 	return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 }
 
-#if SHADOW_TYPE == 2
+#if SHADOW_TYPE == 2 && defined SHADOWS
 	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
 		
@@ -118,8 +118,10 @@ mat2 getRandomRotation(vec2 offset){
 		
 		return sunlight / samples;
 	}
-#else
+#else if defined SHADOWS
 	#define ComputeShadows(shadowPosition, biasCoeff) vec3(shadowVisibility(shadowtex0, shadowPosition));
+#else
+	#define ComputeShadows(shadowPosition, biasCoeff) vec3(1.0);
 #endif
 
 float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){

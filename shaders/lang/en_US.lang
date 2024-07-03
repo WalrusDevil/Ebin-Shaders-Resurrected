@@ -122,14 +122,13 @@ option.SHADOW_MAP_BIAS.comment=Higher values make nearby shadows look better, at
 
 option.SHADOW_TYPE=Shadow Type
 option.SHADOW_TYPE.comment=Soft Shadows have a medium performance cost!
+value.SHADOW_TYPE.0=Disabled
 value.SHADOW_TYPE.1=Hard Shadows
 value.SHADOW_TYPE.2=Soft Shadows
+value.SHADOW_TYPE.3=PCSS Shadows
 
 option.SHADOW_SOFTNESS=Soft Shadow Radius
 option.SHADOW_SOFTNESS.comment=Radius in which shadow samples are made. Does not apply to variable penumbra shadows.
-
-option.VARIABLE_PENUMBRA_SHADOWS=PCSS Shadows
-option.VARIABLE_PENUMBRA_SHADOWS.comment=Makes shadows cast by further objects softer.
 
 option.SHADOW_SAMPLES=Shadow Samples
 option.SHADOW_SAMPLES.comment=Number of shadow samples.
