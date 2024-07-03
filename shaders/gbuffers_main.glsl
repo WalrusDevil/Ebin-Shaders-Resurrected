@@ -377,19 +377,32 @@ float getEmission(vec2 coord){
 // 	return lightDirWorld;
 // }
 
+vec3 getLightDirWorld(vec3 worldPos, float lightmap){
+	vec2 grad = vec2(dFdx(lightmap), dFdy(lightmap));
+
+	vec3 A = dFdx(worldPos) / grad.x;
+	vec3 B = dFdy(worldPos) / grad.y;
+
+	cfloat epsilon = 0.000000001;
+
+	if(length(grad) < epsilon) return vec3(0.0);
+	grad += vec2(lessThan(abs(grad), vec2(epsilon))) * epsilon;
+
+	vec3 perp = B - A;
+
+	vec3 ortho = cross(A, B);
+	vec3 dir = normalize(cross(perp, ortho));
+
+	return dir;
+}
+
 // basically designed by CyanEmber and Balint
 float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worldPos, float lightmap){
-	//vec3 lightDir = getLightDirWorld(faceNormal, worldPos, lightmap);
-
-	vec3 xAxis = normalize(dFdx(worldPos));
-	vec3 yAxis = normalize(dFdy(worldPos));
-	vec3 lightDir = xAxis * dFdx(lightmap) + yAxis * dFdy(lightmap);
-	if(length(lightDir) > 0.){
-		lightDir = normalize(lightDir);
-	}
+	vec3 lightDir = getLightDirWorld(worldPos, lightmap);
+	lightDir = normalize(faceNormal * lightmap + lightDir);
 
 
-	float directionalLighting = dot((faceNormal + lightDir * 2.0), mappedNormal);
+	float directionalLighting = dot(normalize((faceNormal * lightmap + lightDir * 2.0)), mappedNormal);
 	return clamp01(directionalLighting);
 }
 
