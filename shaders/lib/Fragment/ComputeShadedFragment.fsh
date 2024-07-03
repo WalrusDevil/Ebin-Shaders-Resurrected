@@ -34,7 +34,11 @@ float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
 		falloff = clamp01(falloff);
 		falloff = mix(falloff, 0, dist / light);
 	}
-	
+
+	#ifdef DIRECTIONAL_LIGHTING
+	falloff *= clamp01(dot(normal, -viewSpacePosition));
+	#endif
+
 	return falloff;
 }
 

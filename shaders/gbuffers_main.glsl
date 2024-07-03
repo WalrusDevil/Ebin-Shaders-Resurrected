@@ -137,7 +137,6 @@ void main() {
 	blocklight = vertLightmap.r;
 	#endif
 	
-	show(int(mc_Entity.x) == 9)
 	vec3 worldSpacePosition = GetWorldSpacePosition();
 	
 	worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
@@ -352,6 +351,50 @@ float getEmission(vec2 coord){
 	return 0.0;
 }
 
+// // thanks to CyanEmber
+// vec3 getLightDirWorld(vec3 normal, vec3 worldPos, float lightmap){
+// 	// Construct a tangent space
+// 	// vec3 tangent    = normalize(cross(normal, vec3(sqrt(0.1), sqrt(0.9), 0.0)));
+// 	// vec3 bitangent  = cross(normal, tangent);
+// 	// mat3 tangentToWorld = mat3(tangent, bitangent, normal);
+// 	mat3 tangentToWorld = tbnMatrix;
+// 	mat3 worldToTangent = transpose(tangentToWorld);
+
+// 	// Construct transformation matrix from screen space to tangent space
+// 	vec2 tangentPos      = (worldToTangent * worldPos).xy;
+// 	mat2 pixelsToTangent = mat2(dFdx(tangentPos), dFdy(tangentPos));
+
+// 	// Transform light direction from screen space to world space
+// 	vec2 lightDirPixels  = vec2(dFdx(lightmap), dFdy(lightmap));
+
+// 	if(length(lightDirPixels) == 0){
+// 		return vec3(0.0);
+// 	}
+
+// 	vec2 lightDirTangent = normalize(pixelsToTangent * lightDirPixels);
+// 	vec3 lightDirWorld   = tangentToWorld * vec3(lightDirTangent, 0.0);
+
+// 	return lightDirWorld;
+// }
+
+// basically designed by CyanEmber and Balint
+float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worldPos, float lightmap){
+	//vec3 lightDir = getLightDirWorld(faceNormal, worldPos, lightmap);
+
+	vec3 xAxis = normalize(dFdx(worldPos));
+	vec3 yAxis = normalize(dFdy(worldPos));
+	vec3 lightDir = xAxis * dFdx(lightmap) + yAxis * dFdy(lightmap);
+	if(length(lightDir) > 0.){
+		lightDir = normalize(lightDir);
+	}
+
+
+	float directionalLighting = dot((faceNormal + lightDir * 2.0), mappedNormal);
+	return clamp01(directionalLighting);
+}
+
+
+
 
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
@@ -382,13 +425,23 @@ void main() {
 	
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
 	vec4  diffuse     		= GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
+	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);
 	vec3  normal      		= GetNormal(coord);
-	float specularity 		= GetSpecularity(coord);
+	//float specularity 		= GetSpecularity(coord);
+	#ifdef DIRECTIONAL_LIGHTING
+		float directionalLightingFactor = getDirectionalLightingFactor(faceNormal, normal, preAcidWorldSpacePosition, vertLightmap.r);
+	#else
+		float directionalLightingFactor = 1.0;
+	#endif
 	float perceptualSmoothness				= getPerceptualSmoothness(coord);
 	float baseReflectance = getBaseReflectance(coord);
 	float emission 				= getEmission(coord);
 	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
 	float materialAO			= getMaterialAO(coord);
+	
+	#ifdef gbuffers_hand
+	directionalLightingFactor = 1.0;
+	#endif
 
 	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
@@ -399,14 +452,12 @@ void main() {
 			
 			diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
 			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
-			specularity = 1.0;
 			perceptualSmoothness = 1;
 			baseReflectance = 0.02;
 			mask.water  = 1.0;
 		}
 
 		if(materialIDs == 5.0){ // nether portal
-			specularity = 1.0;
 			perceptualSmoothness = 0.9;
 			baseReflectance = 0.02;
 			emission = 0.7;
@@ -419,10 +470,10 @@ void main() {
 		#endif
 		
 
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, preAcidWorldSpacePosition);
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, preAcidWorldSpacePosition);
 
 		vec2 encode;
-		encode.x = Encode4x8F(vec4(specularity, vertLightmap.g, mask.water, 0.1));
+		encode.x = Encode4x8F(vec4(directionalLightingFactor, vertLightmap.g, mask.water, 0.1));
 		encode.y = EncodeNormal(normal, 11.0);
 		
 		if (materialIDs == 4.0) {
@@ -459,7 +510,7 @@ void main() {
 		float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
 		
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
-		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, specularity, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
+		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, directionalLightingFactor, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
 		gl_FragData[3] = vec4(preAcidWorldSpacePosition, 1.0);
 
@@ -476,7 +527,6 @@ void main() {
 			gl_FragData[4] = vec4(blockLightColor, 1.0);
 		}
 	#endif
-
 	
 
 

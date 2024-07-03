@@ -110,7 +110,7 @@ option.WAVING_LEAVES=Waving Leaves
 option.WAVING_WATER=Waving Water
 
 
-screen.Shadows=Shadows
+screen.Shadows=Shadows & Lighting
 
 option.sunPathRotation=Sun Path Rotation
 
@@ -358,6 +358,9 @@ option.WARM_TORCHLIGHT.comment=Whether the torchlight (and other artificial ligh
 
 option.COLORED_BLOCKLIGHT=Colored Blocklight
 option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on light sources onscreen.
+
+option.DIRECTIONAL_LIGHTING=Directional Lighting
+option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
 
 option.INFO=Ebin Resurrected
 value.INFO.0=By jbritain

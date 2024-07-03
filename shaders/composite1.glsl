@@ -152,7 +152,7 @@ void main() {
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
 	Mask  mask          = CalculateMasks(decode4.r);
-	float specularity    = decode4.g;
+	float directionalLightingFactor    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
 	float emission			= texture(colortex9, texcoord).b;
@@ -161,6 +161,8 @@ void main() {
 	vec3 preAcidWorldSpacePosition = texture(colortex10, texcoord).rgb;
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
+
+	torchLightmap *= directionalLightingFactor;
 
 	#ifdef COLORED_BLOCKLIGHT
 	blockLightOverrideColor = getColoredBlockLight(torchColor, vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z));
@@ -208,8 +210,6 @@ void main() {
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, preAcidWorldSpacePosition);
 	
 	gl_FragData[0] = vec4(max0(composite), 1.0);
-
-	
 	
 	exit();
 }
