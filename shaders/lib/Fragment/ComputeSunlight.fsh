@@ -146,7 +146,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS){
 		sunlight = clamp01(sunlight);
 		return sunlight;
 	}
-#else if defined SHADOWS
+#elif defined SHADOWS
 	#define ComputeShadows(shadowPosition, biasCoeff, float SSS) vec3(shadowVisibility(shadowtex0, shadowPosition));
 #else
 	#define ComputeShadows(shadowPosition, biasCoeff, float SSS) vec3(1.0);
