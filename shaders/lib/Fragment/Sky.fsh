@@ -113,6 +113,8 @@ vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool re
 	vec3 color = vec3(0.0);
 	color += ComputeClouds(wDir, wPos, transmit);
 	color += ComputeBackSky(wDir, wPos, transmit, sunlight, reflection, sunFactor);
+
+	color = mix(color, vec3(0.0), eyeBrightnessSmooth.y);
 	
 	return color;
 }

@@ -28,15 +28,20 @@ float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
 
 	float light = max(heldBlockLightValue, heldBlockLightValue2);
 
-	if (length(viewSpacePosition) < light){
-		float dist = length(viewSpacePosition);
+	vec3 eyeOffset = eyePosition - cameraPosition; // offset of eye from camera, vec3(0.) in first person
+	vec3 eyeOffsetView = mat3(gbufferModelView) * eyeOffset;
+
+	vec3 lightPos = viewSpacePosition - eyeOffsetView; // position relative to player eye, ideally I would use hand position but idk where the hand is
+
+	if (length(lightPos) < light){
+		float dist = length(lightPos);
 		falloff = light;
 		falloff = clamp01(falloff);
 		falloff = mix(falloff, 0, dist / light);
 	}
 
 	#ifdef DIRECTIONAL_LIGHTING
-	falloff *= clamp01(dot(normal, -viewSpacePosition));
+	falloff *= clamp01(dot(normal, -normalize(lightPos)));
 	#endif
 
 	return falloff;

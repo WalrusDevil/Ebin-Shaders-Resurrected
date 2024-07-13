@@ -186,6 +186,7 @@ uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
 
 uniform vec3 cameraPosition;
+uniform vec3 eyePosition;
 
 uniform float nightVision;
 uniform float viewHeight;

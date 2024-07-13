@@ -83,6 +83,7 @@ uniform mat4 gbufferPreviousProjection;
 uniform vec3 previousCameraPosition;
 uniform vec3 cameraPosition;
 uniform vec3 upPosition;
+uniform vec3 eyePosition;
 
 uniform vec2 pixelSize;
 uniform float aspectRatio;
