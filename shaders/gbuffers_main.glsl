@@ -309,6 +309,16 @@ float getPorosity(vec2 coord, bool isDielectric){
 	return porosity * 4;
 }
 
+float getSSS(vec2 coord, bool isDielectric){
+	float SSS = GetTexture(specular, coord).b;
+
+	if(SSS <= 0.25){ // porosity range
+		return 0.0;
+	}
+
+	return (SSS - 0.25) * (4.0/3.0);
+}
+
 bool handLight = false;
 
 float getEmission(vec2 coord){
@@ -469,6 +479,7 @@ void main() {
 	float baseReflectance = getBaseReflectance(coord);
 	float emission 				= getEmission(coord);
 	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
+	float SSS					= getSSS(coord, (baseReflectance <= 1.0));
 	float materialAO			= getMaterialAO(coord);
 	
 	#ifdef gbuffers_hand
@@ -502,7 +513,7 @@ void main() {
 		#endif
 		
 
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, preAcidWorldSpacePosition);
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, preAcidWorldSpacePosition);
 
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(directionalLightingFactor, vertLightmap.g, mask.water, 0.1));
@@ -535,6 +546,8 @@ void main() {
 			baseReflectance = mix(baseReflectance, 0.1 * porosity, wetness * vertLightmap.g);
 			perceptualSmoothness = mix(perceptualSmoothness, (1.0 - porosity), wetness * vertLightmap.g);
 		}
+
+		
 		
 
 		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - porosity) / 2) + 0.5), wetness);
@@ -543,7 +556,7 @@ void main() {
 		
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
 		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, directionalLightingFactor, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
-		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
+		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, SSS);
 		gl_FragData[3] = vec4(preAcidWorldSpacePosition, 1.0);
 
 		vec3 blockLightColor = vec3(0.0);

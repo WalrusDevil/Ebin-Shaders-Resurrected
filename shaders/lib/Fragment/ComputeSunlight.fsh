@@ -48,12 +48,26 @@ mat2 getRandomRotation(vec2 offset){
 	return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 }
 
+// ask tech, idk
+float calculateSSS(float blockerDepth, float receiverDepth, float SSS){
+	if(SSS == 0.0){
+		return 0.0;
+	}
+
+	float s = 1.0 / (SSS * 0.06);
+	float z = (blockerDepth - receiverDepth);
+
+	return 0.25 * (exp(-s * z) + 3*exp(-s * z / 3));
+}
+
 #if SHADOW_TYPE == 2 && defined SHADOWS
-	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff) {
+	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff, float SSS) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
+
+		float shadowDepthRange = 255; // distance that a depth of 1 indicates
 		
 		#ifdef VARIABLE_PENUMBRA_SHADOWS
-			float shadowDepthRange = 255; // distance that a depth of 1 indicates
+			
 
 			float sunWidth = 0.9; // approximation of sun width if it was 100m away instead of several million km
 			float receiverDepth = shadowPosition.z * shadowDepthRange;
@@ -79,16 +93,27 @@ mat2 getRandomRotation(vec2 offset){
 
 			float blockerDepth = blockerDepthSum / blockerCount;
 
-
-
+			
 			
 			float penumbraWidth = (receiverDepth - blockerDepth) * sunWidth / blockerDepth;
 			penumbraWidth = clamp(penumbraWidth, -maxPenumbraWidth, maxPenumbraWidth);
 
 			float range = max(SHADOW_SOFTNESS, penumbraWidth * pixelsPerBlock);
 		#else
+
+			float blockerDepth = texture2D(shadowtex0, shadowPosition.xy).r * shadowDepthRange;
+			float receiverDepth = shadowPosition.z * shadowDepthRange;
+
 			float range       = SHADOW_SOFTNESS;
 		#endif
+
+		float scatter = clamp01(calculateSSS(blockerDepth, receiverDepth, SSS)); // subsurface scattering
+
+		show(scatter);
+
+		if(scatter == 1.0){
+			return vec3(1.0);
+		}
 
 		// float sampleCount = pow(range / interval * 2.0 + 1.0, 2.0);
 		float sampleCount = SHADOW_SAMPLES;
@@ -116,12 +141,15 @@ mat2 getRandomRotation(vec2 offset){
 			}
 		}
 		
-		return sunlight / samples;
+		sunlight /= samples;
+		sunlight += scatter;
+		sunlight = clamp01(sunlight);
+		return sunlight;
 	}
 #else if defined SHADOWS
-	#define ComputeShadows(shadowPosition, biasCoeff) vec3(shadowVisibility(shadowtex0, shadowPosition));
+	#define ComputeShadows(shadowPosition, biasCoeff, float SSS) vec3(shadowVisibility(shadowtex0, shadowPosition));
 #else
-	#define ComputeShadows(shadowPosition, biasCoeff) vec3(1.0);
+	#define ComputeShadows(shadowPosition, biasCoeff, float SSS) vec3(1.0);
 #endif
 
 float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
@@ -143,7 +171,7 @@ float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
 	return sunlightCoeff * pow(sunlight, mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1)));
 }
 
-vec3 ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
+vec3 ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff, float SSS) {
 	if (sunlightCoeff <= 0.0) return vec3(sunlightCoeff);
 	
 	float distCoeff = GetDistanceCoeff(worldSpacePosition);
@@ -156,7 +184,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, float sunlightCoeff) {
 	
 	if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return vec3(sunlightCoeff);
 	
-	vec3 sunlight = ComputeShadows(shadowPosition, biasCoeff);
+	vec3 sunlight = ComputeShadows(shadowPosition, biasCoeff, SSS);
 	      sunlight = mix(sunlight, vec3(sunlightCoeff), distCoeff);
 	
 	return vec3(sunlightCoeff) * pow(sunlight, vec3(mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1))));
