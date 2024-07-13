@@ -16,11 +16,10 @@ const float centerDepthHalflife = 0.5;
 ** Transparent Gbuffers **
 const int colortex0Format = RG32F;
 const int colortex3Format = RGBA16F;
-const int colortex10Format = RGBA32F;
 
 ** Flat Gbuffers **
 const int colortex1Format = R11F_G11F_B10F;
-const int colortex4Format = RG32F;
+const int colortex4Format = RGB32F;
 
 ** composite0 Buffers **
 const int colortex5Format = RGBA16;
@@ -77,6 +76,8 @@ const float zShrink = 4.0;
 #if SHADOW_TYPE == 3
     #define VARIABLE_PENUMBRA_SHADOWS
 #endif
+
+// #define SUBSURFACE_SCATTERING
 
 #if SHADOW_TYPE != 0
     #define SHADOWS

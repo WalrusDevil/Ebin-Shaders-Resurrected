@@ -154,7 +154,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 		}
 		
 		sunlight /= samples;
-		sunlight += scatter;
+		sunlight = max(sunlight, scatter);
 		// sunlight = clamp01(sunlight);
 		return sunlight;
 	}

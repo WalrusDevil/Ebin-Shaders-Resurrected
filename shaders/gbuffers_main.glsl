@@ -8,7 +8,6 @@ flat varying ivec2 textureResolution;
 
 varying mat3 tbnMatrix;
 
-varying vec3 preAcidWorldSpacePosition;
 varying mat2x3 position;
 
 varying vec3 worldDisplacement;
@@ -140,8 +139,6 @@ void main() {
 	vec3 worldSpacePosition = GetWorldSpacePosition();
 	
 	worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
-	
-	preAcidWorldSpacePosition = worldSpacePosition;
 
 	position[1] = worldSpacePosition + worldDisplacement;
 	position[0] = position[1] * mat3(gbufferModelViewInverse);
@@ -471,7 +468,7 @@ void main() {
 	vec3  normal      		= GetNormal(coord);
 	//float specularity 		= GetSpecularity(coord);
 	#ifdef DIRECTIONAL_LIGHTING
-		float directionalLightingFactor = getDirectionalLightingFactor(faceNormal, normal, preAcidWorldSpacePosition, vertLightmap.r);
+		float directionalLightingFactor = getDirectionalLightingFactor(faceNormal, normal, position[1], vertLightmap.r);
 	#else
 		float directionalLightingFactor = 1.0;
 	#endif
@@ -513,7 +510,7 @@ void main() {
 		#endif
 		
 
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, tbnMatrix[2], preAcidWorldSpacePosition);
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, tbnMatrix[2]);
 
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(directionalLightingFactor, vertLightmap.g, mask.water, 0.1));
@@ -557,9 +554,8 @@ void main() {
 		float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
 		
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
-		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, directionalLightingFactor, vertLightmap.rg)), EncodeNormal(normal, 11.0), materialAO, 1.0);
+		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, directionalLightingFactor, vertLightmap.rg)), EncodeNormal(normal, 11.0), Encode4x8F(vec4(materialAO, 0.0, 0.0, 0.0)), 1.0);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, SSS);
-		gl_FragData[3] = vec4(preAcidWorldSpacePosition, EncodeNormal(tbnMatrix[2], 11.0));
 
 		vec3 blockLightColor = vec3(0.0);
 		if(materialIDs == 3.0 || materialIDs == 5.0 || handLight){
@@ -567,9 +563,9 @@ void main() {
 		}
 
 		if(emission == 0.0){
-			gl_FragData[4] = vec4(0.0);
+			gl_FragData[3] = vec4(0.0);
 		} else {
-			gl_FragData[4] = vec4(blockLightColor, 0.0);
+			gl_FragData[3] = vec4(blockLightColor, 0.0);
 		}
 	#endif
 	

@@ -149,20 +149,19 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 #include "/lib/Exit.glsl"
 
 void main() {
-	vec2 texture4 = ScreenTex(colortex4).rg;
+	vec3 texture4 = ScreenTex(colortex4).rgb;
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
+	vec4 	decode4b			= Decode4x8F(texture4.b);
 	Mask  mask          = CalculateMasks(decode4.r);
 	float directionalLightingFactor    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
 	float emission			= texture(colortex9, texcoord).b;
-	float materialAO		= clamp01(texture(colortex4, texcoord).b);
+	float materialAO		= clamp01(decode4b.r);
 	float SSS				= clamp01(texture(colortex9, texcoord).a);
 	vec3  geometryNormal = DecodeNormal(texture(colortex10, texcoord).a, 11);
 	//show(geometryNormal);
-
-	vec3 preAcidWorldSpacePosition = texture(colortex10, texcoord).rgb;
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
 
@@ -187,7 +186,7 @@ void main() {
 		mask.bits.xy     = vec2(mask.transparent, mask.water);
 		mask.materialIDs = EncodeMaterialIDs(1.0, mask.bits);
 
-		texture4 = vec2(Encode4x8F(vec4(mask.materialIDs, decode0.r, 0.0, decode0.g)), texture0.g);
+		texture4.rg = vec2(Encode4x8F(vec4(mask.materialIDs, decode0.r, 0.0, decode0.g)), texture0.g);
 	}
 	
 	vec4 GI; vec2 VL;
@@ -211,7 +210,7 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, preAcidWorldSpacePosition);
+	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal);
 
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	
