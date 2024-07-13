@@ -65,9 +65,6 @@ uniform sampler2D shadowtex1;
 uniform sampler2D shadowcolor0;
 uniform mat4 gbufferModelView;
 
-uniform float viewHeight;
-
-
 uniform vec3 shadowLightPosition;
 
 uniform mat4 gbufferModelViewInverse;
@@ -76,6 +73,8 @@ uniform mat4 shadowProjection;
 uniform vec3 cameraPosition;
 
 uniform vec2 pixelSize;
+uniform float viewWidth;
+uniform float viewHeight;
 
 uniform float rainStrength;
 uniform float wetness;
@@ -95,9 +94,14 @@ uniform int isEyeInWater;
 #include "/lib/Fragment/Masks.fsh"
 #include "/lib/Misc/CalculateFogfactor.glsl"
 
+//const bool colortex1MipmapEnabled = true;
 
 vec3 GetColor(vec2 coord) {
 	return texture2D(colortex1, coord).rgb;
+}
+
+float linearizeDepth(float depth) {
+	return (2.0 * near) / (far + near - depth * (far - near));
 }
 
 float GetDepth(vec2 coord) {

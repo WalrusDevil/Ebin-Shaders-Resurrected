@@ -165,6 +165,19 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	vec3 reflectionSum = vec3(0);
 	vec3 offsetNormal = normal;
 
+	// float maxMipMapLevel = log2(max(viewHeight, viewWidth));
+
+	// refRay[0] = reflect(position[0], offsetNormal);
+	// refRay[1] = mat3(gbufferModelViewInverse) * refRay[0];
+
+	// bool hit = ComputeSSRaytrace(position[0], normalize(refRay[0]), refCoord);
+
+	// float blurRadius = linearizeDepth(texture2D(gdepthtex, refCoord.xy).r) * roughness;
+	// if(hit){
+	// 	reflectionSum = texture2DLod(colortex1, refCoord.xy, blurRadius * maxMipMapLevel).rgb;
+	// }
+	
+
 	for(int i = 0; i < REFLECTION_SAMPLES; i++){
 		
 		if (roughness > 0){ // rough reflections
@@ -184,6 +197,8 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 		vec3 transmit = vec3(1.0);
 		vec3 in_scatter = vec3(0.0);
+
+		
 		
 		if (hit) {
 			reflection = GetColor(refCoord.st);
