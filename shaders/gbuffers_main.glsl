@@ -563,14 +563,18 @@ void main() {
 
 			Encode4x8F(vec4(
 				materialAO,
-				0.0,
+				SSS,
 				0.0,
 				0.0
 			)), 
 
+			#if defined gbuffers_terrain
 			EncodeNormal(tbnMatrix[2], 16.0)
+			#else
+			1.0
+			#endif
 		);
-		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, SSS);
+		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
 
 		vec3 blockLightColor = vec3(0.0);
 		if(materialIDs == 3.0 || materialIDs == 5.0 || handLight){

@@ -159,7 +159,7 @@ void main() {
 	float skyLightmap   = decode4.a;
 	float emission			= texture(colortex9, texcoord).b;
 	float materialAO		= clamp01(decode4b.r);
-	float SSS				= clamp01(texture(colortex9, texcoord).a);
+	float SSS				= clamp01(decode4b.g);
 	
 	
 	
