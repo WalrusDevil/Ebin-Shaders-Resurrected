@@ -159,6 +159,8 @@ void main() {
 	float emission			= texture(colortex9, texcoord).b;
 	float materialAO		= clamp01(texture(colortex4, texcoord).b);
 	float SSS				= clamp01(texture(colortex9, texcoord).a);
+	vec3  geometryNormal = DecodeNormal(texture(colortex10, texcoord).a, 11);
+	//show(geometryNormal);
 
 	vec3 preAcidWorldSpacePosition = texture(colortex10, texcoord).rgb;
 	
@@ -209,8 +211,8 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	
-	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, preAcidWorldSpacePosition);
-	
+	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, preAcidWorldSpacePosition);
+
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	
 	exit();

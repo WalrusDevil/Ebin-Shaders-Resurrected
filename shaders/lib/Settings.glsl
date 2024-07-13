@@ -16,7 +16,7 @@ const float centerDepthHalflife = 0.5;
 ** Transparent Gbuffers **
 const int colortex0Format = RG32F;
 const int colortex3Format = RGBA16F;
-const int colortex10Format = RGBA16F;
+const int colortex10Format = RGBA32F;
 
 ** Flat Gbuffers **
 const int colortex1Format = R11F_G11F_B10F;
