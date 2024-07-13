@@ -124,9 +124,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		return;
 	}
 
-	
-	
-
 	//if (isEyeInWater == 1) return;
 
 	float nDotV;

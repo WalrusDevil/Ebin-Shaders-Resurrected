@@ -167,8 +167,8 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		
 		shading.caustics = CalculateWaterCaustics(position[1], shading.skylight, mask.water);
 		
-		shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
-		shading.sunlight  = vec3(ComputeSunlight(position[1], geometryNormal, shading.sunlight.r, SSS));
+		//shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
+		shading.sunlight  = vec3(ComputeSunlight(position[1], geometryNormal, 1.0, SSS));
 		shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 		shading.sunlight *= mix(1.0, 0.0, wetness);
 		
@@ -216,7 +216,10 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	
 	lightmap.ambient = vec3(shading.ambient) * vec3(1.0, 1.2, 1.4);
 	
+	
+
 	#ifdef COLORED_BLOCKLIGHT
+	// show(blockLightOverrideColor);
 	lightmap.torchlight = shading.torchlight * blockLightOverrideColor;
 	#else
 	lightmap.torchlight = shading.torchlight * torchColor;

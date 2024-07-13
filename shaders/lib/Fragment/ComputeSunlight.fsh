@@ -58,23 +58,21 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 		return 0.0;
 	}
 
-	float nDotL = dot(normal, normalize(mat3(gbufferModelViewInverse) * lightVector));
-	show(nDotL);
-	//show(lightVector);
+	float nDotL = dot(mat3(gbufferModelViewInverse) * normal, sunVector);
 
-	if(nDotL >= 0.0){
-		return 0;
+	if(nDotL > -0.00001){
+		return 0.0;
 	}
 
-	float s = 1.0 / (SSS * 0.01);
-	float z = (blockerDepth - receiverDepth);
+	float s = 1.0 / (SSS * 0.06);
+	float z = receiverDepth - blockerDepth;
 
 	float scatter = 0.25 * (exp(-s * z) + 3*exp(-s * z / 3));
-	//show(scatter);
-	return scatter;
+
+	return clamp01(scatter);
 }
 
-#if SHADOW_TYPE == 2 && defined SHADOWS
+#if SHADOW_TYPE > 1 && defined SHADOWS
 	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff, float SSS, vec3 normal) {
 		float spread = (1.0 - biasCoeff) / shadowMapResolution;
 
@@ -83,7 +81,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 		#ifdef VARIABLE_PENUMBRA_SHADOWS
 			
 
-			float sunWidth = 0.9; // approximation of sun width if it was 100m away instead of several million km
+			float sunWidth = 0.9; // approximation of sun width if it was 100m away from the player instead of several million km
 			float receiverDepth = shadowPosition.z * shadowDepthRange;
 			float blockerDepthSum;
 
@@ -121,7 +119,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 			float range       = SHADOW_SOFTNESS;
 		#endif
 
-		float scatter = clamp01(calculateSSS(blockerDepth, receiverDepth, SSS, normal)); // subsurface scattering
+		float scatter = calculateSSS(blockerDepth, receiverDepth, SSS, normal); // subsurface scattering
 
 		// if(scatter == 1.0){
 		// 	return vec3(1.0);
@@ -133,7 +131,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 
 		
 		vec3 sunlight = vec3(0.0);
-		
+
 		int samples = 0;
 		for (float y = -range; y <= range; y += interval){
 			for (float x = -range; x <= range; x += interval){
@@ -152,13 +150,17 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 				samples++;
 			}
 		}
+
+		
 		
 		sunlight /= samples;
-		sunlight = max(sunlight, scatter);
-		// sunlight = clamp01(sunlight);
+
+		sunlight *= clamp01(dot(mat3(gbufferModelViewInverse) * normal, sunVector));
+
+		sunlight = max(sunlight, vec3(scatter));
 		return sunlight;
 	}
-#elif defined SHADOWS
+#elif SHADOW_TYPE == 1
 	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal) vec3(shadowVisibility(shadowtex0, shadowPosition));
 #else
 	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal) vec3(1.0);
@@ -185,6 +187,8 @@ float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
 
 vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, float sunlightCoeff, float SSS) {
 	// if (sunlightCoeff <= 0.0) return vec3(sunlightCoeff);
+
+	
 	
 	float distCoeff = GetDistanceCoeff(worldSpacePosition);
 	
@@ -196,10 +200,20 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, float sunlightCoeff, 
 	
 	// if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return vec3(sunlightCoeff);
 	
-	vec3 sunlight = ComputeShadows(shadowPosition, biasCoeff, SSS, normal);
-	      sunlight = mix(sunlight, vec3(sunlightCoeff), distCoeff);
+	vec3 sunlight = vec3(1.0);
+
+	float nDotL = clamp01(dot(mat3(gbufferModelViewInverse) * normal, sunVector));
+
+	#if SHADOW_TYPE < 2 || !defined SUBSURFACE_SCATTERING
+		sunlight *= nDotL;
+	#endif
+
+	sunlight *= ComputeShadows(shadowPosition, biasCoeff, SSS, normal);
+	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
+
+	return sunlight;
 	
-	return vec3(sunlightCoeff) * pow(sunlight, vec3(mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1))));
+	// return vec3(sunlightCoeff) * pow(sunlight, vec3(mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1))));
 }
 
 #endif

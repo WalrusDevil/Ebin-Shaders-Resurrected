@@ -548,13 +548,28 @@ void main() {
 		
 
 		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - porosity) / 2) + 0.5), wetness);
-
-		show(diffuse.rgb);
 		
 		float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
 		
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
-		gl_FragData[1] = vec4(Encode4x8F(vec4(encodedMaterialIDs, directionalLightingFactor, vertLightmap.rg)), EncodeNormal(normal, 11.0), Encode4x8F(vec4(materialAO, 0.0, 0.0, 0.0)), 1.0);
+		gl_FragData[1] = vec4(
+			Encode4x8F(vec4(
+				encodedMaterialIDs, 
+				directionalLightingFactor, 
+				vertLightmap.rg
+			)), 
+
+			EncodeNormal(normal, 11.0), 
+
+			Encode4x8F(vec4(
+				materialAO,
+				0.0,
+				0.0,
+				0.0
+			)), 
+
+			EncodeNormal(tbnMatrix[2], 16.0)
+		);
 		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, SSS);
 
 		vec3 blockLightColor = vec3(0.0);
@@ -563,9 +578,9 @@ void main() {
 		}
 
 		if(emission == 0.0){
-			gl_FragData[3] = vec4(0.0);
+			gl_FragData[4] = vec4(0.0);
 		} else {
-			gl_FragData[3] = vec4(blockLightColor, 0.0);
+			gl_FragData[4] = vec4(blockLightColor, 0.0);
 		}
 	#endif
 	

@@ -149,7 +149,7 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 #include "/lib/Exit.glsl"
 
 void main() {
-	vec3 texture4 = ScreenTex(colortex4).rgb;
+	vec4 texture4 = ScreenTex(colortex4);
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
 	vec4 	decode4b			= Decode4x8F(texture4.b);
@@ -160,8 +160,8 @@ void main() {
 	float emission			= texture(colortex9, texcoord).b;
 	float materialAO		= clamp01(decode4b.r);
 	float SSS				= clamp01(texture(colortex9, texcoord).a);
-	vec3  geometryNormal = DecodeNormal(texture(colortex10, texcoord).a, 11);
-	//show(geometryNormal);
+	
+	
 	
 	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
 
@@ -173,6 +173,8 @@ void main() {
 	
 	vec3 wNormal = DecodeNormal(texture4.g, 11);
 	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
+	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
+	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
 	
 	float depth1 = mask.hand > 0.5 ? depth0 : GetTransparentDepth(texcoord);
 	

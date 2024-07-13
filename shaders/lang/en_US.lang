@@ -27,6 +27,9 @@ option.ROUGH_REFLECTION_THRESHOLD.comment=Materials with a roughness value great
 option.DYNAMIC_NOISE=Dynamic Noise
 option.DYNAMIC_NOISE.comment=Use different noise every frame for reflections and shadows. Useful if you're blending frames in post.
 
+option.SUBSURFACE_SCATTERING=Subsurface Scattering
+option.SUBSURFACE_SCATTERING.comment=Allows some blocks to scatter sunlight through them, and be lit on the side facing away from the sun.
+
 screen.FOV=FOV Override
 screen.FOV.comment=FOV Override can mitigate chunk-rendering issues with large scale terrain deformation.
 
