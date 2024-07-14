@@ -64,7 +64,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 		return 0.0;
 	}
 
-	float s = 1.0 / (SSS * 0.06);
+	float s = 1.0 / (SSS * 0.12);
 	float z = receiverDepth - blockerDepth;
 
 	float scatter = 0.25 * (exp(-s * z) + 3*exp(-s * z / 3));
