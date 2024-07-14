@@ -138,7 +138,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
 
 	vec3 lightHalfway = normalize(lightVector + v);
-	float shininess =  perceptualSmoothness * 1024;
+	float shininess =  pow(perceptualSmoothness, 0.5) * 512;
 	float roughSunSpecular = pow(clamp01(dot(lightHalfway, normal)), shininess);
 	
 
