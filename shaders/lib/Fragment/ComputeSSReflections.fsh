@@ -136,9 +136,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	} else {
 		nDotV = dot(n, v);
 	}
-	
 
-	//float nDotV = clamp01(dotNorm(-position[0], normal));
+	vec3 lightHalfway = normalize(lightVector + v);
+	float shininess =  perceptualSmoothness * 1024;
+	float roughSunSpecular = pow(clamp01(dot(lightHalfway, normal)), shininess);
+	
 
 	vec3 fresnel;
 
@@ -164,8 +166,8 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	// float maxMipMapLevel = log2(max(viewHeight, viewWidth));
 
-	// refRay[0] = reflect(position[0], offsetNormal);
-	// refRay[1] = mat3(gbufferModelViewInverse) * refRay[0];
+	refRay[0] = reflect(position[0], offsetNormal);
+	refRay[1] = mat3(gbufferModelViewInverse) * refRay[0];
 
 	// bool hit = ComputeSSRaytrace(position[0], normalize(refRay[0]), refCoord);
 
@@ -174,7 +176,9 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	// 	reflectionSum = texture2DLod(colortex1, refCoord.xy, blurRadius * maxMipMapLevel).rgb;
 	// }
 	
+	
 
+	float sunlight = ComputeSunlightFast(position[1], skyLightmap);
 	for(int i = 0; i < REFLECTION_SAMPLES; i++){
 		
 		if (roughness > 0){ // rough reflections
@@ -213,13 +217,18 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
 			#endif
 		} else {
+			
 			#ifndef worldm1
-			float sunlight = ComputeSunlightFast(position[1], skyLightmap);
-			if (roughness > 0.5){ // don't reflect sun on rough surfaces as it causes visual noise
-				sunlight = 0;
-			}
-			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, 1.0) * skyLightmap;
 			transmit = vec3(1.0);
+
+			float sunFactor = 0.0;
+			// if(roughness == 0.0){
+			// 	sunFactor = 1.0 * 20; // I hate this
+			// }
+
+			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor) * skyLightmap;
+			
+			
 	
 			//length(ComputeSunlight(position[1], GetLambertianShading(normal) * skyLightmap));
 
@@ -243,7 +252,15 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	if (roughness > 0){
 		reflectionSum /= REFLECTION_SAMPLES;
+		
+		
+		
 	}
+
+	vec3 transmit = vec3(1.0);
+	vec3 sunspot = ComputeSky(worldLightVector, position[1], transmit, 1.0, true, 1.0) * roughSunSpecular * sunlight;
+	reflectionSum += sunspot;
+
 
 	#ifdef MULTIPLY_METAL_ALBEDO
 		if (baseReflectance >= (229.0 / 255.0)) {
