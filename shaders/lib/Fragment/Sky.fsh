@@ -81,7 +81,7 @@ vec3 ComputeBackSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cboo
 	
 	color += CalculateNightSky(wDir, transmit);
 	color += ComputeSunspot(wDir, transmit) * 16.0 * sunFactor;
-	color += ComputeSunspot(-wDir, transmit) * 16.0 * vec3(0.3, 0.7, 8.0) * sunFactor;
+	color += ComputeSunspot(-wDir, transmit) * 4.0 * vec3(0.3, 0.7, 8.0) * sunFactor;
 	color += CalculateStars(wDir, transmit, reflection);
 	
 	return color;
