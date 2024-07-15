@@ -230,6 +230,10 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	for(int i = 0; i < REFLECTION_SAMPLES; i++){
 		
+		if(roughness > ROUGH_REFLECTION_THRESHOLD){
+			break;
+		}
+
 		if (roughness > 0){ // rough reflections
 			vec3 randomNormal = randomVector(i);
 			if (dot(randomNormal, normal) < 0){ // new random normal faces into surface
