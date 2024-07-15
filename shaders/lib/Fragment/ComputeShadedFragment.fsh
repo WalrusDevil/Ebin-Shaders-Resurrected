@@ -154,7 +154,7 @@ vec3 nightDesat(vec3 color, vec3 lightmap, cfloat mult, cfloat curve) {
 	return mix(desatColor, color, desatAmount);
 }
 
-vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position, float materialAO, float SSS, vec3 geometryNormal) {
+vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position, float materialAO, float SSS, vec3 geometryNormal, vec3 preCalculatedSunlight) {
 	Shading shading;
 	
 #ifndef VARIABLE_WATER_HEIGHT
@@ -168,7 +168,13 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		shading.caustics = CalculateWaterCaustics(position[1], shading.skylight, mask.water);
 		
 		//shading.sunlight  = vec3(GetLambertianShading(normal, lightVector, mask) * shading.skylight);
-		shading.sunlight  = vec3(ComputeSunlight(position[1], geometryNormal, 1.0, SSS));
+		if(preCalculatedSunlight.r >= 0.0){
+			shading.sunlight = preCalculatedSunlight;
+		} else {
+			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS));
+		}
+		//show(shading.sunlight);
+		
 		shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 		shading.sunlight *= mix(1.0, 0.0, wetness);
 		

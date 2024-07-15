@@ -70,6 +70,7 @@ uniform sampler2D shadowcolor;
 uniform sampler2D shadowcolor1;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
+uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform sampler2D colortex11;
 uniform sampler2D colortex12;
@@ -133,8 +134,9 @@ float ExpToLinearDepth(float depth) {
 #include "/lib/Fragment/ComputeGI.fsh"
 #include "/lib/Fragment/ComputeSSAO.fsh"
 #include "/lib/Fragment/ComputeVolumetricLight.fsh"
+#include "/lib/Fragment/ComputeSunlight.fsh"
 
-/* RENDERTARGETS:5,6,12 */
+/* RENDERTARGETS:5,6,12,10 */
 #include "/lib/Exit.glsl"
 
 void main() {
@@ -151,13 +153,15 @@ void main() {
 	vec2 noise2D = vec2(0.0);
 #endif
 	
-	vec2 texture4 = textureRaw(colortex4, texcoord).rg;
+	vec4 texture4 = textureRaw(colortex4, texcoord);
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
+	vec4 	decode4b			= Decode4x8F(texture4.b);
 	Mask  mask          = CalculateMasks(decode4.r);
 	float specularity    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
+	float SSS				= clamp01(decode4b.g);
 	
 	float depth1 = (mask.hand > 0.5 ? depth0 : textureRaw(depthtex1, texcoord).x);
 	
@@ -180,15 +184,18 @@ void main() {
 		{ gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0); exit(); return; }
 	
 	
-	vec3 normal = DecodeNormal(texture4.g, 11);
+	vec3 wNormal = DecodeNormal(texture4.g, 11);
+	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
+	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
+	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
 	
-	float AO = ComputeSSAO(backPos[0], normal * mat3(gbufferModelViewInverse));
+	float AO = ComputeSSAO(backPos[0], wNormal * mat3(gbufferModelViewInverse));
 	
 	if (isEyeInWater != mask.water) // If surface is in water
 		{ gl_FragData[0] = vec4(0.0, 0.0, 0.0, AO); exit(); return; }
 	
 	
-	vec3 GI = ComputeGI(backPos[1], normal, skyLightmap, GI_RADIUS * 2.0, noise2D, mask);
+	vec3 GI = ComputeGI(backPos[1], wNormal, skyLightmap, GI_RADIUS * 2.0, noise2D, mask);
 	
 	gl_FragData[0] = vec4(sqrt(GI * 0.2), AO);
 
@@ -201,6 +208,10 @@ void main() {
 			gl_FragData[2] = vec4(blockLightColor, 1.0);
 		}
 	#endif
+
+	vec3 sunlight = ComputeSunlight(frontPos[1], normal, geometryNormal, 1.0, SSS);
+
+	gl_FragData[3] = vec4(sunlight, 1.0);
 
 	
 	

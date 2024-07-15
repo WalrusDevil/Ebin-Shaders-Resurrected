@@ -20,7 +20,7 @@ vec3 CalculateSkyGradient(vec3 wDir, float sunglow, vec3 sunspot) {
 }
 
 vec3 ComputeSunspot(vec3 wDir, inout vec3 transmit) {
-	float sunspot = float(dot(wDir, sunVector) > 0.9994 + 0*0.9999567766);
+	float sunspot = float(dot(wDir, sunVector) > 1.0 - SUN_ANGULAR_PERCENTAGE + 0*0.9999567766);
 	vec3 color = vec3(float(sunspot) * sunbright) * transmit;
 	
 	transmit *= 1.0 - sunspot;

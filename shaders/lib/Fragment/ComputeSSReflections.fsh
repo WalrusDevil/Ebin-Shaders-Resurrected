@@ -115,14 +115,56 @@ vec3 getMetalf0(float baseReflectance, vec3 color){
 	return clamp01(color);
 }
 
+//GGX area light approximation from Decima Engine: Advances in Lighting and AA presentation
+float getNoHSquared(float NoL, float NoV, float VoL) {
+    float radiusCos = 1.0 - SUN_ANGULAR_PERCENTAGE;
+		float radiusTan = tan(acos(radiusCos));
+    
+    float RoL = 2.0 * NoL * NoV - VoL;
+    // if (RoL >= radiusCos)
+    //     return 1.0;
+
+    float rOverLengthT = radiusCos * radiusTan / sqrt(1.0 - RoL * RoL);
+    float NoTr = rOverLengthT * (NoV - RoL * NoL);
+    float VoTr = rOverLengthT * (2.0 * NoV * NoV - 1.0 - RoL * VoL);
+
+    float triple = sqrt(clamp(1.0 - NoL * NoL - NoV * NoV - VoL * VoL + 2.0 * NoL * NoV * VoL, 0.0, 1.0));
+    
+    float NoBr = rOverLengthT * triple, VoBr = rOverLengthT * (2.0 * triple * NoV);
+    float NoLVTr = NoL * radiusCos + NoV + NoTr, VoLVTr = VoL * radiusCos + 1.0 + VoTr;
+    float p = NoBr * VoLVTr, q = NoLVTr * VoLVTr, s = VoBr * NoLVTr;    
+    float xNum = q * (-0.5 * p + 0.25 * VoBr * NoLVTr);
+    float xDenom = p * p + s * ((s - 2.0 * p)) + NoLVTr * ((NoL * radiusCos + NoV) * VoLVTr * VoLVTr + 
+                   q * (-0.5 * (VoLVTr + VoL * radiusCos) - 0.5));
+    float twoX1 = 2.0 * xNum / (xDenom * xDenom + xNum * xNum);
+    float sinTheta = twoX1 * xDenom;
+    float cosTheta = 1.0 - twoX1 * xNum;
+    NoTr = cosTheta * NoTr + sinTheta * NoBr;
+    VoTr = cosTheta * VoTr + sinTheta * VoBr;
+    
+    float newNoL = NoL * radiusCos + NoTr;
+    float newVoL = VoL * radiusCos + VoTr;
+    float NoH = NoV + newNoL;
+    float HoH = 2.0 * newVoL + 2.0;
+    return clamp(NoH * NoH / HoH, 0.0, 1.0);
+}
+
+float ggx (vec3 N, vec3 V, vec3 L, float roughness) { // trowbridge-reitz
+  float alpha = roughness*roughness;
+  vec3 H = normalize(L + V);
+	float dotNHSquared = pow2(dot(N, H));
+	float distr = dotNHSquared * (alpha - 1.0) + 1.0;
+	return alpha / (PI * pow2(distr));
+}
+
 void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap) {
 	if (baseReflectance == 0) return;
 
 	float roughness = pow(1.0 - perceptualSmoothness, 2.0);
 
-	if(roughness > ROUGH_REFLECTION_THRESHOLD){
-		return;
-	}
+	// if(roughness > ROUGH_REFLECTION_THRESHOLD){
+	// 	return;
+	// }
 
 	//if (isEyeInWater == 1) return;
 
@@ -137,9 +179,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		nDotV = dot(n, v);
 	}
 
-	vec3 lightHalfway = normalize(lightVector + v);
-	float shininess =  pow(perceptualSmoothness, 0.5) * 512;
-	float roughSunSpecular = pow(clamp01(dot(lightHalfway, normal)), shininess);
+	// vec3 lightHalfway = normalize(lightVector + v);
+	// float shininess =  2.0/pow2(max(roughness, 0.1))-2.0;
+	// //float roughSunSpecular = pow(clamp01(dot(lightHalfway, normal)), shininess);
+	float roughSunSpecular = ggx(n, v, lightVector, max(roughness, 0.02));
+	show(roughSunSpecular);
 	
 
 	vec3 fresnel;
@@ -176,9 +220,14 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	// 	reflectionSum = texture2DLod(colortex1, refCoord.xy, blurRadius * maxMipMapLevel).rgb;
 	// }
 	
-	
+	vec3 sunlight;
 
-	float sunlight = ComputeSunlightFast(position[1], skyLightmap);
+	if(abs(depth0 - depth1) < 0.0001){
+		sunlight = texture(colortex10, texcoord).rgb;
+	} else {
+		sunlight = texture(colortex13, texcoord).rgb;
+	}
+	
 	for(int i = 0; i < REFLECTION_SAMPLES; i++){
 		
 		if (roughness > 0){ // rough reflections
@@ -258,7 +307,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
 
 	vec3 transmit = vec3(1.0);
-	vec3 sunspot = ComputeSky(worldLightVector, position[1], transmit, 1.0, true, 1.0) * roughSunSpecular * sunlight;
+	vec3 sunspot = sunlightColor * roughSunSpecular * sunlight;
 	reflectionSum += sunspot;
 
 

@@ -57,13 +57,16 @@ uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform sampler2D colortex3;
 uniform sampler2D colortex4;
+uniform sampler2D colortex10;
 uniform sampler2D gdepthtex;
 uniform sampler2D depthtex1;
 uniform sampler2D noisetex;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
+uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform mat4 gbufferModelView;
+uniform sampler2D colortex13;
 
 uniform vec3 shadowLightPosition;
 
@@ -122,6 +125,9 @@ vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 	return (diagonal2(projMatrix) * viewSpacePosition.xy + projMatrix[3].xy) / -viewSpacePosition.z * 0.5 + 0.5;
 }
 
+float depth0;
+float depth1;
+
 #include "/lib/Fragment/WaterDepthFog.fsh"
 #include "/lib/Fragment/ComputeSunlight.fsh"
 #include "/lib/Fragment/Sky.fsh"
@@ -173,7 +179,7 @@ void main() {
 	
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 	
-	float depth0 = (mask.hand > 0.5 ? 0.55 : GetDepth(texcoord));
+	depth0 = (mask.hand > 0.5 ? 0.55 : GetDepth(texcoord));
 	
 	vec3 normal = DecodeNormal(texture4.g, 11) * mat3(gbufferModelViewInverse);
 	
@@ -181,7 +187,7 @@ void main() {
 	frontPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	frontPos[1] = mat3(gbufferModelViewInverse) * frontPos[0];
 	
-	float  depth1  = depth0;
+	depth1  = depth0;
 	mat2x3 backPos = frontPos;
 	float  alpha   = 0.0;
 	

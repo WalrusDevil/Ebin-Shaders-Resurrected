@@ -176,7 +176,9 @@ uniform sampler2D specular;
 uniform sampler2D noisetex;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
+uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
+uniform sampler2D colortex10;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -443,7 +445,7 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 // #endif
 
 #if defined gbuffers_water || defined gbuffers_textured
-/* RENDERTARGETS:0,3,8,11 */
+/* RENDERTARGETS:0,3,8,11,13 */
 #else
 /* RENDERTARGETS:1,4,9,10,11 */
 #endif
@@ -509,8 +511,9 @@ void main() {
 		baseReflectance = 0.0;
 		#endif
 		
-
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, tbnMatrix[2]);
+		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, SSS));
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, tbnMatrix[2], texture(colortex10, texcoord).rgb);
+		gl_FragData[4] = vec4(sunlight, 1.0);
 
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(directionalLightingFactor, vertLightmap.g, mask.water, 0.1));

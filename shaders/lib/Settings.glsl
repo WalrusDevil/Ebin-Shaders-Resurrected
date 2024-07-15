@@ -150,6 +150,8 @@ const float zShrink = 4.0;
 #define CUSTOM_DAY_NIGHT   1 // [1 2]
 #define CUSTOM_TIME_MISC   1 // [1 2]
 
+#define SUN_ANGULAR_PERCENTAGE 0.0006
+
 //#define TELEFOCAL_SHADOWS
 #define SHADOWS_FOCUS_CENTER
 
