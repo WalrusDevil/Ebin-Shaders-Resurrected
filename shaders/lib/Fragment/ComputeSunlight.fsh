@@ -161,7 +161,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 		return sunlight;
 	}
 #elif SHADOW_TYPE == 1
-	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal) vec3(shadowVisibility(shadowtex0, shadowPosition));
+	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal) shadow2D(shadow, shadowPosition).rgb;
 #else
 	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal) vec3(1.0);
 #endif
@@ -186,6 +186,10 @@ float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
 }
 
 vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, float sunlightCoeff, float SSS) {
+	#ifndef world0
+	return vec3(0.0);
+	#endif
+
 	// if (sunlightCoeff <= 0.0) return vec3(sunlightCoeff);
 
 	
