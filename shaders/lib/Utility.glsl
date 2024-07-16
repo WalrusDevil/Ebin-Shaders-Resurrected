@@ -104,3 +104,14 @@ vec3 rgb(vec3 c) {
 float getLuminance(vec3 color) {
 	return dot(color, lumaCoeff);
 }
+
+// https://www.shadertoy.com/view/4sV3zt
+vec3 slerp(vec3 start, vec3 end, float percent)
+{
+     float dot = dot(start, end);     
+     dot = clamp(dot, -1.0, 1.0);
+     float theta = acos(dot) * percent;
+     vec3 relativeVec = normalize(end - start*dot); // Orthonormal basis
+     // The final result.
+     return ((start * cos(theta)) + (relativeVec * sin(theta)));
+}

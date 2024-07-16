@@ -242,7 +242,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 				randomNormal *= -1;
 			}
 
-			offsetNormal = mix(normal, randomNormal, roughness);
+			offsetNormal = slerp(normal, randomNormal, roughness);
 		}
 
 		refRay[0] = reflect(position[0], offsetNormal);
