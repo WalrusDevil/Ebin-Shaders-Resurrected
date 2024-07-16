@@ -215,6 +215,9 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	sunlight *= ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal);
 	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
 
+	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
+	sunlight *= mix(1.0, 0.0, wetness);
+
 	return sunlight;
 	
 	// return vec3(sunlightCoeff) * pow(sunlight, vec3(mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1))));

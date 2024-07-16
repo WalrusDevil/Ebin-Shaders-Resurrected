@@ -92,6 +92,8 @@ uniform float far;
 uniform float viewWidth;
 uniform float viewHeight;
 
+uniform float wetness;
+
 uniform int isEyeInWater;
 
 #include "/lib/Settings.glsl"

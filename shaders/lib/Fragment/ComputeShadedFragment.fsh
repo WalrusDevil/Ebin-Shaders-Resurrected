@@ -175,8 +175,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		}
 		//show(shading.sunlight);
 		
-		shading.sunlight *= 1.0 * SUN_LIGHT_LEVEL;
-		shading.sunlight *= mix(1.0, 0.0, wetness);
+		
 		
 		shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
 		shading.skylight *= GI.a;
