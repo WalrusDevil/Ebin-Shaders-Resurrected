@@ -47,7 +47,6 @@ vec3 GetWorldSpacePositionShadow() {
 	return transMAD(shadowModelViewInverse, transMAD(gl_ModelViewMatrix, gl_Vertex.xyz));
 }
 
-#include "/block.properties"
 #include "/lib/Vertex/Waving.vsh"
 #include "/lib/Vertex/Vertex_Displacements.vsh"
 
@@ -127,10 +126,10 @@ void main() {
 
 	if (mc_Entity.x == 66) { gl_Position = vec4(-1.0); return; }
 	
-	materialIDs = BackPortID(int(mc_Entity.x));
+	materialIDs  = mc_Entity.x;
 	
 #ifndef WATER_SHADOW
-	if (isWater(materialIDs)) { gl_Position = vec4(-1.0); return; }
+	if (materialIDs == 4.0) { gl_Position = vec4(-1.0); return; }
 #endif
 	
 #ifdef HIDE_ENTITIES

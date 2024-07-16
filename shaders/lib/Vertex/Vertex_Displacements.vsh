@@ -8,10 +8,10 @@ vec3 CalculateVertexDisplacements(vec3 worldSpacePosition) {
 	vec3 displacement = vec3(0.0);
 	
 #if defined gbuffers_terrain || defined gbuffers_water || defined gbuffers_shadow
-	if      (isTranslucent(materialIDs))
+	if      (materialIDs == 2.0)
 		{ displacement += GetWavingLeaves(worldPosition); }
 	
-	else if (isWater(materialIDs))
+	else if (materialIDs == 4.0)
 		{ displacement += GetWavingWater(worldPosition); }
 #endif
 	

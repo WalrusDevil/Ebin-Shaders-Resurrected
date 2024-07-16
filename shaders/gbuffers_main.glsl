@@ -69,8 +69,6 @@ vec2 GetDefaultLightmap() {
 	return clamp01(lightmapCoord / vec2(0.8745, 0.9373)).rg;
 }
 
-#include "/block.properties"
-
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
 	
@@ -118,7 +116,7 @@ uniform ivec2 atlasSize;
 void main() {
 	
 
-	materialIDs  = BackPortID(int(mc_Entity.x));
+	materialIDs  = mc_Entity.x;
 	
 #ifdef HIDE_ENTITIES
 //	if (isEntity(materialIDs)) { gl_Position = vec4(-1.0); return; }
