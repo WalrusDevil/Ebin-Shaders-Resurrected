@@ -485,6 +485,8 @@ void main() {
 	directionalLightingFactor = 1.0;
 	#endif
 
+	show(vertLightmap.x);
+
 	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
 		
@@ -509,7 +511,10 @@ void main() {
 		#ifdef gbuffers_textured
 		perceptualSmoothness = 0.0;
 		baseReflectance = 0.0;
+		directionalLightingFactor = 1.0;
 		#endif
+
+		
 		
 		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, SSS));
 		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, tbnMatrix[2], texture(colortex10, texcoord).rgb);
