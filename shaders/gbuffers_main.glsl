@@ -432,7 +432,7 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 	return clamp01(directionalLighting);
 }
 
-
+#include "/lib/iPBR/iPBR.glsl"
 
 
 #include "/lib/Fragment/TerrainParallax.fsh"
