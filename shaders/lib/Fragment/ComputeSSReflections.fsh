@@ -115,14 +115,14 @@ vec3 getMetalf0(float baseReflectance, vec3 color){
 	return clamp01(color);
 }
 
-//GGX area light approximation from Decima Engine: Advances in Lighting and AA presentation
+// https://advances.realtimerendering.com/s2017/DecimaSiggraph2017.pdf
 float getNoHSquared(float NoL, float NoV, float VoL) {
     float radiusCos = 1.0 - SUN_ANGULAR_PERCENTAGE;
 		float radiusTan = tan(acos(radiusCos));
     
     float RoL = 2.0 * NoL * NoV - VoL;
-    // if (RoL >= radiusCos)
-    //     return 1.0;
+    if (RoL >= radiusCos)
+        return 1.0;
 
     float rOverLengthT = radiusCos * radiusTan / sqrt(1.0 - RoL * RoL);
     float NoTr = rOverLengthT * (NoV - RoL * NoL);
@@ -151,8 +151,10 @@ float getNoHSquared(float NoL, float NoV, float VoL) {
 
 float ggx (vec3 N, vec3 V, vec3 L, float roughness) { // trowbridge-reitz
   float alpha = roughness*roughness;
+
   vec3 H = normalize(L + V);
-	float dotNHSquared = pow2(dot(N, H));
+	// float dotNHSquared = pow2(dot(N, H));
+	float dotNHSquared = getNoHSquared(dot(N, L), dot(N, V), dot(V, L));
 	float distr = dotNHSquared * (alpha - 1.0) + 1.0;
 	return alpha / (PI * pow2(distr));
 }
