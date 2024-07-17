@@ -323,7 +323,7 @@ void main() {
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
 	vec4  diffuse     		= GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
 
-	// so, having full transparent rain messes with fog, instead we dither it. Thanks joyouscreeper for 
+	// so, having full transparent rain messes with fog, instead we dither it. Thanks joyouscreeper for this mildly criminal idea which works better than could be hoped
 	#ifdef gbuffers_weather
 	#ifndef RAIN
 		discard;
@@ -338,7 +338,6 @@ void main() {
 
 	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);
 	vec3  normal      		= tbnMatrix * PBR.normal;
-	//float specularity 		= GetSpecularity(coord);
 	#ifdef DIRECTIONAL_LIGHTING
 		float directionalLightingFactor = getDirectionalLightingFactor(faceNormal, normal, position[1], vertLightmap.r);
 	#else

@@ -59,7 +59,7 @@ uniform sampler3D colortex7;
 uniform sampler2D colortex9;
 uniform sampler2D colortex10;
 
-#if defined COMPOSITE0_ENABLED
+#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VOLUMETRIC_LIGHT)
 const bool colortex5MipmapEnabled = true;
 uniform sampler2D colortex5;
 uniform sampler2D colortex6;

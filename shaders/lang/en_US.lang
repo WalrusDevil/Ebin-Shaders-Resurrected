@@ -1,3 +1,7 @@
+option.INFO=Ebin Resurrected
+value.INFO.0=§dby jbritain
+value.INFO.1=§aby BruceKnowsHow
+
 screen.WORLD=World
 screen.MATERIALS=Materials
 screen.SKY=Sky
@@ -19,6 +23,22 @@ screen.RESOURCE_PACK=Resource Pack Settings
 screen.REFLECTIONS=Reflection Settings
 screen.BLOOM=Bloom Settings
 screen.MOTION_BLUR=Motion Blur Settings
+
+
+profile.POTATO=§6Potato
+profile.POTATO.comment=For that rebadged optiplex with a GT 710 and a 3rd gen i5 that your grandma thought was a gaming PC.
+
+profile.LOW=§2Low
+profile.LOW.comment=For your GTX 1050 that's been hanging on for dear life for the last 8 years.
+
+profile.MEDIUM=§aMedium
+profile.MEDIUM.comment=Runs at 60FPS on my RX 590.
+
+profile.HIGH=§bHigh
+profile.HIGH.comment=For any half decent PC.
+
+profile.ULTRA=§dUltra
+profile.ULTRA.comment=Feeling fancy, are we?
 
 option.TEXTURE_PACK_RESOLUTION=Texture Resolution
 value.TEXTURE_PACK_RESOLUTION.0=Auto
@@ -336,9 +356,7 @@ option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on lig
 option.DIRECTIONAL_LIGHTING=Directional Lighting
 option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
 
-option.INFO=§aEbin Resurrected§
-value.INFO.0=§bby jbritain§
-value.INFO.1=§bby § §dBruceKnowsHow§
+
 
 option.LABPBR_VERSION=labPBR Version
 

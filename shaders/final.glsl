@@ -195,7 +195,7 @@ void main() {
 	float depth = GetDepth(texcoord);
 	float linearDepth = linearizeDepth(depth);
 	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
-	show(viewPos);
+	show(linearDepth);
 	vec3  color = GetColor(texcoord);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	

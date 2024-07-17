@@ -115,6 +115,28 @@ vec3 getMetalf0(float baseReflectance, vec3 color){
 	return clamp01(color);
 }
 
+vec3 getMetalf82(float baseReflectance, vec3 color){
+	switch(int(baseReflectance * 255)){
+			case 230: // Iron
+					return vec3(0.74, 0.76, 0.76);
+			case 231: // Gold
+					return vec3(1.00, 0.93, 0.73);
+			case 232: // Aluminum
+					return vec3(0.96, 0.97, 0.98);
+			case 233: // Chrome
+					return vec3(0.74, 0.79, 0.78);
+			case 234: // Copper
+					return vec3(1.00, 0.90, 0.80);
+			case 235: // Lead
+					return vec3(0.83, 0.80, 0.83);
+			case 236: // Platinum
+					return vec3(0.89, 0.87, 0.81);
+			case 237: // Silver
+					return vec3(1.00, 1.00, 0.95);
+	}
+	return clamp01(color);
+}
+
 // https://advances.realtimerendering.com/s2017/DecimaSiggraph2017.pdf
 float getNoHSquared(float NoL, float NoV, float VoL) {
     float radiusCos = 1.0 - SUN_ANGULAR_PERCENTAGE;
@@ -183,8 +205,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	if (baseReflectance < (229.0 / 255.0)) {
 		fresnel = vec3(baseReflectance + (1 - (baseReflectance)) * pow(1 - nDotV, 5)); // schlick approximation
 	} else {
-		vec3 metalReflectance = getMetalf0(baseReflectance, color);
-		fresnel = metalReflectance + (1 - (metalReflectance)) * pow(1 - nDotV, 5); // schlick approximation
+		vec3 f0 = getMetalf0(baseReflectance, color); // lazanyi 2019 schlick
+		vec3 f82 = getMetalf82(baseReflectance, color);
+		vec3 a = 17.6513846 * (f0 - f82) + 8.16666667 * (1.0 - f0);
+		float m = pow(1 - nDotV, 5);
+		fresnel = clamp01(f0 + (1.0 - f0) * m - a * nDotV * (m - m * nDotV));
 	}
   
 	

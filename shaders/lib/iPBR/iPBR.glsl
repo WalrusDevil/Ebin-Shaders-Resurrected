@@ -116,7 +116,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         break;
 
       case IPBR_GRASS_BLOCK:
-        float isGrass = float(data.albedo.g - data.albedo.r > 0.1);
+        float isGrass = float(data.albedo.g - data.albedo.r > 0.05);
         applyiPBR(data.SSS, 0.2 * isGrass);
         applyiPBR(data.baseReflectance, 0.03 * isGrass);
         applyiPBR(data.perceptualSmoothness, 0.3 * isGrass * smoothstep(0.16, 0.5, data.hsv.b));
