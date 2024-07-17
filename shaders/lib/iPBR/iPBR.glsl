@@ -108,6 +108,10 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.baseReflectance, 0.02);
         applyiPBR(data.perceptualSmoothness, 0.8);
 
+      case IPBR_COPPER:
+        applyiPBR(data.baseReflectance, 234.0/255.0);
+        applyiPBR(data.perceptualSmoothness, max(data.albedo.r, 0.3));
+        break;
     }
 
     if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));
