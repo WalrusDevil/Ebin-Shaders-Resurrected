@@ -30,7 +30,7 @@ option.HARDCODED_SPECULAR=Hardcoded Specular
 option.HARDCODED_SPECULAR.comment=Hardcoded specular mapping for blocks like metals.
 
 option.HARDCODED_SSS=Hardcoded Subsurface Scattering
-option.HARDCODED_SSS=Hardcoded subsurface scattering for blocks like leaves.
+option.HARDCODED_SSS.comment=Hardcoded subsurface scattering for blocks like leaves.
 
 option.MULTIPLY_METAL_ALBEDO=Metal Albedo Tinting
 option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo colour. Disable if resource pack does not support this.

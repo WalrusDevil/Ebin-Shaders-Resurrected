@@ -294,8 +294,15 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	vec3 transmit = vec3(1.0);
 	vec3 sunspot = sunlightColor * specularHighlight * sunlight;
-	show(sunlight);
+
+	if(roughness > ROUGH_REFLECTION_THRESHOLD){
+		reflectionSum = color;
+	}
+
 	reflectionSum += sunspot;
+
+	show(sunspot);
+	
 
 
 	#ifdef MULTIPLY_METAL_ALBEDO
@@ -306,6 +313,8 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	if (baseReflectance < 1.0){
 		color = mix(color, reflectionSum, clamp01(fresnel));
+
+		
 		
 	}
 	
