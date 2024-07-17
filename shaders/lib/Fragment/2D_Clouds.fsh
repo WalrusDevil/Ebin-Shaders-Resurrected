@@ -49,7 +49,7 @@ float CloudFBM(vec2 coord, out mat4x2 c, vec3 weights, float weight) {
 }
 
 vec3 Compute2DCloudPlane(vec3 wDir, vec3 wPos, vec3 transmit, float phase) {
-#ifndef CLOUDS_2D
+#ifndef CLOUDS_ENABLED
 	return vec3(0.0);
 #endif
 	

@@ -86,11 +86,6 @@ const float zShrink = 4.0;
 
 //#define GI_ENABLED
 //#define AO_ENABLED
-//#define VOLUMETRIC_LIGHT
-
-#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VOLUMETRIC_LIGHT)
-#define COMPOSITE0_ENABLED
-#endif
 
 //#define PLAYER_GI_BOUNCE
 #define GI_RADIUS        8   // [2 4 6 8 12 16 24 32]
@@ -115,7 +110,6 @@ const float zShrink = 4.0;
 #define TERRAIN_PARALLAX_DISTANCE  12.0  // [6.0 12.0 24.0 48.0]
 #define TERRAIN_PARALLAX_INTENSITY  1.0 // [0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
-#define WAVING_DOUBLE_PLANTS
 #define WAVING_GRASS
 #define WAVING_LEAVES
 #define WAVING_WATER
@@ -123,7 +117,7 @@ const float zShrink = 4.0;
 #define COMPOSITE0_SCALE 1.0
 #define COMPOSITE0_NOISE
 
-#define CLOUDS_2D
+#define CLOUDS_ENABLED
 #define CLOUD_HEIGHT_2D   512  // [256 320 384 448 512 576 640 704 768 832 896 960 1024]
 #define CLOUD_COVERAGE_2D 0.50  // [0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70]
 #define CLOUD_SPEED_2D    1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
@@ -131,7 +125,7 @@ const float zShrink = 4.0;
 //#define WATER_PARALLAX
 //#define WATER_CAUSTICS
 #include "/UserProgram/WaterHeight.glsl"
-#define VARIABLE_WATER_HEIGHT
+//#define VARIABLE_WATER_HEIGHT
 #define UNDERWATER_LIGHT_DEPTH 16 // [4 8 16 32 64 65536]
 
 #define WAVE_MULT  1.0 // [0.0 0.5 1.0 1.5 2.0]
@@ -142,7 +136,6 @@ const float zShrink = 4.0;
 
 //#define HIDE_ENTITIES
 //#define CLEAR_WATER
-//#define WEATHER
 
 //#define TIME_OVERRIDE
 #define TIME_OVERRIDE_MODE 1 // [1 2 3]
@@ -163,25 +156,18 @@ const float zShrink = 4.0;
 #define MULTIPLY_METAL_ALBEDO
 #define NORMAL_MAPS
 //#define TERRAIN_PARALLAX
-#define SPECULARITY_MAPS
+#define SPECULAR_MAPS
 #define EMISSION
-#define AUTO_LIGHT_SOURCE_EMISSION
+#define HARDCODED_EMISSION
+#define HARDCODED_SPECULAR
+#define HARDCODED_SSS
 #define ROUGH_REFLECTION_THRESHOLD 0.5 // [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 #define REFLECTION_SAMPLES 4 // [1 2 4 8 16 32 64]
 
-
-//#define FOV_OVERRIDE
-
-#define FOV_DEFAULT_TENS  110 // [90 100 110 120 130 140 150]
-
-#define FOV_TRUE_TENS  90 // [70 80 90 100 110]
-#define FOV_TRUE_FIVES 0  // [0 5]
 
 #define FOG_ENABLED
 
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
 
 //#define DYNAMIC_NOISE
-
-#define WARM_TORCHLIGHT

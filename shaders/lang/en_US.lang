@@ -1,10 +1,36 @@
-screen.TexturePack=Materials
+screen.WORLD=World
+screen.MATERIALS=Materials
+screen.SKY=Sky
+screen.ATMOSPHERICS=Atmosphere
+screen.LIGHTING=Shadows & Lighting
+screen.POST_PROCESSING=Post Processing
+screen.MISC=Misc.
+screen.DEBUG=Development
+screen.TIME=Time Override
+screen.DEFORM=Terrain deformation
+screen.CLOUDS2D=2D Cloud Settings
+screen.CLOUDS3D=Volumetric Cloud Settings
+screen.STARS=Stars
+screen.SHADOWS=Shadow Settings
+screen.LIGHT_LEVELS=Light Levels
+screen.AO=Ambient Occlusion Settings
+screen.GI=Global Illumination Settings
+screen.RESOURCE_PACK=Resource Pack Settings
+screen.REFLECTIONS=Reflection Settings
+screen.BLOOM=Bloom Settings
+screen.MOTION_BLUR=Motion Blur Settings
 
 option.TEXTURE_PACK_RESOLUTION=Texture Resolution
 value.TEXTURE_PACK_RESOLUTION.0=Auto
 
-option.AUTO_LIGHT_SOURCE_EMISSION=Automatic Light Source Emission
-option.AUTO_LIGHT_SOURCE_EMISSION.comment=Guess which pixels on light sources 'emit' the light and add emission to them.
+option.HARDCODED_EMISSION=Hardcoded Emission
+option.HARDCODED_EMISSION.comment=Hardcoded emission data for blocks like torches.
+
+option.HARDCODED_SPECULAR=Hardcoded Specular
+option.HARDCODED_SPECULAR.comment=Hardcoded specular mapping for blocks like metals.
+
+option.HARDCODED_SSS=Hardcoded Subsurface Scattering
+option.HARDCODED_SSS=Hardcoded subsurface scattering for blocks like leaves.
 
 option.MULTIPLY_METAL_ALBEDO=Metal Albedo Tinting
 option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo colour. Disable if resource pack does not support this.
@@ -12,8 +38,8 @@ option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo col
 option.NORMAL_MAPS=Normal Maps
 option.NORMAL_MAPS.comment=Use normal map data from resource pack
 
-option.SPECULARITY_MAPS=Specular Maps
-option.SPECULARITY_MAPS.comment=Use specular map data from resource pack. This has a high performance impact as it uses screen space reflections
+option.SPECULAR_MAPS=Specular Maps
+option.SPECULAR_MAPS.comment=Use specular map data from resource pack. This has a high performance impact as it uses screen space reflections
 
 option.EMISSION=Emission
 option.Emission.comment=Makes some objects glow in the dark
@@ -22,7 +48,7 @@ option.REFLECTION_SAMPLES=Rough Reflection Samples
 option.REFLECTION_SAMPLES.comment=Number of samples taken for reflections on rough surfaces. Lower sample count = more performance but more noise
 
 option.ROUGH_REFLECTION_THRESHOLD=Rough Reflection Threshold
-option.ROUGH_REFLECTION_THRESHOLD.comment=Materials with a roughness value greater than the threshold will not reflect. Higher values have a higher performance cost and may cause visual noise.
+option.ROUGH_REFLECTION_THRESHOLD.comment=Materials with a roughness value greater than the threshold will not reflect. Higher values have a higher performance cost and may cause visual noise. §eSetting this to 0 disables rough reflections!§
 
 option.DYNAMIC_NOISE=Dynamic Noise
 option.DYNAMIC_NOISE.comment=Use different noise every frame for reflections and shadows. Useful if you're blending frames in post.
@@ -30,18 +56,12 @@ option.DYNAMIC_NOISE.comment=Use different noise every frame for reflections and
 option.SUBSURFACE_SCATTERING=Subsurface Scattering
 option.SUBSURFACE_SCATTERING.comment=Allows some blocks to scatter sunlight through them, and be lit on the side facing away from the sun.
 
-screen.FOV=FOV Override
-screen.FOV.comment=FOV Override can mitigate chunk-rendering issues with large scale terrain deformation.
-
 option.FOV_OVERRIDE=FOV Override
 option.FOV_OVERRIDE.comment=Manually override the FOV from the in-game setting. Set the in-game FOV higher than your actual FOV to reduce chunk artifacts with large-scale vertex deformations. May cause crashes on AMD!
 
 option.FOV_DEFAULT_TENS=In-game FOV
 option.FOV_TRUE_TENS=Actual FOV
 option.FOV_TRUE_FIVES=Actual FOV
-
-
-screen.Brightness=Post-Processing
 
 option.EXPOSURE=Exposure
 option.EXPOSURE.comment=The brightness level of the entire scene
@@ -64,21 +84,13 @@ option.TORCH_LIGHT_LEVEL.comment=The brightness level of artificial light source
 option.SKY_BRIGHTNESS=Sky Brightness
 option.SKY_BRIGHTNESS.comment=The brightness level of the sky
 
-
-screen.Effects=Effects
-
-screen.Bloom=Bloom
-
-option.BLOOM_ENABLED=Bloom Enabled
+option.BLOOM_ENABLED=Bloom
 
 option.BLOOM_AMOUNT=Bloom Amount
 option.BLOOM_AMOUNT.comment=The visibility level of bloom, AKA Glow
 
 option.BLOOM_CURVE=Bloom Curve
 option.BLOOM_CURVE.comment=Higher values make the bloom more concentrated to bright areas, and also make the bloom more colorful
-
-
-screen.Motion_Blur=Motion Blur
 
 option.MOTION_BLUR=Motion Blur
 
@@ -106,14 +118,9 @@ option.TERRAIN_PARALLAX_QUALITY=Terrain Parallax Quality
 option.TERRAIN_PARALLAX_DISTANCE=Terrain Parallax Distance
 option.TERRAIN_PARALLAX_INTENSITY=Terrain Parallax Intensity
 
-
-screen.Waving_Blocks=Waving Blocks
-option.WAVING_GRASS=Waving Grass
+option.WAVING_GRASS=Waving Plants
 option.WAVING_LEAVES=Waving Leaves
 option.WAVING_WATER=Waving Water
-
-
-screen.Shadows=Shadows & Lighting
 
 option.sunPathRotation=Sun Path Rotation
 
@@ -142,9 +149,6 @@ option.TRANSPARENT_SHADOWS.comment=Allows transparent objects to let light throu
 option.PLAYER_SHADOW=Player Shadow
 option.PLAYER_SHADOW.comment=Whether or not the player casts a shadow
 
-
-screen.Composite0=GI & AO
-
 option.COMPOSITE0_SCALE=Effect Resolution
 option.COMPOSITE0_SCALE.comment=Rendering resolution of:. Global Illumination. Ambient Occlusion. Volumetric Light
 value.COMPOSITE0_SCALE.0.25=0.25x
@@ -158,18 +162,12 @@ value.COMPOSITE0_SCALE.1.00=1.00x
 option.COMPOSITE0_NOISE=Ditherred Noise
 option.COMPOSITE0_NOISE.comment=Helps hide artifacts due to low sample counts. Medium performance cost!. Causes flickering at lower resolutions!
 
-
-screen.Fog=Fog
-
-option.FOG_ENABLED=Fog Enabled
+option.FOG_ENABLED=Fog
 
 option.FOG_POWER=Fog Curve
 option.FOG_POWER.comment=Higher values make fog more subtle nearby, but more intense farther away
 
 option.FOG_START=Fog Start
-
-
-screen.GI=Global Illumination
 
 option.GI_ENABLED=Global Illumination
 
@@ -190,9 +188,6 @@ option.GI_TRANSLUCENCE.comment=Higher values make global illumination seem to "b
 
 option.GI_BRIGHTNESS=GI Brightness
 
-
-screen.AO=Ambient Occlusion
-
 option.AO_ENABLED=Ambient Occlusion
 
 option.AO_SAMPLE_COUNT=AO Sample Count
@@ -201,20 +196,13 @@ option.AO_RADIUS=AO Radius
 
 option.AO_INTENSITY=AO Intensity
 
-
-screen.Cloud2D=2D Cloud Plane
-
-option.CLOUDS_2D=2D Cloud Plane
-option.CLOUDS_2D.comment=Medium performance cost!
+option.CLOUDS_ENABLED=Clouds
 
 option.CLOUD_HEIGHT_2D=2D Cloud Plane Height
 
 option.CLOUD_COVERAGE_2D=Cloud Coverage
 
 option.CLOUD_SPEED_2D=Cloud Speed
-
-
-screen.CLOUD3D=Volumetric Clouds
 
 option.CLOUD3D=Volumetric Clouds
 option.CLOUD3D_START_HEIGHT=Starting Height
@@ -250,7 +238,7 @@ option.WATER_PARALLAX.comment=High performance cost!
 option.WATER_CAUSTICS=Underwater Caustics
 option.WATER_CAUSTICS.comment=High performance cost!
 
-option.WATER_HEIGHT=Water Plane Height
+option.WATER_HEIGHT=Sea level
 option.WATER_HEIGHT.comment=Assumed constant height for water surface
 
 option.VARIABLE_WATER_HEIGHT=Variable Water Height
@@ -262,9 +250,6 @@ value.UNDERWATER_LIGHT_DEPTH.65536=Infinite
 
 option.WAVE_MULT=Wave Height
 option.WAVE_SPEED=Wave Speed
-
-
-screen.Time=Time Override
 
 option.TIME_OVERRIDE=Time Override
 option.TIME_OVERRIDE.comment=Modify or override the in-game time, based on the settings on this page
@@ -285,9 +270,6 @@ option.CUSTOM_TIME_MISC=Misc
 value.CUSTOM_TIME_MISC.1=Old North
 value.CUSTOM_TIME_MISC.2=User Defined Rotation
 
-
-screen.Deform=Terrain Deformation
-
 option.DEFORM=Terrain Deformation
 
 option.DEFORMATION=Deformation Type
@@ -295,21 +277,12 @@ value.DEFORMATION.1=Planetoid
 value.DEFORMATION.2=Acid Shaders
 value.DEFORMATION.3=User Deformation
 
-
-screen.Misc=Misc
-
 option.HIDE_ENTITIES=Hide Entities
 
 option.LIGHT_DESATURATION=Light Desaturation
 
 option.CLEAR_WATER=Clear Water
-
-option.WEATHER=Weather
-option.WEATHER.comment=Weather is not really set up yet.
-
-
-screen.Telefocal=Telefocal Shadows
-screen.Telefocal.comment=Focus the shadow quality-center to a coordinate, or the center of your screen
+option.CLEAR_WATER.comment=Disables depth based fog on things which are underwater.
 
 option.TELEFOCAL_SHADOWS=Telefocal Shadows
 option.TELEFOCAL_SHADOWS.comment=Focus the shadow quality-center to a coordinate, or the center of your screen
@@ -329,9 +302,6 @@ option.WATER_SHADOW=Water Shadow
 
 
 option.FORCE_COMPATIBILITY=Force Compatibility Mode
-
-
-screen.Debug=Development
 
 option.DEBUG=Debug Mode
 
@@ -364,12 +334,12 @@ option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on lig
 option.DIRECTIONAL_LIGHTING=Directional Lighting
 option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
 
-option.INFO=Ebin Resurrected
-value.INFO.0=By jbritain
-value.INFO.1=By BruceKnowsHow
+option.INFO=§aEbin Resurrected§
+value.INFO.0=§bby jbritain§
+value.INFO.1=§bby § §dBruceKnowsHow§
 
 option.LABPBR_VERSION=labPBR Version
 
 option.VERSION=Version
 value.VERSION.0=SOURCE
-value.VERSION.1=ROLLING
+value.VERSION.1=latest

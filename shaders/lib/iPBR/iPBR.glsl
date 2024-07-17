@@ -26,6 +26,10 @@ void applyiPBR(inout float val, float newVal){
 
 float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
+  #ifndef HARDCODED_EMISSION
+  return 0.0;
+  #endif
+
   float luma = data.hsv.b;
 	float sat = data.hsv.g;
 
@@ -38,13 +42,15 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
 #ifdef gbuffers_main
   PBRData getRawPBRData(vec2 coord){
-    vec4 specularData = texture(specular, coord);
-    vec4 normalData = texture(normals, coord);
-
-    PBRData data;
+    PBRData data = PBRData(vec4(0.0), vec3(0.0), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, vec3(0.0));
 
     data.albedo = GetDiffuse(coord);
     data.hsv = hsv(data.albedo.rgb);
+
+    #ifdef SPECULAR_MAPS
+    vec4 specularData = texture(specular, coord);
+
+    
 
     data.perceptualSmoothness = specularData.r;
     data.baseReflectance = specularData.g;
@@ -59,23 +65,24 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 		}
 
     data.emission = specularData.a != 1.0 ? specularData.a : 0.0;
+    #endif
 
+    #ifdef NORMAL_MAPS
+    vec4 normalData = texture(normals, coord);
     data.materialAO = normalData.b;
     data.height = normalData.a * 0.75 + 0.25;
     data.normal.xy = normalData.xy * 2.0 - 1.0;
     data.normal.z = sqrt(1.0 - dot(data.normal.xy, data.normal.xy));
     data.normal = normalize(data.normal);
+    #endif
 
     return data;
   }
 
   void injectIPBR(inout PBRData data, float ID){
-    switch(int(ID + 0.5)){
-      case IPBR_WATER:
-        data.perceptualSmoothness = 1.0;
-        data.baseReflectance = 0.02;
-        break;
+    PBRData oldData = data;
 
+    switch(int(ID + 0.5)){
       case IPBR_ICE:
         applyiPBR(data.perceptualSmoothness, 1.0);
         applyiPBR(data.baseReflectance, 0.02);
@@ -110,6 +117,21 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       applyiPBR(data.baseReflectance, 0.03);
       applyiPBR(data.perceptualSmoothness, 0.5 * smoothstep(0.16, 0.5, data.hsv.b));
     }   
+
+    // not a great way of doing this but otherwise I'd have to reorganise and make things overall more complicated
+    #ifndef HARDCODED_SPECULAR
+      data.perceptualSmoothness = oldData.perceptualSmoothness;
+      data.baseReflectance = oldData.baseReflectance;
+    #endif
+
+    #ifndef HARDCODED_SSS
+      data.SSS = oldData.sss;
+    #endif
+
+    if(int(ID + 0.5) == IPBR_WATER){
+        data.perceptualSmoothness = 1.0;
+        data.baseReflectance = 0.02;
+    }
 
   }
 #endif
