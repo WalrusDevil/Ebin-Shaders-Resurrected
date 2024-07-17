@@ -35,6 +35,7 @@
 
 #define IPBR_IRON 3001
 #define IPBR_GOLD 3002
+#define IPBR_GLASS 3003
 
 
 #endif

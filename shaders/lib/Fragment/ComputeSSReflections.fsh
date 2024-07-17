@@ -175,7 +175,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		nDotV = dot(n, v);
 	}
 
-	float roughSunSpecular = ggx(n, v, lightVector, max(roughness, 0.02));
+	float specularHighlight = ggx(n, v, lightVector, max(roughness, 0.02));
 	
 
 	vec3 fresnel;
@@ -293,7 +293,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 
 	vec3 transmit = vec3(1.0);
-	vec3 sunspot = sunlightColor * roughSunSpecular * sunlight;
+	vec3 sunspot = sunlightColor * specularHighlight * sunlight;
 	show(sunlight);
 	reflectionSum += sunspot;
 
