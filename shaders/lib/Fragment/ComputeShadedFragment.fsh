@@ -195,7 +195,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.torchlight  = torchLightmap;
 
 	#ifdef gbuffers_textured
-		shading.sunlight = vec3(max(shading.skylight, shading.torchlight));
+		shading.sunlight = vec3(max(shading.sunlight, shading.torchlight));
 	#endif
 
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));

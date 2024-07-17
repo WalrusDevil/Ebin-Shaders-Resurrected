@@ -172,6 +172,9 @@ vec3 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 }
 
 vec3 ComputeWaveNormals(vec3 worldSpacePosition, vec3 flatWorldNormal) {
+	#ifndef WAVING_WATER
+		return vec3(0.0, 0.0, 1.0);
+	#endif
 	if (WAVE_MULT == 0.0) return vec3(0.0, 0.0, 1.0);
 	
 	SetupWaveFBM();

@@ -82,7 +82,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         break;
 
       case IPBR_NETHER_PORTAL:
-        applyiPBR(data.perceptualSmoothness, 0.9);
+        applyiPBR(data.perceptualSmoothness, 1.0);
         applyiPBR(data.baseReflectance, 0.02);
         applyiPBR(data.emission, 0.7);
         break;
