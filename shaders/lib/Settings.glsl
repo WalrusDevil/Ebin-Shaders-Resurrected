@@ -149,9 +149,6 @@ const float zShrink = 4.0;
 #define SHADOWS_FOCUS_CENTER
 
 
-//#define WATER_SHADOW
-
-
 #define TEXTURE_PACK_RESOLUTION 0 // [0 16 32 64 128 256 512 1024 2048 4096]
 #define MULTIPLY_METAL_ALBEDO
 #define NORMAL_MAPS

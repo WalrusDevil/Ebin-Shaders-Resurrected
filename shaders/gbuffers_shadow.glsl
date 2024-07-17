@@ -2,12 +2,16 @@
 
 #include "/lib/Settings.glsl"
 
+#include "/lib/iPBR/IDs.glsl"
+#include "/lib/iPBR/Groups.glsl"
+
 
 varying vec4 color;
 varying vec2 texcoord;
 varying vec2 vertLightmap;
 
 flat varying vec3 vertNormal;
+varying float materialIDs;
 
 
 /***********************************************************************/
@@ -29,12 +33,9 @@ uniform float sunAngle;
 
 uniform float thunderStrength;
 
-float materialIDs;
-
 #include "/lib/Utility.glsl"
 
-#include "/lib/iPBR/IDs.glsl"
-#include "/lib/iPBR/Groups.glsl"
+
 #include "/UserProgram/centerDepthSmooth.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
@@ -125,14 +126,11 @@ void main() {
 		gl_Position = ftransform();
 		return;
 	#endif
-
-	if (mc_Entity.x == 66) { gl_Position = vec4(-1.0); return; }
 	
 	materialIDs  = mc_Entity.x;
 	
-#ifndef WATER_SHADOW
-	if (materialIDs == 4.0) { gl_Position = vec4(-1.0); return; }
-#endif
+
+	
 	
 #ifdef HIDE_ENTITIES
 //	if (mc_Entity.x < 0.5) { gl_Position = vec4(-1.0); return; }
@@ -186,6 +184,8 @@ void main() {
 	#endif
 
 	vec4 diffuse = color * texture2D(tex, texcoord);
+
+	if (materialIDs == IPBR_WATER) { diffuse = vec4(0.215, 0.356, 0.533, 0.75); }
 	
 	gl_FragData[0] = diffuse;
 	gl_FragData[1] = vec4(vertNormal.xy * 0.5 + 0.5, 0.0, 1.0);

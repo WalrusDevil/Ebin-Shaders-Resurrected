@@ -73,6 +73,7 @@ uniform vec2 pixelSize;
 uniform float rainStrength;
 
 uniform float far;
+uniform float near;
 
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
@@ -90,7 +91,13 @@ float GetDepth(vec2 coord) {
 	return texture2D(gdepthtex, coord).x;
 }
 
+float linearizeDepth(float depth) {
+   return (2.0 * near) / (far + near - depth * (far - near));
+}
+
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
+	screenPos = screenPos * 2.0 - 1.0;
+	
 	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
 }
 
@@ -186,19 +193,26 @@ vec3 Vignette(vec3 color) {
 
 void main() {
 	float depth = GetDepth(texcoord);
+	float linearDepth = linearizeDepth(depth);
+	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
+	show(viewPos);
 	vec3  color = GetColor(texcoord);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
-	if (isEyeInWater){ // hacky water fog
-		color = mix(color, waterColor, CalculateFogFactor(vec3(0, 0, depth * far)));
-	}
-
-	#ifdef worldm1
-		color = mix(color, fogColor, pow(CalculateFogFactor(vec3(0, 0, depth * far)), 64.0));
-	#endif
+	
 
 	color = MotionBlur(color, depth);
 	color =   GetBloom(color);
+
+	if (isEyeInWater){ // hacky water fog
+		color *= normalize(vec3(0.215, 0.356, 0.533)); // faint blue tint
+		color = mix(color, waterColor, 1.0 - pow2(-linearDepth + 1));
+	}
+
+	#ifdef worldm1
+		color = mix(color, fogColor, CalculateFogFactor(viewPos));
+	#endif
+
 	color =   Vignette(color);
 	color =    Tonemap(color);
 
