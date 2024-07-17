@@ -1,5 +1,5 @@
 #include "/lib/GLSL_Version.glsl"
-#define gbuffers_weather
+#define gbuffers_textured
 #define vsh
 #define world0
 #define ShaderStage -2

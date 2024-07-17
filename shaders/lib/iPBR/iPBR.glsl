@@ -74,6 +74,8 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     data.normal.xy = normalData.xy * 2.0 - 1.0;
     data.normal.z = sqrt(1.0 - dot(data.normal.xy, data.normal.xy));
     data.normal = normalize(data.normal);
+    #else
+    data.normal = vec3(0.0, 0.0, 1.0);
     #endif
 
     return data;
@@ -112,6 +114,12 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.baseReflectance, 234.0/255.0);
         applyiPBR(data.perceptualSmoothness, max(data.albedo.r, 0.3));
         break;
+
+      case IPBR_GRASS_BLOCK:
+        float isGrass = float(data.albedo.g - data.albedo.r > 0.1);
+        applyiPBR(data.SSS, 0.2 * isGrass);
+        applyiPBR(data.baseReflectance, 0.03 * isGrass);
+        applyiPBR(data.perceptualSmoothness, 0.3 * isGrass * smoothstep(0.16, 0.5, data.hsv.b));
     }
 
     if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));

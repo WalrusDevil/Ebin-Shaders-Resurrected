@@ -297,6 +297,8 @@ option.Shadow_Focus_Y.comment=The Y coordinate of the shadow map's highest quali
 option.Shadow_Focus_Z=Shadow Focus Z
 option.Shadow_Focus_Z.comment=The Z coordinate of the shadow map's highest quality zone. This coordinate can be set in: /UserProgram/Shadow_Focus.glsl. These coordinates are overwritten by the "Focus Center" option
 
+option.RAIN=Rain
+option.RAIN.comment=Enables rain particles. Because of how Ebin is designed, rain is dithered, and doesn't look great.
 
 option.WATER_SHADOW=Water Shadow
 

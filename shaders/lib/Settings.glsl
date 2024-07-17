@@ -59,7 +59,7 @@ const float zShrink = 4.0;
 
 
 #define EXPOSURE            1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
-#define SATURATION          1.2 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define SATURATION          1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define SUN_LIGHT_LEVEL     1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define SKY_LIGHT_LEVEL     1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define AMBIENT_LIGHT_LEVEL 0.5 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
@@ -78,6 +78,8 @@ const float zShrink = 4.0;
 #endif
 
 #define SUBSURFACE_SCATTERING
+
+#define RAIN
 
 #if SHADOW_TYPE != 0
     #define SHADOWS

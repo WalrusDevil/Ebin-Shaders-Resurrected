@@ -22,14 +22,6 @@ vec2 reproject(vec3 pos) {
 }
 
 #ifdef composite0
-  //Dithering from Jodie
-  float bayer2(vec2 a) {
-      a = floor(a);
-      return fract(a.x * 0.5 + a.y * a.y * 0.75);
-  }
-
-  #define bayer4(a) (bayer2(a * 0.5) * 0.25 + bayer2(a))
-  #define bayer8(a) (bayer4(a * 0.5) * 0.25 + bayer2(a))
 
   vec2 randDist(float x) {
     float n = fract(x * 8.0) * 6.283;
