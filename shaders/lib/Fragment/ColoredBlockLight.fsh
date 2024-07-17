@@ -87,7 +87,7 @@ vec2 reproject(vec3 pos) {
     coloredLightNormalized *= getLuminance(blocklightCol) / getLuminance(coloredLightNormalized);
     float coloredLightMix = min((coloredLight.r + coloredLight.g + coloredLight.b) * 2048.0, 1.0);
     
-    return mix(blocklightCol, coloredLightNormalized, coloredLightMix);
+    return mix(blocklightCol, coloredLightNormalized, coloredLightMix * 0.5);
   }
   vec3 blockLightOverrideColor;
 #endif

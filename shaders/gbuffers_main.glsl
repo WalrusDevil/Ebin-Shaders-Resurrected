@@ -295,11 +295,11 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 // #endif
 
 #if defined gbuffers_water
-/* RENDERTARGETS:0,3,8,13,11 */
+/* RENDERTARGETS: 0,3,8,13,11 */
 #elif defined gbuffers_textured
-/* RENDERTARGETS:0,3,8,13 */
+/* RENDERTARGETS: 0,3,8,13 */
 #else
-/* RENDERTARGETS:1,4,9,10,11 */
+/* RENDERTARGETS: 1,4,9,10,11 */
 #endif
 
 #include "/lib/Exit.glsl"
@@ -423,7 +423,7 @@ void main() {
 		}
 
 		if(materialIDs == IPBR_TORCH){
-			blockLightColor = vec3(0.5, 0.1, 0.05) * 4.0 * PBR.emission;
+			blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
 		}
 
 		show(blockLightColor);

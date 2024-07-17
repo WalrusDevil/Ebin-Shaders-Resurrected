@@ -174,6 +174,8 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS));
 		}
 		//show(shading.sunlight);
+
+		
 		
 		
 		
@@ -188,7 +190,14 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		shading.sunlight = vec3(0);
 	#endif
 
+	
+
 	shading.torchlight  = torchLightmap;
+
+	#ifdef gbuffers_textured
+		shading.sunlight = vec3(max(shading.skylight, shading.torchlight));
+	#endif
+
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
 
 	clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL * 10));
