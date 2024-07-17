@@ -164,12 +164,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	float roughness = pow(1.0 - perceptualSmoothness, 2.0);
 
-	// if(roughness > ROUGH_REFLECTION_THRESHOLD){
-	// 	return;
-	// }
-
-	//if (isEyeInWater == 1) return;
-
 	float nDotV;
 
 	vec3 v = normalize(-position[0]);
@@ -181,11 +175,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		nDotV = dot(n, v);
 	}
 
-	// vec3 lightHalfway = normalize(lightVector + v);
-	// float shininess =  2.0/pow2(max(roughness, 0.1))-2.0;
-	// //float roughSunSpecular = pow(clamp01(dot(lightHalfway, normal)), shininess);
 	float roughSunSpecular = ggx(n, v, lightVector, max(roughness, 0.02));
-	show(roughSunSpecular);
 	
 
 	vec3 fresnel;
@@ -210,17 +200,8 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	vec3 reflectionSum = vec3(0);
 	vec3 offsetNormal = normal;
 
-	// float maxMipMapLevel = log2(max(viewHeight, viewWidth));
-
 	refRay[0] = reflect(position[0], offsetNormal);
 	refRay[1] = mat3(gbufferModelViewInverse) * refRay[0];
-
-	// bool hit = ComputeSSRaytrace(position[0], normalize(refRay[0]), refCoord);
-
-	// float blurRadius = linearizeDepth(texture2D(gdepthtex, refCoord.xy).r) * roughness;
-	// if(hit){
-	// 	reflectionSum = texture2DLod(colortex1, refCoord.xy, blurRadius * maxMipMapLevel).rgb;
-	// }
 	
 	vec3 sunlight;
 
@@ -307,13 +288,13 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	if (roughness > 0){
 		reflectionSum /= REFLECTION_SAMPLES;
-		
-		
-		
 	}
+
+	
 
 	vec3 transmit = vec3(1.0);
 	vec3 sunspot = sunlightColor * roughSunSpecular * sunlight;
+	show(sunlight);
 	reflectionSum += sunspot;
 
 

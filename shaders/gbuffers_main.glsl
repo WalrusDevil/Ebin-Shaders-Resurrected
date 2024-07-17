@@ -1,5 +1,6 @@
 #include "/lib/Syntax.glsl"
 
+#define gbuffers_main
 
 varying vec3 color;
 varying vec2 texcoord;
@@ -42,7 +43,8 @@ uniform float far;
 
 uniform float wetness;
 
-
+#include "/lib/iPBR/IDs.glsl"
+#include "/lib/iPBR/Groups.glsl"
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
@@ -232,158 +234,8 @@ vec4 GetDiffuse(vec2 coord) {
 	return vec4(color.rgb, 1.0) * GetTexture(tex, coord);
 }
 
-vec3 GetNormal(vec2 coord) {
-	vec3 normal = vec3(0.0, 0.0, 1.0);
-	
-#ifdef NORMAL_MAPS
-	normal = GetTexture(normals, coord).rgb;
-	normal = normal * 2.0 - 1.0;
-	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy));
-#endif
-	
-	return tbnMatrix * normal;
-}
-
-float getMaterialAO(vec2 coord){
-	#ifndef NORMAL_MAPS
-	return 0.0;
-	#endif
-
-	return GetTexture(normals, coord).z;
-}
-
-vec3 GetTangentNormal() {
-#ifdef NORMAL_MAPS
-	vec3 normal = texture2D(normals, texcoord).rgb;
-	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy));
-	return normal;
-#endif
-	
-	return vec3(0.5, 0.5, 1.0);
-}
-
-float GetSpecularity(vec2 coord) {
-	float specularity = 0.0;
-	
-#ifdef SPECULARITY_MAPS
-	float smoothness = GetTexture(specular, coord).r;
-
-	float baseReflectance = GetTexture(specular, coord).g * (229 / 255);
-
-	specularity = pow(smoothness, 2) * baseReflectance;
-#endif
-	
-	return clamp01(specularity + wetness);
-}
-
-float getPerceptualSmoothness(vec2 coord){
-	#ifdef SPECULARITY_MAPS
-	return GetTexture(specular, coord).r;
-	#endif
-	return 0.0;
-}
-
-float getBaseReflectance(vec2 coord){
-	#ifdef SPECULARITY_MAPS
-	return GetTexture(specular, coord).g;
-	#endif
-	return 0.0;
-}
-
-float getPorosity(vec2 coord, bool isDielectric){
-	#ifndef SPECULARITY_MAPS
-		return 0.0;
-	#endif
-	if(!isDielectric){
-		return 0.0;
-	}
-	float porosity = GetTexture(specular, coord).b;
-
-	if (porosity > 0.25){ // subsurface scattering range
-		return 0.0;
-	}
-	
-	return porosity * 4;
-}
-
-float getSSS(vec2 coord, bool isDielectric){
-	float SSS = GetTexture(specular, coord).b;
-
-	if(SSS <= 0.25){ // porosity range
-		return 0.0;
-	}
-
-	return (SSS - 0.25) * (4.0/3.0);
-}
-
 bool handLight = false;
 
-float getEmission(vec2 coord){
-	#ifdef gbuffers_spidereyes
-	return 1.0;
-	#endif
-
-	#ifdef EMISSION
-	float emission = GetTexture(specular, coord).a;
-	if (emission == 1.0) {
-		return 0.0;
-	}
-	if (emission != 0.0){
-		return emission;
-	}
-	#endif
-
-	#define LUMA_THRESHOLD 0.8
-	#define SAT_THRESHOLD 0.6
-
-	#ifdef AUTO_LIGHT_SOURCE_EMISSION
-
-	
-
-	if(materialIDs == 3.0 || handLight){ // light sources
-		vec3 color = GetTexture(tex, coord).rgb;
-
-		vec3 hsvcol = hsv(color);
-		float luma = hsvcol.b;
-		float sat = hsvcol.g;
-		
-		if(luma < LUMA_THRESHOLD){
-			return smoothstep(SAT_THRESHOLD, 1.0, sat) * blocklight;
-		}
-		// if brightness more than 0.7, just use brightness
-		return luma * blocklight;
-		// return pow(max(max(albedo.r, albedo.g), albedo.b), 4.0) * 0.4;
-	}
-	#endif
-
-	return 0.0;
-}
-
-// // thanks to CyanEmber
-// vec3 getLightDirWorld(vec3 normal, vec3 worldPos, float lightmap){
-// 	// Construct a tangent space
-// 	// vec3 tangent    = normalize(cross(normal, vec3(sqrt(0.1), sqrt(0.9), 0.0)));
-// 	// vec3 bitangent  = cross(normal, tangent);
-// 	// mat3 tangentToWorld = mat3(tangent, bitangent, normal);
-// 	mat3 tangentToWorld = tbnMatrix;
-// 	mat3 worldToTangent = transpose(tangentToWorld);
-
-// 	// Construct transformation matrix from screen space to tangent space
-// 	vec2 tangentPos      = (worldToTangent * worldPos).xy;
-// 	mat2 pixelsToTangent = mat2(dFdx(tangentPos), dFdy(tangentPos));
-
-// 	// Transform light direction from screen space to world space
-// 	vec2 lightDirPixels  = vec2(dFdx(lightmap), dFdy(lightmap));
-
-// 	if(length(lightDirPixels) == 0){
-// 		return vec3(0.0);
-// 	}
-
-// 	vec2 lightDirTangent = normalize(pixelsToTangent * lightDirPixels);
-// 	vec3 lightDirWorld   = tangentToWorld * vec3(lightDirTangent, 0.0);
-
-// 	return lightDirWorld;
-// }
 
 vec3 getLightDirWorld(vec3 worldPos, float lightmap){
 	vec2 grad = vec2(dFdx(lightmap), dFdy(lightmap));
@@ -442,8 +294,10 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 // /* RENDERTARGETS:0,3,8,11 */
 // #endif
 
-#if defined gbuffers_water || defined gbuffers_textured
-/* RENDERTARGETS:0,3,8,11,13 */
+#if defined gbuffers_water
+/* RENDERTARGETS:0,3,8,13,11 */
+#elif defined gbuffers_textured
+/* RENDERTARGETS:0,3,8,13 */
 #else
 /* RENDERTARGETS:1,4,9,10,11 */
 #endif
@@ -451,6 +305,10 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 #include "/lib/Exit.glsl"
 
 void main() {
+
+	PBRData PBR;
+	PBR = getRawPBRData(texcoord);
+	injectIPBR(PBR, materialIDs);
 	
 
 	#ifdef gbuffers_hand
@@ -465,97 +323,74 @@ void main() {
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
 	vec4  diffuse     		= GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
 	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);
-	vec3  normal      		= GetNormal(coord);
+	vec3  normal      		= tbnMatrix * PBR.normal;
 	//float specularity 		= GetSpecularity(coord);
 	#ifdef DIRECTIONAL_LIGHTING
 		float directionalLightingFactor = getDirectionalLightingFactor(faceNormal, normal, position[1], vertLightmap.r);
 	#else
 		float directionalLightingFactor = 1.0;
 	#endif
-	float perceptualSmoothness				= getPerceptualSmoothness(coord);
-	float baseReflectance = getBaseReflectance(coord);
-	float emission 				= getEmission(coord);
-	float porosity				= getPorosity(coord, (baseReflectance <= 1.0));
-	float SSS					= getSSS(coord, (baseReflectance <= 1.0));
-	float materialAO			= getMaterialAO(coord);
 	
 	#ifdef gbuffers_hand
 	directionalLightingFactor = 1.0;
 	#endif
 
-	show(vertLightmap.x);
-
 	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
-		
-		#ifdef gbuffers_water
-		if (materialIDs == 4.0) {
-			if (!gl_FrontFacing) discard;
-			
-			diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
-			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
-			perceptualSmoothness = 1;
-			baseReflectance = 0.02;
-			mask.water  = 1.0;
-		}
-
-		if(materialIDs == 5.0){ // nether portal
-			perceptualSmoothness = 0.9;
-			baseReflectance = 0.02;
-			emission = 0.7;
-		}
-		#endif
 
 		#ifdef gbuffers_textured
-		perceptualSmoothness = 0.0;
-		baseReflectance = 0.0;
+		PBR.perceptualSmoothness = 0.0;
+		PBR.baseReflectance = 0.0;
 		directionalLightingFactor = 1.0;
 		#endif
 
+		#ifdef gbuffers_water
+		if (materialIDs == IPBR_WATER) {
+			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
+			diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
+			mask.water  = 1.0;
+		}
+		#endif
 		
 		
-		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, SSS));
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), emission, position, materialAO, SSS, tbnMatrix[2], texture(colortex10, texcoord).rgb);
-		gl_FragData[4] = vec4(sunlight, 1.0);
+		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, PBR.SSS));
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], texture(colortex10, texcoord).rgb);
+		gl_FragData[3] = vec4(sunlight, 1.0);
 
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(directionalLightingFactor, vertLightmap.g, mask.water, 0.1));
 		encode.y = EncodeNormal(normal, 11.0);
 		
-		if (materialIDs == 4.0) {
+		#ifdef gbuffers_water
+		if (materialIDs == IPBR_WATER) {
 			composite *= 0.0;
-			diffuse.a = 0.0;
+			diffuse.a = 0.0;	
 		}
+		#endif
 		
 		gl_FragData[0] = vec4(encode, 0.0, 1.0);
 		gl_FragData[1] = vec4(composite, diffuse.a);
-		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, 0.0, 1.0);
+		gl_FragData[2] = vec4(PBR.perceptualSmoothness, PBR.baseReflectance, 0.0, 1.0);
 		vec3 blockLightColor = vec3(0.0);
-		if(materialIDs == 3.0 || materialIDs == 5.0){
-			blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
+
+		if(IPBR_EMITS_LIGHT(materialIDs)){
+			blockLightColor = texture(tex, texcoord).rgb * clamp01(PBR.emission);
 		}
 
 		
 		#ifndef gbuffers_textured
-		if(emission == 0.0){
-			gl_FragData[3] = vec4(0);
+		if(PBR.emission == 0.0){
+			gl_FragData[4] = vec4(0);
 		} else {
-			gl_FragData[3] = vec4(blockLightColor, 1.0);
+			gl_FragData[4] = vec4(blockLightColor, 1.0);
 		}
 		#endif
 	#else
 
-		if (porosity > 0){
-			baseReflectance = mix(baseReflectance, 0.1 * porosity, wetness * vertLightmap.g);
-			perceptualSmoothness = mix(perceptualSmoothness, (1.0 - porosity), wetness * vertLightmap.g);
-		}
 
+		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), wetness);
 		
-		
-
-		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - porosity) / 2) + 0.5), wetness);
-		
-		float encodedMaterialIDs = EncodeMaterialIDs(materialIDs, vec4(0.0, 0.0, 0.0, 0.0));
+		float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
 		
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
 		gl_FragData[1] = vec4(
@@ -568,8 +403,8 @@ void main() {
 			EncodeNormal(normal, 11.0), 
 
 			Encode4x8F(vec4(
-				materialAO,
-				SSS,
+				PBR.materialAO,
+				PBR.SSS,
 				0.0,
 				0.0
 			)), 
@@ -580,14 +415,20 @@ void main() {
 			1.0
 			#endif
 		);
-		gl_FragData[2] = vec4(perceptualSmoothness, baseReflectance, emission, 1.0);
+		gl_FragData[2] = vec4(PBR.perceptualSmoothness, PBR.baseReflectance, PBR.emission, 1.0);
 
 		vec3 blockLightColor = vec3(0.0);
-		if(materialIDs == 3.0 || materialIDs == 5.0 || handLight){
-			blockLightColor = texture(tex, texcoord).rgb * clamp01(emission);
+		if(IPBR_EMITS_LIGHT(materialIDs) || handLight){
+			blockLightColor = texture(tex, texcoord).rgb * clamp01(PBR.emission);
 		}
 
-		if(emission == 0.0){
+		if(materialIDs == IPBR_TORCH){
+			blockLightColor = vec3(0.5, 0.1, 0.05) * 4.0 * PBR.emission;
+		}
+
+		show(blockLightColor);
+
+		if(PBR.emission == 0.0){
 			gl_FragData[4] = vec4(0.0);
 		} else {
 			gl_FragData[4] = vec4(blockLightColor, 0.0);

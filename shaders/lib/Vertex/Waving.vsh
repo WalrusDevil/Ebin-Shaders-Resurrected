@@ -4,7 +4,7 @@ vec3 GetWavingGrass(vec3 position, cbool doubleTall) {
 #endif
 	
 	bool topVert  = texcoord.t < mc_midTexCoord.t;
-	bool topBlock = mc_Entity.z > 8.0;
+	bool topBlock = mc_Entity.x == 2009;
 	
 	float magnitude  = vertLightmap.g;
 	

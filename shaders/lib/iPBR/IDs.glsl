@@ -2,6 +2,7 @@
 #define IPBR_IDS
 
 #define IPBR_WATER 1
+#define IPBR_ICE 2
 
 #define IPBR_TORCH 1001
 #define IPBR_REDSTONE_WIRE 1002
@@ -26,10 +27,14 @@
 
 #define IPBR_LEAVES 2001
 #define IPBR_GRASS 2002
+
 #define IPBR_SAPLINGS 2004
 #define IPBR_FLOWERS 2005
 #define IPBR_DRIPLEAF 2006
 #define IPBR_VINE 2007
+
+#define IPBR_IRON 3001
+#define IPBR_GOLD 3002
 
 
 #endif

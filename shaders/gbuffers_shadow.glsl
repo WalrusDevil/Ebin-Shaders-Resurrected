@@ -33,6 +33,8 @@ float materialIDs;
 
 #include "/lib/Utility.glsl"
 
+#include "/lib/iPBR/IDs.glsl"
+#include "/lib/iPBR/Groups.glsl"
 #include "/UserProgram/centerDepthSmooth.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
