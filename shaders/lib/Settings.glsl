@@ -1,4 +1,4 @@
-const int   shadowMapResolution      = 4096;  // [1024 2048 3072 4096 6144 8192 16384]
+const int   shadowMapResolution      = 2048;  // [1024 2048 3072 4096 6144 8192 16384]
 const float sunPathRotation          = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
 const float shadowDistance           = 256;   // [128 192 256 512]
 const float shadowIntervalSize       = 4.0;

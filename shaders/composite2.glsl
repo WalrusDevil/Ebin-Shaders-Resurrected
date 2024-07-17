@@ -176,6 +176,7 @@ void main() {
 	float baseReflectance = ScreenTex(colortex9).g;
 	float perceptualSmoothness = ScreenTex(colortex9).r;
 	float skyLightmap   = decode4.a;
+
 	
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 	
@@ -190,6 +191,8 @@ void main() {
 	depth1  = depth0;
 	mat2x3 backPos = frontPos;
 	float  alpha   = 0.0;
+
+	show(mask.transparent);
 	
 	if (mask.transparent > 0.5) {
 		depth1     = (mask.hand > 0.5 ? 0.55 : GetTransparentDepth(texcoord));
@@ -199,6 +202,7 @@ void main() {
 		backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 		backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 	}
+
 	
 	if (true) { // this stuff has to be in a different scope because it was designed that way
 		vec3 alpha = vec3(1.0);

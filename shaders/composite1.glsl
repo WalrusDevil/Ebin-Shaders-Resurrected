@@ -179,6 +179,8 @@ void main() {
 	
 	float depth1 = mask.hand > 0.5 ? depth0 : GetTransparentDepth(texcoord);
 	
+	mask.transparent = 0.0;
+
 	if (depth0 != depth1) {
 		vec2 texture0 = texture2D(colortex0, texcoord).rg;
 		
@@ -191,6 +193,8 @@ void main() {
 
 		texture4.rg = vec2(Encode4x8F(vec4(mask.materialIDs, decode0.r, 0.0, decode0.g)), texture0.g);
 	}
+
+	show(mask.transparent);
 	
 	vec4 GI; vec2 VL;
 	BilateralUpsample(wNormal, depth1, GI, VL);

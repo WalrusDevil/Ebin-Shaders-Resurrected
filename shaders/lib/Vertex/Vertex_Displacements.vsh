@@ -8,11 +8,14 @@ vec3 CalculateVertexDisplacements(vec3 worldSpacePosition) {
 	vec3 displacement = vec3(0.0);
 	
 #if defined gbuffers_terrain || defined gbuffers_water || defined gbuffers_shadow
-	if      (isTranslucent(materialIDs))
+	if      (materialIDs == IPBR_LEAVES)
 		{ displacement += GetWavingLeaves(worldPosition); }
-	
-	else if (isWater(materialIDs))
-		{ displacement += GetWavingWater(worldPosition); }
+
+	else if (materialIDs == IPBR_GRASS)
+		{ displacement += GetWavingGrass(worldPosition, false); }
+
+	else if (IPBR_IS_TALL_GRASS(materialIDs))
+		{ displacement += GetWavingGrass(worldPosition, true); }
 #endif
 	
 #if !defined gbuffers_hand
