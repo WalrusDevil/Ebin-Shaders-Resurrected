@@ -20,14 +20,7 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 
 
 vec3 randomVector(int sampleCount){
-	int seed = floatBitsToInt(
-	gbufferModelViewInverse[2].x +
-	gbufferModelViewInverse[2].y +
-	gbufferModelViewInverse[2].z +
-	cameraPosition.x +
-	cameraPosition.y +
-	cameraPosition.z
-	) + sampleCount;
+	int seed = frameCounter * REFLECTION_SAMPLES + sampleCount;
 
 	float theta = acos(ign(floor(texcoord * vec2(viewWidth, viewHeight)), seed));
 	float phi = 2 * PI * ign(texcoord * vec2(viewWidth, viewHeight) + vec2(97, 23), seed);
