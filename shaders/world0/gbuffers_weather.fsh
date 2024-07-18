@@ -2,7 +2,7 @@
 #define gbuffers_textured
 #define gbuffers_weather
 #define fsh
-#define world0
+#define WORLD_OVERWORLD
 #define ShaderStage -1
 
 

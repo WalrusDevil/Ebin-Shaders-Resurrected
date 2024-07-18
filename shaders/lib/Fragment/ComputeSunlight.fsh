@@ -186,7 +186,7 @@ float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
 }
 
 vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, float sunlightCoeff, float SSS) {
-	#ifndef world0
+	#ifndef WORLD_OVERWORLD
 	return vec3(0.0);
 	#endif
 

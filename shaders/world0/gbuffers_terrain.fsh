@@ -1,7 +1,7 @@
 #include "/lib/GLSL_Version.glsl"
 #define gbuffers_terrain
 #define fsh
-#define world0
+#define WORLD_OVERWORLD
 #define ShaderStage -1
 
 

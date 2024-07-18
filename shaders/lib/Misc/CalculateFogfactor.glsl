@@ -10,7 +10,7 @@ float CalculateFogFactor(vec3 position) {
 	return 0.0;
 #endif
 
-#ifdef world1 //end
+#ifdef WORLD_THE_END //end
 	return 0.0;
 #endif
 	

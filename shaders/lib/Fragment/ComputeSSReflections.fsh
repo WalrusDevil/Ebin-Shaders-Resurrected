@@ -22,7 +22,7 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 vec3 randomVector(int sampleCount){
 	int seed = frameCounter * REFLECTION_SAMPLES + sampleCount;
 
-	float theta = acos(ign(floor(texcoord * vec2(viewWidth, viewHeight)), seed));
+	float theta = acos(ign(floor(gl_FragCoord.xy), seed));
 	float phi = 2 * PI * ign(texcoord * vec2(viewWidth, viewHeight) + vec2(97, 23), seed);
 	return vec3(sin(phi)*cos(theta), sin(phi)*sin(theta), cos(phi));
 }
@@ -261,12 +261,12 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			float edge       = clamp01(1.0 - pow2(dist * 2.0 * angleCoeff));
 			fogFactor        = clamp01(fogFactor + pow(1.0 - edge, 10.0));
 			
-			#ifndef worldm1
+			#ifndef WORLD_THE_NETHER
 			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
 			#endif
 		} else {
 			
-			#ifndef worldm1
+			#ifndef WORLD_THE_NETHER
 			transmit = vec3(1.0);
 
 			float sunFactor = 0.0;

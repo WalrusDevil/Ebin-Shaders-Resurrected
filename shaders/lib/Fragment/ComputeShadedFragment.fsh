@@ -162,7 +162,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		skyLightmap = 1.0 - clamp01(-(position[1].y + cameraPosition.y - WATER_HEIGHT) / UNDERWATER_LIGHT_DEPTH);
 #endif
 	
-	#ifdef world0
+	#ifdef WORLD_OVERWORLD
 		shading.skylight = pow2(skyLightmap);
 		
 		shading.caustics = CalculateWaterCaustics(position[1], shading.skylight, mask.water);
@@ -210,12 +210,12 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.ambient *= GI.a * 0.5 + 0.5;
 	shading.ambient *= 0.04 * AMBIENT_LIGHT_LEVEL;
 	shading.ambient = mix(shading.ambient, shading.ambient / 2.0, materialAO);
-	#ifdef worldm1 // nether - no sunlight or skylight so boost ambient
+	#ifdef WORLD_THE_NETHER // nether - no sunlight or skylight so boost ambient
 		shading.ambient *= 3;
 		shading.ambient = clamp(shading.ambient, 0.2, 1.0);
 		shading.torchlight *= 2;
 	#endif
-	#ifdef world1 // the end
+	#ifdef WORLD_THE_END // the end
 		shading.ambient *= 3;
 	#endif
 	

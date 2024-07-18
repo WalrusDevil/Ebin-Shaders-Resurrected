@@ -28,7 +28,7 @@ vec2 AtmosphereDistances(vec3 worldPosition, vec3 worldDirection, cfloat atmosph
 }
 
 vec3 ComputeAtmosphericSky(vec3 worldDirection, io vec3 transmit) {
-	#ifndef world0
+	#ifndef WORLD_OVERWORLD
 		return vec3(0);
 	#endif
 

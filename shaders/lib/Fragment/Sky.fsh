@@ -102,11 +102,11 @@ vec3 computeEndSky(vec3 wDir){
 }
 
 vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor) {
-	#ifdef worldm1
+	#ifdef WORLD_THE_NETHER
 		return vec3(0);
 	#endif
 
-	#ifdef world1
+	#ifdef WORLD_THE_END
 		return computeEndSky(wDir);
 	#endif
 

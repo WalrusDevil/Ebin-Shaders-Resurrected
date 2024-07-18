@@ -10,7 +10,7 @@ vec3 WaterDepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	
 	float waterDepth = distance(backPos.xyz, frontPos.xyz) * 0.5; // Depth of the water volume
 	
-	if (isEyeInWater == 1) waterDepth = length(frontPos);
+	if (isEyeInWater != 0.0) waterDepth = length(frontPos);
 	
 	// Beer's Law
 	float fogAccum = exp(-waterDepth * 0.05);

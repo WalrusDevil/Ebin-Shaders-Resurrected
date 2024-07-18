@@ -89,6 +89,8 @@ uniform ivec2 eyeBrightnessSmooth;
 
 uniform int isEyeInWater;
 
+uniform vec3 fogColor;
+
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
@@ -219,13 +221,16 @@ void main() {
 	}
 
 
-
+	#ifdef WORLD_OVERWORLD
 	// apply atmospheric fog to solid things
 	if(mask.water == 0.0 && isEyeInWater == 0.0){ // surface not in water
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit);
 		color += fog;
 	}
+	#else
+		color = mix(color, fogColor, vec3(CalculateFogFactor(backPos[1])));
+	#endif
 
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
@@ -236,20 +241,23 @@ void main() {
 
 	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
 
-	if(isEyeInWater == 1.0){ // surface in water
+	if(isEyeInWater != 0.0){ // surface in water
 		color = WaterDepthFog(frontPos[0], backPos[0], color);
 	}
 	
-
+	#ifdef WORLD_OVERWORLD
 	if(mask.transparent == 1.0 && isEyeInWater == 0.0){
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit);
 		color += fog;
 	}
+	#else
+		if(mask.transparent == 1.0) color = mix(color, fogColor, vec3(CalculateFogFactor(frontPos[1])));
+	#endif
 		
-		gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
-		exit();
-	}
+	gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
+	exit();
+}
 
 #endif
 /***********************************************************************/

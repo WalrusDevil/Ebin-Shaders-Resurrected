@@ -1,7 +1,7 @@
 #include "/lib/GLSL_Version.glsl"
 #define gbuffers_shadow
 #define fsh
-#define worldm1
+#define WORLD_THE_NETHER
 #define ShaderStage -1
 
 #include "/gbuffers_discard.glsl"

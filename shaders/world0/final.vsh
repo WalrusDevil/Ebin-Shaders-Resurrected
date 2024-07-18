@@ -1,7 +1,7 @@
 #include "/lib/GLSL_Version.glsl"
 #define final
 #define vsh
-#define world0
+#define WORLD_OVERWORLD
 #define ShaderStage 10
 
 #include "/final.glsl"

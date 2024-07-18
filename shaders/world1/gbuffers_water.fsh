@@ -2,7 +2,7 @@
 #include "/lib/GLSL_Version.glsl"
 #define gbuffers_water
 #define fsh
-#define world1
+#define WORLD_THE_END
 #define ShaderStage -1
 
 
