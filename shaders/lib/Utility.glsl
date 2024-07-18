@@ -176,6 +176,14 @@ float blueNoise(vec2 coord){
 
 // https://blog.demofox.org/2022/01/01/interleaved-gradient-noise-a-different-kind-of-low-discrepancy-sequence/
 // adapted with help from balint and hardester
+float ign(vec2 coord, int frame){
+	int frameMod = frame;
+	frameMod = ((frameMod * frameMod) & 0xFF);
+	float x = coord.x + 5.588238f * frameMod;
+	float y = coord.y + 5.588238f * frameMod;
+	return mod(52.9829189 * mod(dot(vec2(0.06711056, 0.00583715), vec2(x, y)), 1.0), 1.0);
+}
+
 float ign(vec2 coord){
-    return mod(52.9829189 * mod(dot(vec2(0.06711056, 0.00583715), coord), 1.0), 1.0);
+	return ign(coord, frameCounter);
 }

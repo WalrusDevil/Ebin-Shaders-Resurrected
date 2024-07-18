@@ -328,7 +328,7 @@ void main() {
 
 	// float rainNoise = blueNoise(gl_FragCoord.xy + vec2(pow2(frameCounter % 64)));
 	// float rainNoise = bayer8(gl_FragCoord.xy + vec2(pow2(frameCounter % 8)));
-	float rainNoise = ign(floor(gl_FragCoord.xy + vec2(pow2(frameCounter % 8))));
+	float rainNoise = ign(floor(gl_FragCoord.xy));
 	diffuse = vec4(0.9, 0.9, 1.0, step(0.5, rainNoise) * 0.5 * diffuse.a);
 
 	#endif

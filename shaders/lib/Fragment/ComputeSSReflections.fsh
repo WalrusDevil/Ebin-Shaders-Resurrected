@@ -20,23 +20,17 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 
 
 vec3 randomVector(int sampleCount){
-	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y);
-  seed = seed * 720720u + uint(sampleCount);
-	seed += floatBitsToInt(
+	int seed = floatBitsToInt(
 	gbufferModelViewInverse[2].x +
 	gbufferModelViewInverse[2].y +
 	gbufferModelViewInverse[2].z +
 	cameraPosition.x +
 	cameraPosition.y +
 	cameraPosition.z
-	);
+	) + sampleCount;
 
-	#ifdef DYNAMIC_NOISE
-	seed += frameCounter;
-	#endif
-
-	float theta = acos(sqrt(prng(seed)));
-	float phi = 2 * PI * prng(seed+seed);
+	float theta = acos(ign(floor(texcoord * vec2(viewWidth, viewHeight)), seed));
+	float phi = 2 * PI * ign(texcoord * vec2(viewWidth, viewHeight) + vec2(97, 23), seed);
 	return vec3(sin(phi)*cos(theta), sin(phi)*sin(theta), cos(phi));
 }
 
