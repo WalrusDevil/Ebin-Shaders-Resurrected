@@ -56,16 +56,16 @@ option.MULTIPLY_METAL_ALBEDO=Metal Albedo Tinting
 option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo colour. Disable if resource pack does not support this.
 
 option.NORMAL_MAPS=Normal Maps
-option.NORMAL_MAPS.comment=Use normal map data from resource pack
+option.NORMAL_MAPS.comment=Use normal map data from the resource pack.
 
 option.SPECULAR_MAPS=Specular Maps
-option.SPECULAR_MAPS.comment=Use specular map data from resource pack. This has a high performance impact as it uses screen space reflections
+option.SPECULAR_MAPS.comment=Use specular map data from resource pack.
 
 option.EMISSION=Emission
 option.Emission.comment=Makes some objects glow in the dark
 
 option.REFLECTION_SAMPLES=Rough Reflection Samples
-option.REFLECTION_SAMPLES.comment=Number of samples taken for reflections on rough surfaces. Lower sample count = more performance but more noise
+option.REFLECTION_SAMPLES.comment=Number of samples taken for reflections on rough surfaces. §cHigher values will severely impact performance.
 
 option.ROUGH_REFLECTION_THRESHOLD=Rough Reflection Threshold
 option.ROUGH_REFLECTION_THRESHOLD.comment=Materials with a roughness value greater than the threshold will not reflect. Higher values have a higher performance cost and may cause visual noise. §eSetting this to 0 disables rough reflections!§
@@ -148,23 +148,23 @@ option.shadowMapResolution=Shadow Map Resolution
 option.shadowDistance=Shadow Distance
 
 option.SHADOW_MAP_BIAS=Shadow Map Bias
-option.SHADOW_MAP_BIAS.comment=Higher values make nearby shadows look better, at the cost of making farther off shadows look worse
+option.SHADOW_MAP_BIAS.comment=Higher values make nearby shadows look better, at the cost of making farther off shadows look worse.
 
 option.SHADOW_TYPE=Shadow Type
-option.SHADOW_TYPE.comment=Soft Shadows have a medium performance cost!
+option.SHADOW_TYPE.comment=Soft shadows have a constant sample radius/softness. PCSS shadows are softer based on how far away the object casting the shadow is.
 value.SHADOW_TYPE.0=Disabled
 value.SHADOW_TYPE.1=Hard Shadows
 value.SHADOW_TYPE.2=Soft Shadows
 value.SHADOW_TYPE.3=PCSS Shadows
 
 option.SHADOW_SOFTNESS=Soft Shadow Radius
-option.SHADOW_SOFTNESS.comment=Radius in which shadow samples are made. Does not apply to variable penumbra shadows.
+option.SHADOW_SOFTNESS.comment=Radius in which shadow samples are made. Does not apply to PCSS or hard shadows.
 
 option.SHADOW_SAMPLES=Shadow Samples
-option.SHADOW_SAMPLES.comment=Number of shadow samples.
+option.SHADOW_SAMPLES.comment=Number of shadow samples. Only applies to soft and PCSS shadows.
 
 option.TRANSPARENT_SHADOWS=Transparent Shadows
-option.TRANSPARENT_SHADOWS.comment=Allows transparent objects to let light through in their shadows (does not currently support coloured shadows)
+option.TRANSPARENT_SHADOWS.comment=Allows transparent objects to tint the colour of sunlight.
 
 option.PLAYER_SHADOW=Player Shadow
 option.PLAYER_SHADOW.comment=Whether or not the player casts a shadow
@@ -300,9 +300,10 @@ value.DEFORMATION.3=User Deformation
 option.HIDE_ENTITIES=Hide Entities
 
 option.LIGHT_DESATURATION=Light Desaturation
+option.LIGHT_DESATURATION.comment=Reduces saturation on light sources.
 
 option.CLEAR_WATER=Clear Water
-option.CLEAR_WATER.comment=Disables depth based fog on things which are underwater.
+option.CLEAR_WATER.comment=Disables vertical depth based fog on things which are underwater.
 
 option.TELEFOCAL_SHADOWS=Telefocal Shadows
 option.TELEFOCAL_SHADOWS.comment=Focus the shadow quality-center to a coordinate, or the center of your screen
@@ -353,8 +354,8 @@ option.WARM_TORCHLIGHT.comment=Whether the torchlight (and other artificial ligh
 option.COLORED_BLOCKLIGHT=Colored Blocklight
 option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on light sources onscreen.
 
-option.DIRECTIONAL_LIGHTING=Directional Lighting
-option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
+option.DIRECTIONAL_LIGHTING=Directional Lighting §c[EXPERIMENTAL]
+option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks. §cThis feature may not work correctly on NVIDIA GPUs.
 
 
 
@@ -362,4 +363,4 @@ option.LABPBR_VERSION=labPBR Version
 
 option.VERSION=Version
 value.VERSION.0=SOURCE
-value.VERSION.1=latest
+value.VERSION.1=ROLLING
