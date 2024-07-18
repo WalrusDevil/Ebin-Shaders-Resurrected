@@ -59,11 +59,6 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     data.porosity = porositySSS <= 0.25 ? porositySSS * 4.0 : 0.0;
     data.SSS = porositySSS > 0.25 ? (porositySSS - 0.25) * (4.0/3.0) : 0.0;
 
-    if (data.porosity > 0){
-			data.baseReflectance = mix(data.baseReflectance, 0.1 * data.porosity, wetness * vertLightmap.g);
-			data.perceptualSmoothness = mix(data.perceptualSmoothness, (1.0 - data.porosity), wetness * vertLightmap.g);
-		}
-
     data.emission = specularData.a != 1.0 ? specularData.a : 0.0;
     #endif
 
@@ -83,6 +78,8 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
   void injectIPBR(inout PBRData data, float ID){
     PBRData oldData = data;
+
+    bool hasRPPorosity = !(data.SSS == 0.0 && data.porosity == 0.0);
 
     switch(int(ID + 0.5)){
       case IPBR_ICE:
@@ -152,6 +149,13 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         data.perceptualSmoothness = 1.0;
         data.baseReflectance = 0.02;
     }
+
+    if(!hasRPPorosity) data.porosity = 0.2;
+
+    if (data.porosity > 0){
+			data.baseReflectance = mix(data.baseReflectance, 0.02, (1.0 - data.porosity) * wetness * vertLightmap.g);
+			data.perceptualSmoothness = mix(data.perceptualSmoothness, (1.0 - data.porosity), wetness * vertLightmap.g);
+		}
 
   }
 #endif
