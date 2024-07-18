@@ -59,7 +59,7 @@ uniform sampler2D colortex2;
 uniform sampler2D colortex3;
 uniform sampler2D gdepthtex;
 uniform sampler2D noisetex;
-uniform bool isEyeInWater;
+uniform int isEyeInWater;
 uniform vec3 fogColor;
 
 uniform mat4 gbufferModelViewInverse;
@@ -96,8 +96,6 @@ float linearizeDepth(float depth) {
 }
 
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
-	screenPos = screenPos * 2.0 - 1.0;
-	
 	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
 }
 
@@ -195,7 +193,6 @@ void main() {
 	float depth = GetDepth(texcoord);
 	float linearDepth = linearizeDepth(depth);
 	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
-	show(linearDepth);
 	vec3  color = GetColor(texcoord);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
@@ -203,16 +200,6 @@ void main() {
 
 	color = MotionBlur(color, depth);
 	color =   GetBloom(color);
-
-	if (isEyeInWater){ // hacky water fog
-		color *= normalize(vec3(0.215, 0.356, 0.533)); // faint blue tint
-		color = mix(color, waterColor, 1.0 - pow2(-linearDepth + 1));
-	}
-
-	#ifdef worldm1
-		color = mix(color, fogColor, CalculateFogFactor(viewPos));
-	#endif
-
 	color =   Vignette(color);
 	color =    Tonemap(color);
 

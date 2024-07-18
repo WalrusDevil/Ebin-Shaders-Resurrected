@@ -125,6 +125,10 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_SAND:
         applyiPBR(data.SSS, 0.35);
         break;
+
+      case IPBR_LAVA:
+        applyiPBR(data.emission, 1.0);
+        break;
     }
 
     if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));
@@ -142,7 +146,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     #endif
 
     #ifndef HARDCODED_SSS
-      data.SSS = oldData.sss;
+      data.SSS = oldData.SSS;
     #endif
 
     if(int(ID + 0.5) == IPBR_WATER){
