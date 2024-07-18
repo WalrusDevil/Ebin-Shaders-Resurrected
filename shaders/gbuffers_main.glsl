@@ -290,10 +290,6 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
-// #if defined gbuffers_textured
-// /* RENDERTARGETS:0,3,8,11 */
-// #endif
-
 #if defined gbuffers_water
 /* RENDERTARGETS: 0,3,8,13,11 */
 #elif defined gbuffers_textured
@@ -329,12 +325,16 @@ void main() {
 		discard;
 	#endif
 
-	diffuse = vec4(0.9, 1.0, 0.9, float(bayer8(gl_FragCoord.xy + vec2(frameCounter % 2, 0.0)) > 0.9));
+	// float rainNoise = blueNoise(gl_FragCoord.xy + vec2(pow2(frameCounter % 64)));
+	float rainNoise = bayer8(gl_FragCoord.xy + vec2(pow2(frameCounter % 8)));
+	diffuse = vec4(0.9, 1.0, 0.9, float(rainNoise >= 0.5));
 	if(diffuse.a != 1.0){
 		discard;
 	}
-	diffuse.a *= 0.2;
+	diffuse.a *= 0.5;
+
 	#endif
+	
 
 	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);
 	vec3  normal      		= tbnMatrix * PBR.normal;
