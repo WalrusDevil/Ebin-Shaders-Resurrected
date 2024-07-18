@@ -123,6 +123,11 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.SSS, 0.2 * isGrass);
         applyiPBR(data.baseReflectance, 0.03 * isGrass);
         applyiPBR(data.perceptualSmoothness, 0.3 * isGrass * smoothstep(0.16, 0.5, data.hsv.b));
+        break;
+
+      case IPBR_SAND:
+        applyiPBR(data.SSS, 0.35);
+        break;
     }
 
     if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));
