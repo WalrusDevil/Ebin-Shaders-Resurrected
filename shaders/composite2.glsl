@@ -176,11 +176,21 @@ void main() {
 	float baseReflectance = ScreenTex(colortex9).g;
 	float perceptualSmoothness = ScreenTex(colortex9).r;
 	float skyLightmap   = decode4.a;
+	vec4 transparentColor = texture(colortex3, texcoord);
+	mask.transparent = clamp01(step(0.01, transparentColor.a) + mask.water);
+	mask.transparent *= (1.0 - mask.hand);
 
 	
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 	
-	depth0 = (mask.hand > 0.5 ? 0.55 : GetDepth(texcoord));
+	depth0 = GetDepth(texcoord);
+
+	if(depth0 < 0.56){
+		mask.hand = 1.0;
+		depth0 = 0.55;
+	}
+
+	depth1 = (mask.hand > 0.5 ? 0.55 : GetTransparentDepth(texcoord));
 	
 	vec3 normal = DecodeNormal(texture4.g, 11) * mat3(gbufferModelViewInverse);
 	
@@ -188,39 +198,58 @@ void main() {
 	frontPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	frontPos[1] = mat3(gbufferModelViewInverse) * frontPos[0];
 	
-	depth1  = depth0;
 	mat2x3 backPos = frontPos;
-	float  alpha   = 0.0;
-
-	show(mask.transparent);
-	
-	if (mask.transparent > 0.5) {
-		depth1     = (mask.hand > 0.5 ? 0.55 : GetTransparentDepth(texcoord));
-		//alpha      = texture2D(colortex3, texcoord).a;
-		baseReflectance = ScreenTex(colortex8).g;
-		perceptualSmoothness = ScreenTex(colortex8).r;
+	if(mask.transparent == 1.0){
 		backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 		backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
+		baseReflectance = ScreenTex(colortex8).g;
+		perceptualSmoothness = ScreenTex(colortex8).r;
 	}
+	
+	vec3 color = texture(colortex1, texcoord).rgb;
 
 	
-	if (true) { // this stuff has to be in a different scope because it was designed that way
-		vec3 alpha = vec3(1.0);
+
+	// render sky
+	if(depth1 == 1.0) {
+
+		vec3 transmit = vec3(1.0);
+		color = ComputeSky(normalize(frontPos[1]), vec3(0.0), transmit, 1.0, false, 1.0);
+
+	}
+
+
+
+	// apply atmospheric fog to solid things
+	if(mask.water == 0.0 && isEyeInWater == 0.0){ // surface not in water
 		vec3 fogTransmit = vec3(1.0);
-		vec3 color = vec3(0.0);
-		vec3 fog = (depth0 < 1.0) ? SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit) : vec3(0.0);
-		
-		color = fog + ComputeReflectiveSurface(depth0, depth1, frontPos, backPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, mask, alpha, fogTransmit);
-		
-		if (alpha.r + alpha.g + alpha.b > 0.0) {
-			color += ComputeSky(normalize(frontPos[1]), vec3(0.0), alpha, 1.0, false, 1.0);
-		}
+		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit);
+		color += fog;
+	}
+
+	// blend in transparent stuff
+	color = mix(color, transparentColor.rgb, transparentColor.a);
+
+	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // surface in water
+		color = WaterDepthFog(frontPos[0], backPos[0], color);
+	}
+
+	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
+
+	if(isEyeInWater == 1.0){ // surface in water
+		color = WaterDepthFog(frontPos[0], backPos[0], color);
+	}
+	
+
+	if(mask.transparent == 1.0 && isEyeInWater == 0.0){
+		vec3 fogTransmit = vec3(1.0);
+		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit);
+		color += fog;
+	}
 		
 		gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
 		exit();
-		return;
 	}
-}
 
 #endif
 /***********************************************************************/

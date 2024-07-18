@@ -164,7 +164,7 @@ void main() {
 	
 	
 	
-	float depth0 = (mask.hand > 0.5 ? 0.9 : GetDepth(texcoord));
+	float depth0 = (GetDepth(texcoord));
 
 	torchLightmap *= directionalLightingFactor;
 
@@ -193,8 +193,6 @@ void main() {
 
 		texture4.rg = vec2(Encode4x8F(vec4(mask.materialIDs, decode0.r, 0.0, decode0.g)), texture0.g);
 	}
-
-		show(mask.water);
 	
 	vec4 GI; vec2 VL;
 	BilateralUpsample(wNormal, depth1, GI, VL);
@@ -216,7 +214,7 @@ void main() {
 	vec3 diffuse = GetDiffuse(texcoord);
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
-	vec3 sunlight = vec3(ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS));
+	vec3 sunlight = texture(colortex10, texcoord).rgb;
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);
 
 	gl_FragData[0] = vec4(max0(composite), 1.0);

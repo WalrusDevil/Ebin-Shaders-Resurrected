@@ -156,7 +156,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
     if(!hasRPPorosity) data.porosity = 0.2;
 
-    if (data.porosity > 0){
+    if (data.porosity > 0 && int(ID + 0.5) != IPBR_WATER){
 			data.baseReflectance = mix(data.baseReflectance, 0.02, (1.0 - data.porosity) * wetness * vertLightmap.g);
 			data.perceptualSmoothness = mix(data.perceptualSmoothness, (1.0 - data.porosity), wetness * vertLightmap.g);
 		}

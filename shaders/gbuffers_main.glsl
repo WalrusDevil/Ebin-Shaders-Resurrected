@@ -439,8 +439,6 @@ void main() {
 			blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
 		}
 
-		show(blockLightColor);
-
 		if(PBR.emission == 0.0){
 			gl_FragData[4] = vec4(0.0);
 		} else {

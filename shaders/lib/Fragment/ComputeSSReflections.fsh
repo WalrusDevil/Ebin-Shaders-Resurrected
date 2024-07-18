@@ -312,8 +312,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	}
 
 	reflectionSum += sunspot;
-
-	show(sunspot);
 	
 
 

@@ -142,7 +142,6 @@ float ExpToLinearDepth(float depth) {
 #include "/lib/Exit.glsl"
 
 void main() {
-	show(ign(floor(texcoord * vec2(viewWidth, viewHeight))) > 0.5);
 	float depth0 = GetDepth(texcoord);
 	
 #ifndef VOLUMETRIC_LIGHT
@@ -212,7 +211,7 @@ void main() {
 		}
 	#endif
 
-	vec3 sunlight = ComputeSunlight(frontPos[1], normal, geometryNormal, 1.0, SSS);
+	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS);
 
 	gl_FragData[3] = vec4(sunlight, 1.0);
 
