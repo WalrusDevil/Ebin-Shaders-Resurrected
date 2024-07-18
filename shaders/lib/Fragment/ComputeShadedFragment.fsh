@@ -200,7 +200,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
 
-	clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL * 10));
+	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL * 10));
 
 	shading.torchlight *= GI.a;
 

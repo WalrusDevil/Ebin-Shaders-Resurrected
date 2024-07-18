@@ -348,6 +348,10 @@ void main() {
 	directionalLightingFactor = 1.0;
 	#endif
 
+	#ifdef gbuffers_spidereyes
+		PBR.emission = 1.0;
+	#endif
+
 	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
 
