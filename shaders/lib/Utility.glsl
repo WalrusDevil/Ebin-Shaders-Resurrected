@@ -178,7 +178,7 @@ float blueNoise(vec2 coord){
 // adapted with help from balint and hardester
 float ign(vec2 coord, int frame){
 	int frameMod = frame;
-	frameMod = ((frameMod * frameMod) & 0xFF);
+	frameMod = (frameMod & 0x3F);
 	float x = coord.x + 5.588238f * frameMod;
 	float y = coord.y + 5.588238f * frameMod;
 	return mod(52.9829189 * mod(dot(vec2(0.06711056, 0.00583715), vec2(x, y)), 1.0), 1.0);
