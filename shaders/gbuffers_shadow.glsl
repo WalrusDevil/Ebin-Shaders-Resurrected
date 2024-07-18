@@ -27,6 +27,8 @@ uniform mat4 shadowProjectionInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
 
+uniform float entityId;
+
 uniform vec3 cameraPosition;
 
 uniform float sunAngle;
@@ -156,10 +158,7 @@ void main() {
 	
 	color.rgb *= clamp01(vertNormal.z);
 	
-	if (   mc_Entity.x == 0 // If the vertex is an entity
-		&& abs(position.x) < 1.2
-		&& position.y > -0.1 &&  position.y < 2.2 // Check if the vertex is A bounding box around the player, so that at least non-near entities still cast shadows
-		&& abs(position.z) < 1.2) {
+	if (entityId == 1) {
 	#ifndef PLAYER_SHADOW
 		color.a = 0.0;
 	#elif !defined PLAYER_GI_BOUNCE
