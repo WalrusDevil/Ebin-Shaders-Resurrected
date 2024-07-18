@@ -188,13 +188,14 @@ uniform vec3 cameraPosition;
 uniform vec3 eyePosition;
 
 uniform float nightVision;
-uniform float viewHeight;
 
 uniform ivec2 eyeBrightnessSmooth;
 
 uniform int isEyeInWater;
 uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
+uniform float viewWidth;
+uniform float viewHeight;
 
 uniform ivec2 atlasSize;
 
@@ -317,7 +318,7 @@ void main() {
 		{ discard; }
 	
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
-	vec4  diffuse     		= GetDiffuse(coord); if (diffuse.a < 0.1) { discard; }
+	vec4  diffuse     		= GetDiffuse(coord);
 
 	// so, having full transparent rain messes with fog, instead we dither it. Thanks joyouscreeper for this mildly criminal idea which works better than could be hoped
 	#ifdef gbuffers_weather
@@ -326,14 +327,13 @@ void main() {
 	#endif
 
 	// float rainNoise = blueNoise(gl_FragCoord.xy + vec2(pow2(frameCounter % 64)));
-	float rainNoise = bayer8(gl_FragCoord.xy + vec2(pow2(frameCounter % 8)));
-	diffuse = vec4(0.9, 1.0, 0.9, float(rainNoise >= 0.5));
-	if(diffuse.a != 1.0){
-		discard;
-	}
-	diffuse.a *= 0.5;
+	// float rainNoise = bayer8(gl_FragCoord.xy + vec2(pow2(frameCounter % 8)));
+	float rainNoise = ign(floor(gl_FragCoord.xy + vec2(pow2(frameCounter % 8))));
+	diffuse = vec4(0.9, 0.9, 1.0, step(0.5, rainNoise) * 0.5 * diffuse.a);
 
 	#endif
+
+	 if (diffuse.a < 0.1) { discard; }
 	
 
 	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);

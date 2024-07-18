@@ -142,6 +142,7 @@ float ExpToLinearDepth(float depth) {
 #include "/lib/Exit.glsl"
 
 void main() {
+	show(ign(floor(texcoord * vec2(viewWidth, viewHeight))) > 0.5);
 	float depth0 = GetDepth(texcoord);
 	
 #ifndef VOLUMETRIC_LIGHT
