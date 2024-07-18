@@ -129,6 +129,11 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_LAVA:
         applyiPBR(data.emission, 1.0);
         break;
+
+      case IPBR_GEM:
+        applyiPBR(data.SSS, 0.5);
+        applyiPBR(data.baseReflectance, 0.03);
+        applyiPBR(data.perceptualSmoothness, 1.0);
     }
 
     if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));

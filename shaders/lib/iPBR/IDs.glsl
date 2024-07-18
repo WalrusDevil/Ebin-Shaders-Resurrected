@@ -40,6 +40,7 @@
 #define IPBR_GOLD 3002
 #define IPBR_GLASS 3003
 #define IPBR_COPPER 3004
+#define IPBR_GEM 3005
 
 
 #endif
