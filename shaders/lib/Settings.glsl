@@ -165,7 +165,7 @@ const float zShrink = 4.0;
 #define HARDCODED_EMISSION
 #define HARDCODED_SPECULAR
 #define HARDCODED_SSS
-#define ROUGH_REFLECTION_THRESHOLD 0.2 // [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define ROUGH_REFLECTION_THRESHOLD 0.3 // [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 #define REFLECTION_SAMPLES 8 // [1 2 4 8 16 32 64]
 
@@ -174,6 +174,4 @@ const float zShrink = 4.0;
 
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
 
-//#define DYNAMIC_NOISE
-
-//#define WATER_BEHIND_TRANSLUCENTS
+#define WATER_BEHIND_TRANSLUCENTS

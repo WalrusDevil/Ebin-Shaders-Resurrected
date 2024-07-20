@@ -68,6 +68,7 @@ uniform sampler2D shadowcolor0;
 uniform mat4 gbufferModelView;
 uniform sampler2D colortex13;
 uniform usampler2D waterDepthTex;
+uniform usampler2D waterNormalTex;
 
 uniform vec3 shadowLightPosition;
 
@@ -155,7 +156,6 @@ void main() {
 
 	float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
 
-	// if(waterDepth > depth1) waterDepth = depth1;
 
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 	
@@ -211,33 +211,12 @@ void main() {
 		color = mix(color, fogColor, vec3(CalculateFogFactor(backPos[1])));
 	#endif
 
+
 	#ifdef WATER_BEHIND_TRANSLUCENTS
 	if(depth1 > waterDepth && waterDepth != 0.0 && waterDepth > depth0 && isEyeInWater == 0.0){ // render water behind translucents when necessary
-
 		color = waterdepthFog(waterPos[0], backPos[0], color);
-
-		vec3 dPdx = dFdx(waterPos[1]);
-		vec3 dPdy = dFdy(waterPos[1]);
-
-		const float gradientThreshold = 1.0;
-
-		vec3 waterTangent = normalize(dPdx);
-		vec3 waterBitangent = normalize(dPdy);
-
-		vec3 waterGeometryNormal = normalize(cross(waterTangent, waterBitangent));
-
-		mat3 waterTBN = mat3(
-			waterTangent,
-			waterBitangent,
-			waterGeometryNormal
-		);
-
-
-		vec3 waterNormal = waterTBN * ComputeWaveNormals(waterPos[1], waterTBN[2]);
+		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));
 		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
-
-		
-		
 	} else
 	#endif
 	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // render water fog directly

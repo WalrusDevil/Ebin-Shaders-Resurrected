@@ -228,6 +228,7 @@ float LOD;
 	
 #ifdef gbuffers_water
 	layout (r32ui) uniform uimage2D waterdepth;
+	layout (r32ui) uniform uimage2D waternormal;
 
 	#define GetTexture(x, y) texture2D(x, y)
 #endif
@@ -369,18 +370,20 @@ void main() {
 		
 
 		if (materialIDs == IPBR_WATER) {
-			float depth = gl_FragCoord.z;
-			uint depthInt = floatBitsToUint(depth);
-
-			// TODO: BITPACK NORMALS
-
-			uint oldDepth = imageAtomicMin(waterdepth, ivec2(floor(gl_FragCoord.xy)), depthInt);	
-
-			if(oldDepth == 0){
-				imageStore(waterdepth, ivec2(floor(gl_FragCoord.xy)), uvec4(depthInt, uvec3(0)));
-			}
-
 			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
+
+			#ifdef WATER_BEHIND_TRANSLUCENTS
+				uint normalInt = floatBitsToUint(EncodeNormal(normal, 11));
+				float depth = gl_FragCoord.z;
+				uint depthInt = floatBitsToUint(depth);
+				uint oldDepth = imageAtomicMin(waterdepth, ivec2(floor(gl_FragCoord.xy)), depthInt);	
+
+				if (oldDepth > depthInt){ // we wrote the new depth, so write the normal
+					imageStore(waternormal, ivec2(floor(gl_FragCoord.xy)), uvec4(normalInt, uvec3(0)));
+				}
+			#endif
+
+			
 			diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
 			mask.water  = 1.0;
 		}
