@@ -184,3 +184,9 @@ float ign(vec2 coord, int frame){
 	return ign(coord + 5.588238 * (frame & 63));
 }
 
+#ifdef fsh
+float linearizeDepth(float depth) {
+	return (2.0 * near) / (far + near - depth * (far - near));
+}
+#endif
+

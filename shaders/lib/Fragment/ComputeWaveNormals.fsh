@@ -126,11 +126,15 @@ vec2 GetWaveDifferentials(vec2 coord, cfloat scale) { // Get finite wave differe
 	return a - vec2(aX, aY);
 }
 
-#if defined gbuffers_water
+#if defined gbuffers_water || defined composite2
 vec2 GetParallaxWave(vec2 worldPos, float angleCoeff) {
 #ifndef WATER_PARALLAX
 	return worldPos;
 #endif
+
+#ifdef composite2
+	return worldPos;
+#else
 	
 	cfloat parallaxDist = TERRAIN_PARALLAX_DISTANCE * 5.0;
 	cfloat distFade     = parallaxDist / 3.0;
@@ -165,11 +169,16 @@ vec2 GetParallaxWave(vec2 worldPos, float angleCoeff) {
 	}
 	
 	return worldPos;
+	#endif
 }
 
+#ifndef composite2
 vec3 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 	return projMAD(projMatrix, viewSpacePosition) / -viewSpacePosition.z * 0.5 + 0.5;
 }
+#else
+vec3 worldDisplacement = vec3(0.0);
+#endif
 
 vec3 ComputeWaveNormals(vec3 worldSpacePosition, vec3 flatWorldNormal) {
 	#ifndef WAVING_WATER
@@ -179,16 +188,18 @@ vec3 ComputeWaveNormals(vec3 worldSpacePosition, vec3 flatWorldNormal) {
 	
 	SetupWaveFBM();
 	
-	float angleCoeff  = dotNorm(-position[1].xyz, flatWorldNormal);
-	      angleCoeff /= clamp(length(position[1]) * 0.05, 1.0, 10.0);
+	float angleCoeff  = dotNorm(-worldSpacePosition.xyz, flatWorldNormal);
+	      angleCoeff /= clamp(length(worldSpacePosition) * 0.05, 1.0, 10.0);
 	      angleCoeff  = clamp01(angleCoeff * 2.5);
 	      angleCoeff  = sqrt(angleCoeff);
 	
-	vec3 worldPos    = position[1] + cameraPos - worldDisplacement;
+	vec3 worldPos    = worldSpacePosition + cameraPos - worldDisplacement;
 	     worldPos.xz = worldPos.xz + worldPos.y;
 	
+	#ifndef composite2
 	worldPos.xz = GetParallaxWave(worldPos.xz, angleCoeff);
-	
+	#endif
+
 	vec2 diff = GetWaveDifferentials(worldPos.xz, 0.1) * angleCoeff;
 	
 	return vec3(diff, sqrt(1.0 - length2(diff)));

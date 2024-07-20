@@ -42,6 +42,9 @@ const bool colortex3MipmapEnabled = true;
 uniform sampler2D colortex3;
 uniform sampler2D noisetex;
 
+uniform float near;
+uniform float far;
+
 uniform vec2 pixelSize;
 
 #include "/lib/Settings.glsl"

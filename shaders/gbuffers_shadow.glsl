@@ -185,8 +185,8 @@ void main() {
 	vec4 diffuse = color * texture2D(tex, texcoord);
 
 	if (materialIDs == IPBR_WATER) {
-		discard;
-		 diffuse = vec4(0.215, 0.356, 0.533, 0.75); 
+		// discard;
+		diffuse = vec4(0.215, 0.356, 0.533, 0.75); 
 	}
 	
 	gl_FragData[0] = diffuse;

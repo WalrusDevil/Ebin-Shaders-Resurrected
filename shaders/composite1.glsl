@@ -144,7 +144,7 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 #include "/lib/Fragment/BilateralUpsample.fsh"
 
 #include "/lib/Misc/CalculateFogfactor.glsl"
-#include "/lib/Fragment/WaterDepthFog.fsh"
+#include "/lib/Fragment/waterdepthFog.fsh"
 
 /* RENDERTARGETS:1,4,6,5 */
 #include "/lib/Exit.glsl"
@@ -216,6 +216,8 @@ void main() {
 	
 	vec3 sunlight = texture(colortex10, texcoord).rgb;
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);
+
+	show(composite);
 
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	

@@ -67,6 +67,7 @@ uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform mat4 gbufferModelView;
 uniform sampler2D colortex13;
+uniform usampler2D waterDepthTex;
 
 uniform vec3 shadowLightPosition;
 
@@ -105,9 +106,7 @@ vec3 GetColor(vec2 coord) {
 	return texture2D(colortex1, coord).rgb;
 }
 
-float linearizeDepth(float depth) {
-	return (2.0 * near) / (far + near - depth * (far - near));
-}
+
 
 float GetDepth(vec2 coord) {
 	return texture2D(gdepthtex, coord).x;
@@ -130,44 +129,16 @@ vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 float depth0;
 float depth1;
 
-#include "/lib/Fragment/WaterDepthFog.fsh"
+#include "/lib/Fragment/waterdepthFog.fsh"
 #include "/lib/Fragment/ComputeSunlight.fsh"
 #include "/lib/Fragment/Sky.fsh"
 #include "/lib/Fragment/ComputeSSReflections.fsh"
+#include "/lib/Fragment/ComputeWaveNormals.fsh"
 
 
 
 /* DRAWBUFFERS:32 */
 #include "/lib/Exit.glsl"
-
-vec3 ComputeReflectiveSurface(float depth0, float depth1, mat2x3 frontPos, mat2x3 backPos, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap, Mask mask, out vec3 alpha, vec3 transmit) {
-	vec3 color = vec3(0.0);
-	
-	alpha = vec3(1.0);
-	
-	if (mask.transparent == 1.0) {
-		color += texture2D(colortex3, texcoord).rgb;
-		alpha *= clamp01(1.0 - texture2D(colortex3, texcoord).a);
-	}
-
-	if (depth1 < 1.0) {
-		if (mask.water == 1.0)
-			WaterDepthFog(frontPos[0], backPos[0] * (1-isEyeInWater), alpha); // surface, behind water
-		
-		color += texture2D(colortex1, texcoord).rgb * alpha;
-		
-		alpha *= 0.0;
-	}
-
-	if (mask.water == 1.0 && depth1 >= 1.0 && isEyeInWater == 0) // sky, behind water
-		alpha *= 0.1;
-
-	if (depth0 < 1.0)
-		ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
-	
-	return color * transmit;
-	
-}
 
 void main() {
 	vec2 texture4 = ScreenTex(colortex4).rg;
@@ -182,7 +153,10 @@ void main() {
 	mask.transparent = clamp01(step(0.01, transparentColor.a) + mask.water);
 	mask.transparent *= (1.0 - mask.hand);
 
-	
+	float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
+
+	// if(waterDepth > depth1) waterDepth = depth1;
+
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 	
 	depth0 = GetDepth(texcoord);
@@ -207,6 +181,11 @@ void main() {
 		baseReflectance = ScreenTex(colortex8).g;
 		perceptualSmoothness = ScreenTex(colortex8).r;
 	}
+
+	mat2x3 waterPos;
+	waterPos[0] = CalculateViewSpacePosition(vec3(texcoord, waterDepth > depth1 ? depth1 : waterDepth));
+	
+	waterPos[1] = mat3(gbufferModelViewInverse) * waterPos[0];
 	
 	vec3 color = texture(colortex1, texcoord).rgb;
 
@@ -223,7 +202,7 @@ void main() {
 
 	#ifdef WORLD_OVERWORLD
 	// apply atmospheric fog to solid things
-	if(mask.water == 0.0 && isEyeInWater == 0.0){ // surface not in water
+	if(mask.water == 0.0 && isEyeInWater == 0.0){ // surface not behind water so apply atmospheric fog
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit);
 		color += fog;
@@ -232,17 +211,50 @@ void main() {
 		color = mix(color, fogColor, vec3(CalculateFogFactor(backPos[1])));
 	#endif
 
+	#ifdef WATER_BEHIND_TRANSLUCENTS
+	if(depth1 > waterDepth && waterDepth != 0.0 && waterDepth > depth0 && isEyeInWater == 0.0){ // render water behind translucents when necessary
+
+		color = waterdepthFog(waterPos[0], backPos[0], color);
+
+		vec3 dPdx = dFdx(waterPos[1]);
+		vec3 dPdy = dFdy(waterPos[1]);
+
+		const float gradientThreshold = 1.0;
+
+		vec3 waterTangent = normalize(dPdx);
+		vec3 waterBitangent = normalize(dPdy);
+
+		vec3 waterGeometryNormal = normalize(cross(waterTangent, waterBitangent));
+
+		mat3 waterTBN = mat3(
+			waterTangent,
+			waterBitangent,
+			waterGeometryNormal
+		);
+
+
+		vec3 waterNormal = waterTBN * ComputeWaveNormals(waterPos[1], waterTBN[2]);
+		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
+
+		
+		
+	} else
+	#endif
+	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // render water fog directly
+		color = waterdepthFog(frontPos[0], backPos[0], color);
+
+	}
+
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
 
-	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // surface in water
-		color = WaterDepthFog(frontPos[0], backPos[0], color);
-	}
+
 
 	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
 
 	if(isEyeInWater != 0.0){ // surface in water
-		color = WaterDepthFog(frontPos[0], backPos[0], color);
+		show(length(frontPos[0]) / far);
+		color = waterdepthFog(frontPos[0], backPos[0], color);
 	}
 	
 	#ifdef WORLD_OVERWORLD

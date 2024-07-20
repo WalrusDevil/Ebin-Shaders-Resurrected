@@ -75,6 +75,7 @@ uniform sampler2D shadowcolor0;
 uniform sampler2D colortex11;
 uniform sampler2D colortex12;
 uniform sampler2D depthtex0;
+uniform usampler2D waterDepthTex;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -166,6 +167,7 @@ void main() {
 	float SSS				= clamp01(decode4b.g);
 	
 	float depth1 = (mask.hand > 0.5 ? depth0 : textureRaw(depthtex1, texcoord).x);
+	show(depth1);
 	
 	mat2x3 backPos;
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
@@ -190,6 +192,10 @@ void main() {
 	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
 	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
 	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
+
+	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS);
+	gl_FragData[3] = vec4(sunlight, 1.0);
+	show(sunlight);
 	
 	float AO = ComputeSSAO(backPos[0], wNormal * mat3(gbufferModelViewInverse));
 	
@@ -211,9 +217,10 @@ void main() {
 		}
 	#endif
 
-	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS);
+	
+	
 
-	gl_FragData[3] = vec4(sunlight, 1.0);
+	
 
 	
 	

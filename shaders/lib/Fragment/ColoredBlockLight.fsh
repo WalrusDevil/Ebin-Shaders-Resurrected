@@ -28,10 +28,6 @@ vec2 reproject(vec3 pos) {
       return vec2(cos(n), sin(n)) * x * x;
   }
 
-  float linearizeDepth(float depth) {
-   return (2.0 * near) / (far + near - depth * (far - near));
-  }
-
   vec3 calculateColoredBlockLight(vec2 coord, float z, float dither) {
     vec2 prevCoord = reproject(vec3(coord, z));
     float lz = linearizeDepth(z);

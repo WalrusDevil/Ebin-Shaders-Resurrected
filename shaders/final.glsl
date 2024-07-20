@@ -91,10 +91,6 @@ float GetDepth(vec2 coord) {
 	return texture2D(gdepthtex, coord).x;
 }
 
-float linearizeDepth(float depth) {
-   return (2.0 * near) / (far + near - depth * (far - near));
-}
-
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
 	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
 }
@@ -186,7 +182,7 @@ vec3 Vignette(vec3 color) {
 
 #include "/lib/Exit.glsl"
 
-#include "/lib/Fragment/WaterDepthFog.fsh"
+#include "/lib/Fragment/waterdepthFog.fsh"
 #include "/lib/Misc/CalculateFogfactor.glsl"
 
 void main() {

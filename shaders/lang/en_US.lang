@@ -23,6 +23,7 @@ screen.RESOURCE_PACK=Resource Pack Settings
 screen.REFLECTIONS=Reflection Settings
 screen.BLOOM=Bloom Settings
 screen.MOTION_BLUR=Motion Blur Settings
+screen.EXPERIMENTAL=Experiments
 
 
 profile.POTATO=§6Potato
@@ -354,10 +355,11 @@ option.WARM_TORCHLIGHT.comment=Whether the torchlight (and other artificial ligh
 option.COLORED_BLOCKLIGHT=Colored Blocklight
 option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on light sources onscreen.
 
-option.DIRECTIONAL_LIGHTING=Directional Lighting §c[EXPERIMENTAL]
+option.DIRECTIONAL_LIGHTING=Directional Lighting
 option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks. §cThis feature may not work correctly on NVIDIA GPUs.
 
-
+option.WATER_BEHIND_TRANSLUCENTS=Render Water Behind Translucents
+option.WATER_BEHIND_TRANSLUCENTS.comment=Generate a separate depth buffer for water and reconstruct normals for reflections from the depth. §cThis feature currently has serious artifacts.
 
 option.LABPBR_VERSION=labPBR Version
 

@@ -200,7 +200,10 @@ uniform float viewHeight;
 uniform ivec2 atlasSize;
 
 uniform float wetness;
+uniform float near;
 uniform float far;
+
+
 
 #include "/lib/Settings.glsl"
 #include "/lib/Debug.glsl"
@@ -223,10 +226,9 @@ float LOD;
 	#define GetTexture(x, y) texture2D(x, y)
 #endif
 	
-// if I change the above if statement to an 'if defined', the terrain parallax option disappears from the options menu
-// so instead I'm just doing the check here
-// because parallax is disabled on transparent stuff, the LOD causes weird artefacts on things like nether portals
 #ifdef gbuffers_water
+	layout (r32ui) uniform uimage2D waterdepth;
+
 	#define GetTexture(x, y) texture2D(x, y)
 #endif
 
@@ -278,9 +280,6 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 
 	lightDir = normalize(faceNormal * lightmap + lightDir);
 
-	
-
-
 	float directionalLighting = dot(normalize((faceNormal * lightmap + lightDir * 2.0)), mappedNormal);
 	return clamp01(directionalLighting);
 }
@@ -302,6 +301,7 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 #include "/lib/Exit.glsl"
 
 void main() {
+
 
 	PBRData PBR;
 	PBR = getRawPBRData(texcoord);
@@ -352,8 +352,12 @@ void main() {
 		PBR.emission = 1.0;
 	#endif
 
+	
+
 	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
+
+		
 
 		#ifdef gbuffers_textured
 		PBR.perceptualSmoothness = 0.0;
@@ -362,12 +366,27 @@ void main() {
 		#endif
 
 		#ifdef gbuffers_water
+		
+
 		if (materialIDs == IPBR_WATER) {
+			float depth = gl_FragCoord.z;
+			uint depthInt = floatBitsToUint(depth);
+
+			// TODO: BITPACK NORMALS
+
+			uint oldDepth = imageAtomicMin(waterdepth, ivec2(floor(gl_FragCoord.xy)), depthInt);	
+
+			if(oldDepth == 0){
+				imageStore(waterdepth, ivec2(floor(gl_FragCoord.xy)), uvec4(depthInt, uvec3(0)));
+			}
+
 			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
 			diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
 			mask.water  = 1.0;
 		}
 		#endif
+
+
 		
 		
 		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, PBR.SSS));
