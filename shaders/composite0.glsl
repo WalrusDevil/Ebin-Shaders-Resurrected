@@ -151,7 +151,7 @@ void main() {
 	
 	
 #ifdef COMPOSITE0_NOISE
-	vec2 noise2D = GetDitherred2DNoise(texcoord * COMPOSITE0_SCALE, 4.0) * 2.0 - 1.0;
+	vec2 noise2D = vec2(ign(floor(gl_FragCoord.xy), 4), ign(floor(gl_FragCoord.xy), 5));
 #else
 	vec2 noise2D = vec2(0.0);
 #endif
