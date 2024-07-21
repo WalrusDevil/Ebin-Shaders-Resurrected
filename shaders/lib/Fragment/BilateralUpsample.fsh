@@ -5,10 +5,6 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 	GI = vec4(0.0, 0.0, 0.0, 1.0);
 	VL = vec2(1.0);
 	
-#if !(defined COMPOSITE0_ENABLED)
-	return;
-#endif
-	
 	vec2 scaledCoord = texcoord * COMPOSITE0_SCALE;
 	
 	float expDepth = ExpToLinearDepth(depth);

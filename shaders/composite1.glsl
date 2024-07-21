@@ -217,8 +217,6 @@ void main() {
 	vec3 sunlight = texture(colortex10, texcoord).rgb;
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);
 
-	show(composite);
-
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	
 	exit();

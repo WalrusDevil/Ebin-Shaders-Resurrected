@@ -65,7 +65,7 @@ const float zShrink = 4.0;
 #define AMBIENT_LIGHT_LEVEL 0.5 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define TORCH_LIGHT_LEVEL   1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define SKY_BRIGHTNESS      1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
-// #define DIRECTIONAL_LIGHTING
+#define DIRECTIONAL_LIGHTING
 
 #define SHADOW_MAP_BIAS 0.80 // [0.00 0.60 0.70 0.80 0.85 0.90 0.95]
 #define SHADOW_TYPE 3 // [0 1 2 3]
