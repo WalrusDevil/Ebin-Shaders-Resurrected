@@ -356,10 +356,13 @@ option.COLORED_BLOCKLIGHT=Colored Blocklight
 option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on light sources onscreen.
 
 option.DIRECTIONAL_LIGHTING=Directional Lighting
-option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks. §cThis feature may not work correctly on NVIDIA GPUs.
+option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
 
 option.WATER_BEHIND_TRANSLUCENTS=Render Water Behind Translucents
 option.WATER_BEHIND_TRANSLUCENTS.comment=Generate a separate depth buffer for water and reconstruct normals for reflections from the depth. §cThis feature currently has mild artifacts.
+
+option.WATER_REFRACTION=Water Refraction
+option.WATER_REFRACTION.comment=Distort stuff visible through water due to the refraction of light. §cCurrently, only the sky is refracted. This looks pretty weird, so it's disabled.
 
 option.LABPBR_VERSION=labPBR Version
 

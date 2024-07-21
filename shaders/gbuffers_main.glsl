@@ -240,7 +240,8 @@ vec4 GetDiffuse(vec2 coord) {
 
 bool handLight = false;
 
-// basically designed by CyanEmber and Balint
+// adapted from NinjaMike's method
+// https://discord.com/channels/237199950235041794/525510804494221312/1004459522095579186
 float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worldPos, float lightmap){
 	vec3 viewPos = worldPos * mat3(gbufferModelViewInverse);
 	vec3 viewNormal = mappedNormal * mat3(gbufferModelViewInverse);

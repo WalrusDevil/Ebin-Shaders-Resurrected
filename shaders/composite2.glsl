@@ -199,7 +199,9 @@ void main() {
 		vec3 incident = normalize(frontPos[1]);
 		vec3 refracted = incident;
 		if(mask.water > 0.5){
+			#ifdef WATER_REFRACTION
 			refracted = refract(incident, normalize(mat3(gbufferModelViewInverse) * normal), (1.0 / 1.33));
+			#endif
 		}
 
 		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
