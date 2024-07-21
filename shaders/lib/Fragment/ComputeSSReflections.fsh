@@ -168,6 +168,24 @@ float ggx (vec3 N, vec3 V, vec3 L, float roughness) { // trowbridge-reitz
 	return alpha / (PI * pow2(distr));
 }
 
+float convertWaterIOR(float f){ // f can be f0 or f82 or any other f really
+	if(isEyeInWater != 1.0){
+		return f;
+	}
+	float sqrtf = sqrt(f);
+	float IOR = (sqrtf + 1)/(1 - sqrtf);
+	return pow((1.33 - IOR) / (1.33 + IOR), 2);
+}
+
+vec3 convertWaterIOR(vec3 f){ // f can be f0 or f82 or any other f really
+	if(isEyeInWater != 1.0){
+		return f;
+	}
+	vec3 sqrtf = sqrt(f);
+	vec3 IOR = (sqrtf + 1)/(1 - sqrtf);
+	return pow((1.33 - IOR) / (1.33 + IOR), vec3(2));
+}
+
 void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap) {
 	if (baseReflectance == 0) return;
 
@@ -190,10 +208,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	vec3 fresnel;
 
 	if (baseReflectance < (229.0 / 255.0)) {
-		fresnel = vec3(baseReflectance + (1 - (baseReflectance)) * pow(1 - nDotV, 5)); // schlick approximation
+		float f0 = convertWaterIOR(baseReflectance);
+		fresnel = vec3(baseReflectance + (1 - f0) * pow(1 - nDotV, 5)); // schlick approximation
 	} else {
-		vec3 f0 = getMetalf0(baseReflectance, color); // lazanyi 2019 schlick
-		vec3 f82 = getMetalf82(baseReflectance, color);
+		vec3 f0 = convertWaterIOR(getMetalf0(baseReflectance, color)); // lazanyi 2019 schlick
+		vec3 f82 = convertWaterIOR(getMetalf82(baseReflectance, color));
 		vec3 a = 17.6513846 * (f0 - f82) + 8.16666667 * (1.0 - f0);
 		float m = pow(1 - nDotV, 5);
 		fresnel = clamp01(f0 + (1.0 - f0) * m - a * nDotV * (m - m * nDotV));
@@ -248,7 +267,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		vec3 in_scatter = vec3(0.0);
 
 		
-		
 		if (hit) {
 			reflection = GetColor(refCoord.st);
 			
@@ -262,6 +280,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			fogFactor        = clamp01(fogFactor + pow(1.0 - edge, 10.0));
 			
 			#ifndef WORLD_THE_NETHER
+			
 			in_scatter = SkyAtmosphereToPoint(position[1], mat3(gbufferModelViewInverse) * refVPos, transmit);
 			#endif
 		} else {
