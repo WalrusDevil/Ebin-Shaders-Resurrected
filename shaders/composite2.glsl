@@ -195,7 +195,14 @@ void main() {
 	if(depth1 == 1.0) {
 
 		vec3 transmit = vec3(1.0);
-		color = ComputeSky(normalize(frontPos[1]), vec3(0.0), transmit, 1.0, false, 1.0);
+
+		vec3 incident = normalize(frontPos[1]);
+		vec3 refracted = incident;
+		if(mask.water > 0.5){
+			refracted = refract(incident, normalize(mat3(gbufferModelViewInverse) * normal), (1.0 / 1.33));
+		}
+
+		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
 
 	}
 
@@ -217,6 +224,9 @@ void main() {
 		color = waterdepthFog(waterPos[0], backPos[0], color);
 		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));
 		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
+		vec3 fogTransmit = vec3(1.0);
+		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), waterPos[1], fogTransmit);
+		color += fog;
 	} else
 	#endif
 	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // render water fog directly
@@ -232,7 +242,6 @@ void main() {
 	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
 
 	if(isEyeInWater != 0.0){ // surface in water
-		show(length(frontPos[0]) / far);
 		color = waterdepthFog(frontPos[0], backPos[0], color);
 	}
 	
