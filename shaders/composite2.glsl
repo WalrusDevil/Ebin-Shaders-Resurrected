@@ -188,6 +188,28 @@ void main() {
 	waterPos[1] = mat3(gbufferModelViewInverse) * waterPos[0];
 	
 	vec3 color = texture(colortex1, texcoord).rgb;
+	
+
+	#ifdef WATER_REFRACTION
+	if(mask.water > 0.5){
+		vec3 refracted = normalize(refract(frontPos[0], normal, isEyeInWater == 1.0 ? 1.33 : (1.0 / 1.33)));
+
+		vec3 refractedPos;
+		bool refractHit = ComputeSSRaytrace(frontPos[0], refracted, refractedPos);
+
+		if(refractHit){
+			depth1 = refractedPos.z;
+			backPos[0] = CalculateViewSpacePosition(refractedPos);
+			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
+			color = texture(colortex1, refractedPos.xy).rgb;
+		} else {
+			color = waterColor;
+			depth1 = 1.0;
+			backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
+			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
+		}
+	}
+	#endif
 
 	
 
@@ -200,7 +222,7 @@ void main() {
 		vec3 refracted = incident;
 		if(mask.water > 0.5){
 			#ifdef WATER_REFRACTION
-			refracted = refract(incident, normalize(mat3(gbufferModelViewInverse) * normal), (1.0 / 1.33));
+			refracted = refract(incident, normalize(mat3(gbufferModelViewInverse) * normal), isEyeInWater == 1.0 ? 1.33 : 1.0 / 1.33);
 			#endif
 		}
 
@@ -208,10 +230,17 @@ void main() {
 
 	}
 
+	if(isEyeInWater == 1.0 && mask.water > 0.5) {
+		float nDotV = dot(normal, normalize(-frontPos[0]));
+		float f0 = convertWaterIOR(0.02);
+		float fresnel = f0 + (1 - f0) * pow(1 - nDotV, 5);
+		color = mix(color, waterColor, fresnel);
+		show(fresnel);
+	}
 
 	#ifdef WORLD_OVERWORLD
 	// apply atmospheric fog to solid things
-	if(mask.water == 0.0 && isEyeInWater == 0.0){ // surface not behind water so apply atmospheric fog
+	if(((mask.water == 0.0 && isEyeInWater == 0.0) || (mask.water == 1.0 && isEyeInWater == 1.0)) && depth1 != 1.0){ // surface not behind water so apply atmospheric fog
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit);
 		color += fog;

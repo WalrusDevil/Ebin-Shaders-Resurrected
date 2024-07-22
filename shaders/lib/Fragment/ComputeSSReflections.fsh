@@ -48,10 +48,6 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	//	if (any(greaterThan(abs(screenPos.st - 0.5), vec2(0.5))) || -ray.z > maxRayDepth) return false;
 		
 		screenPos.z = texture2D(depthtex1, screenPos.st).x;
-		
-		if (screenPos.z < 0.56){ // don't show hand in reflections
-			return false;
-		}
 
 		float depth = screenPos.z * zMAD.x + zMAD.y;
 		
@@ -209,7 +205,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	if (baseReflectance < (229.0 / 255.0)) {
 		float f0 = convertWaterIOR(baseReflectance);
-		fresnel = vec3(baseReflectance + (1 - f0) * pow(1 - nDotV, 5)); // schlick approximation
+		fresnel = vec3(f0 + (1 - f0) * pow(1 - nDotV, 5)); // schlick approximation
 	} else {
 		vec3 f0 = convertWaterIOR(getMetalf0(baseReflectance, color)); // lazanyi 2019 schlick
 		vec3 f82 = convertWaterIOR(getMetalf82(baseReflectance, color));
@@ -285,23 +281,22 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			#endif
 		} else {
 			
-			#ifndef WORLD_THE_NETHER
+			#ifdef WORLD_THE_NETHER
+				reflection = mix(color, vec3(0.02, 0.02, 0), 0.5);
+			#else
 			transmit = vec3(1.0);
 
 			float sunFactor = 0.0;
-			// if(roughness == 0.0){
-			// 	sunFactor = 1.0 * 20; // I hate this
-			// }
-
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor) * skyLightmap;
-			
-			
-	
-			//length(ComputeSunlight(position[1], GetLambertianShading(normal) * skyLightmap));
+			in_scatter *= (1.0 - clamp01(isEyeInWater));
 
-			in_scatter *= (1.0 - isEyeInWater);
-			#else
-			reflection = mix(color, vec3(0.02, 0.02, 0), 0.5);
+			if(isEyeInWater == 1.0){
+				reflection = waterColor;
+			}
+
+
+			
+			
 			#endif
 		}
 		
