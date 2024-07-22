@@ -130,7 +130,7 @@ const float zShrink = 4.0;
 #define CLOUD_SPEED_2D    1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 
 //#define WATER_PARALLAX
-//#define WATER_CAUSTICS
+#define WATER_CAUSTICS
 #include "/UserProgram/WaterHeight.glsl"
 //#define VARIABLE_WATER_HEIGHT
 #define UNDERWATER_LIGHT_DEPTH 16 // [4 8 16 32 64 65536]
@@ -167,7 +167,7 @@ const float zShrink = 4.0;
 #define HARDCODED_SSS
 #define ROUGH_REFLECTION_THRESHOLD 0.3 // [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
-#define WATER_REFRACTION
+//#define WATER_REFRACTION
 
 #define REFLECTION_SAMPLES 8 // [1 2 4 8 16 32 64]
 
