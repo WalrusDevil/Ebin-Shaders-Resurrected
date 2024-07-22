@@ -189,6 +189,7 @@ void main() {
 	
 	vec3 color = texture(colortex1, texcoord).rgb;
 	
+	show(normalize(waterColor));
 
 	#ifdef WATER_REFRACTION
 	if(mask.water > 0.5){
@@ -202,8 +203,8 @@ void main() {
 			backPos[0] = CalculateViewSpacePosition(refractedPos);
 			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 			color = texture(colortex1, refractedPos.xy).rgb;
-		} else {
-			color = waterColor;
+		} else if(isEyeInWater == 1.0) {
+			color = normalize(waterColor);
 			depth1 = 1.0;
 			backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
@@ -228,14 +229,6 @@ void main() {
 
 		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
 
-	}
-
-	if(isEyeInWater == 1.0 && mask.water > 0.5) {
-		float nDotV = dot(normal, normalize(-frontPos[0]));
-		float f0 = convertWaterIOR(0.02);
-		float fresnel = f0 + (1 - f0) * pow(1 - nDotV, 5);
-		color = mix(color, waterColor, fresnel);
-		show(fresnel);
 	}
 
 	#ifdef WORLD_OVERWORLD
@@ -267,7 +260,10 @@ void main() {
 
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
+
 	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
+
+
 
 	if(isEyeInWater != 0.0){ // surface in water
 		color = waterdepthFog(frontPos[0], backPos[0], color);

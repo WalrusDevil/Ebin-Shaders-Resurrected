@@ -164,22 +164,27 @@ float ggx (vec3 N, vec3 V, vec3 L, float roughness) { // trowbridge-reitz
 	return alpha / (PI * pow2(distr));
 }
 
-float convertWaterIOR(float f){ // f can be f0 or f82 or any other f really
-	if(isEyeInWater != 1.0){
-		return f;
-	}
-	float sqrtf = sqrt(f);
-	float IOR = (sqrtf + 1)/(1 - sqrtf);
-	return pow((1.33 - IOR) / (1.33 + IOR), 2);
-}
+float schlick(float f0, float nDotV){
+	bool checkTIR = false;
+	#ifdef WATER_REFRACTION
+		checkTIR = true;
+	#endif
 
-vec3 convertWaterIOR(vec3 f){ // f can be f0 or f82 or any other f really
-	if(isEyeInWater != 1.0){
-		return f;
+	if(abs(f0 - 0.02) > 0.001 || !checkTIR){ // if not water don't bother checking for TIR
+		return f0 + (1 - f0) * pow(1 - nDotV, 5);
 	}
-	vec3 sqrtf = sqrt(f);
-	vec3 IOR = (sqrtf + 1)/(1 - sqrtf);
-	return pow((1.33 - IOR) / (1.33 + IOR), vec3(2));
+
+	f0 = pow2(f0);
+	if(isEyeInWater == 1.0){
+		float sinT2 = pow2(1.33)*(1.0 - pow2(nDotV));
+		if(sinT2 > 1.0){
+			return 1.0;
+		}
+		nDotV = sqrt(1.0-sinT2);
+	}
+	float x = 1.0-nDotV;
+	return f0 + (1 - f0) * pow(x, 5);
+	
 }
 
 void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap) {
@@ -204,11 +209,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	vec3 fresnel;
 
 	if (baseReflectance < (229.0 / 255.0)) {
-		float f0 = convertWaterIOR(baseReflectance);
-		fresnel = vec3(f0 + (1 - f0) * pow(1 - nDotV, 5)); // schlick approximation
+		fresnel = vec3(schlick(baseReflectance, nDotV));
+
 	} else {
-		vec3 f0 = convertWaterIOR(getMetalf0(baseReflectance, color)); // lazanyi 2019 schlick
-		vec3 f82 = convertWaterIOR(getMetalf82(baseReflectance, color));
+		vec3 f0 = getMetalf0(baseReflectance, color); // lazanyi 2019 schlick
+		vec3 f82 = getMetalf82(baseReflectance, color);
 		vec3 a = 17.6513846 * (f0 - f82) + 8.16666667 * (1.0 - f0);
 		float m = pow(1 - nDotV, 5);
 		fresnel = clamp01(f0 + (1.0 - f0) * m - a * nDotV * (m - m * nDotV));
@@ -288,14 +293,12 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 			float sunFactor = 0.0;
 			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor) * skyLightmap;
-			in_scatter *= (1.0 - clamp01(isEyeInWater));
+			in_scatter *= (1.0 - float(isEyeInWater == 1.0));
 
 			if(isEyeInWater == 1.0){
-				reflection = waterColor;
+				transmit = vec3(1.0);
+				reflection = waterColor * nDotV;
 			}
-
-
-			
 			
 			#endif
 		}

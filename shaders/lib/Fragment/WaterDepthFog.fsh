@@ -17,7 +17,7 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	
 	vec3 waterdepthColors = waterColor;
 	
-	color *= pow(vec3(0.1, 0.5, 0.8), vec3(waterdepth));  // TODO, additional fog based on depth below sea level
+	color *= mix(vec3(1.0), pow(vec3(0.1, 0.5, 0.8), vec3(waterdepth)), 0.3);  // TODO, additional fog based on depth below sea level
 	color  = mix(waterdepthColors, color, clamp01(fogAccum));
 
 	return color;
