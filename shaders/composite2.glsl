@@ -222,7 +222,7 @@ void main() {
 
 
 	#ifdef WATER_BEHIND_TRANSLUCENTS
-	if(depth1 > waterDepth && waterDepth != 0.0 && waterDepth > depth0 && isEyeInWater == 0.0){ // render water behind translucents when necessary
+	if(depth1 > waterDepth && waterDepth != 0.0 && (waterDepth > depth0 || (mask.water < 0.5 && depth0 == waterDepth)) && isEyeInWater == 0.0){ // render water behind translucents when necessary
 		color = waterdepthFog(waterPos[0], backPos[0], color);
 		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));
 		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
@@ -238,9 +238,6 @@ void main() {
 
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
-
-
-
 	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
 
 	if(isEyeInWater != 0.0){ // surface in water
