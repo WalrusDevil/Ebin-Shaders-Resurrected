@@ -1,5 +1,6 @@
 ![ebin-banner](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/358e8e8c-f5fe-45f8-8660-c3dfeadb2081)
 [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/ebin-resurrected)
+[![discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-plural_vector.svg)](https://discord.gg/b9SHNcvs6c)
 
 Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 
@@ -8,7 +9,7 @@ Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 [Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed by [BruceKnowsHow](https://github.com/BruceKnowsHow) from 2016-2020. [jbritain](https://github.com/jbritain) resumed development of the shader in 2024 under the name 'Ebin Resurrected'. This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and also improves upon some aspects of the shader, using more modern features and standards.
 
 ## Community
-If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join the [Shaderlabs Discord server](https://discord.gg/SMgEpZe).
+If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join my [Discord server](https://discord.gg/b9SHNcvs6c).
 
 ## Features
 - Screen Space Multicoloured Blocklight
@@ -41,7 +42,7 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Ebin Resurrected has been tested on Optifine and Iris and is known to work on versions as far back as 1.17. Older versions are **unsupported**, however as [Legacy Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) was still in development during this time, it should work for versions as far back as 1.7.
   
 ## If you run into problems
-If you are experiencing a problem with Ebin you consider to be a bug, create a new [issue](https://github.com/jbritain/Ebin-Shaders-Resurrected/issues). Please read the issue guidelines before creating one and make sure somebody else hasn't raised the same issue already.
+Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and create a thread in `#support`. Alternatively, if you are experiencing a problem with Ebin you consider to be a bug, create a new [issue](https://github.com/jbritain/Ebin-Shaders-Resurrected/issues). Please read the issue guidelines before creating one and make sure somebody else hasn't raised the same issue already. **You are likely to get a faster response on Discord**.
 
 ## Team
 - [jbritain](https://github.com/jbritain): Maintainer
