@@ -156,7 +156,6 @@ void main() {
 
 	float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
 
-
 	gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 	
 	depth0 = GetDepth(texcoord);
@@ -201,7 +200,7 @@ void main() {
 			backPos[0] = CalculateViewSpacePosition(refractedPos);
 			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 			color = texture(colortex1, refractedPos.xy).rgb;
-		} else if(isEyeInWater == 1.0) {
+		} else if(isEyeInWater == 1.0 && EBS == 1.0) {
 			color = normalize(waterColor);
 			depth1 = 1.0;
 			backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));

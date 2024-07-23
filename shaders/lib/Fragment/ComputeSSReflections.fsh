@@ -306,7 +306,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 			if(isEyeInWater == 1.0){
 				transmit = vec3(1.0);
-				reflection = waterColor * sunlightColor * dot(-normal, lightVector);
+				reflection = mix(waterColor * sunlightColor, waterColor / 4, 1.0 - skyLightmap) * dot(-normal, lightVector);
 			}
 			
 			#endif

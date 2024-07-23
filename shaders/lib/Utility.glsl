@@ -7,6 +7,8 @@ cfloat DEG = degrees(  1.0); // Radians per degree
 uniform int   frameCounter;
 uniform float frameTimeCounter;
 
+#define EBS eyeBrightnessSmooth.g / 240.0
+
 //#define FREEZE_TIME
 //#define FRAMERATE_BOUND_TIME
 #define ANIMATION_FRAMERATE 60.0 // [24.0 30.0 60.0 120.0 90.0 144.0 240.0]
