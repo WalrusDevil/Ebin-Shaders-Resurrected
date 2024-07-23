@@ -218,9 +218,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		float m = pow(1 - nDotV, 5);
 		fresnel = clamp01(f0 + (1.0 - f0) * m - a * nDotV * (m - m * nDotV));
 	}
-  
-	
-	if (length(fresnel) < 0.0005) return;
+
 
 	mat2x3 refRay;
 	

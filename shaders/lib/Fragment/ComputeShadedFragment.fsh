@@ -110,7 +110,7 @@ float CalculateWaterCaustics(vec3 worldPos, float skyLightmap, float waterMask) 
 	caustics = 1.0 - caustics / 9.0;
 	caustics *= 0.07 / pow2(distanceThreshold);
 	
-	return pow3(caustics);
+	return pow3(caustics) / 2.0 + 0.5;
 }
 #else
 #define CalculateWaterCaustics(a, c, b) 1.0

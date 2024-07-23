@@ -15,9 +15,9 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	// Beer's Law
 	float fogAccum = exp(-waterdepth * 0.05);
 	
-	vec3 waterdepthColors = waterColor;
+	vec3 waterdepthColors = waterColor * sunlightColor;
 	
-	color *= mix(vec3(1.0), pow(vec3(0.1, 0.5, 0.8), vec3(waterdepth)), 0.3);  // TODO, additional fog based on depth below sea level
+	color *= pow(vec3(0.1, 0.5, 0.8), vec3(waterdepth));
 	color  = mix(waterdepthColors, color, clamp01(fogAccum));
 
 	return color;

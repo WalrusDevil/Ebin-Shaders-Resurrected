@@ -10,6 +10,7 @@ screen.LIGHTING=Shadows & Lighting
 screen.POST_PROCESSING=Post Processing
 screen.MISC=Misc.
 screen.DEBUG=Development
+screen.WATER=Water
 screen.TIME=Time Override
 screen.DEFORM=Terrain deformation
 screen.CLOUDS2D=2D Cloud Settings
@@ -324,7 +325,6 @@ option.RAIN.comment=Enables rain particles. If rendering water behind translucen
 
 option.WATER_SHADOW=Water Shadow
 
-
 option.FORCE_COMPATIBILITY=Force Compatibility Mode
 
 option.DEBUG=Debug Mode
@@ -362,7 +362,7 @@ option.WATER_BEHIND_TRANSLUCENTS=Render Water Behind Translucents
 option.WATER_BEHIND_TRANSLUCENTS.comment=Generate a separate depth buffer for water and reconstruct normals for reflections from the depth. §cThis feature currently has mild artifacts.
 
 option.WATER_REFRACTION=Water Refraction
-option.WATER_REFRACTION.comment=Distort stuff visible through water due to the refraction of light. §cCurrently, only the sky is refracted. This looks pretty weird, so it's disabled.
+option.WATER_REFRACTION.comment=Distort stuff visible through water due to the refraction of light. §cThis feature currently has mild artifacts (pixels refracted offscreen keep their original colour).
 
 option.LABPBR_VERSION=labPBR Version
 
