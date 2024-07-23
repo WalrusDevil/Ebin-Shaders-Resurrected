@@ -36,8 +36,9 @@ If applicable, add screenshots to help explain your problem.
 Add any other context about the problem here.
 
 **PLEASE READ THE FOLLOWING BEFORE SUBMITTING AN ISSUE**
+ - If this isn't a bug, but a general problem you are having, consider asking in my [Discord Server](https://discord.gg/b9SHNcvs6c) instead.
  - Mods which add additional blocks, biomes, or dimensions (i.e Create) are not supported.
  - The shader not loading without an error message does not constitute a bug. Ensure your folder structure is correct.
  - MacOS **is not supported on Ebin Resurrected**. Things may break.
- - Old versions of Minecraft are not supported. I haven't tested anything other than 1.20 but if you're on some really old version then don't expect it to work.
+ - Old versions of Minecraft are not supported. I haven't tested anything other than 1.20+ but if you're on some really old version then don't expect it to work.
  - You can confirm that you have read the above by deleting this paragraph.
