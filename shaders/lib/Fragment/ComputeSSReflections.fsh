@@ -48,12 +48,13 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	//	if (any(greaterThan(abs(screenPos.st - 0.5), vec2(0.5))) || -ray.z > maxRayDepth) return false;
 		
 		screenPos.z = texture2D(depthtex1, screenPos.st).x;
+		if(screenPos.z < 0.56){
+			return false;
+		}
 
 		float depth = screenPos.z * zMAD.x + zMAD.y;
 
-		if(depth < 0.56){
-			return false;
-		}
+		
 		
 		if (ray.z * depth >= 1.0) { // if (1.0 / (depth * a + b) >= ray.z), quick way to compare ray with hyperbolic sample depth without doing a division
 			float diff = (1.0 / depth) - ray.z;
@@ -305,7 +306,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 			if(isEyeInWater == 1.0){
 				transmit = vec3(1.0);
-				reflection = waterColor * nDotV;
+				reflection = waterColor * sunlightColor * dot(-normal, lightVector);
 			}
 			
 			#endif
