@@ -167,7 +167,6 @@ void main() {
 	float SSS				= clamp01(decode4b.g);
 	
 	float depth1 = (mask.hand > 0.5 ? depth0 : textureRaw(depthtex1, texcoord).x);
-	show(depth1);
 	
 	mat2x3 backPos;
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
@@ -195,7 +194,6 @@ void main() {
 
 	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS);
 	gl_FragData[3] = vec4(sunlight, 1.0);
-	show(sunlight);
 	
 	float AO = ComputeSSAO(backPos[0], wNormal * mat3(gbufferModelViewInverse));
 	
