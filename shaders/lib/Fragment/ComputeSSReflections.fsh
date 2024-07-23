@@ -208,7 +208,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	vec3 fresnel;
 
-	if (baseReflectance < (229.0 / 255.0)) {
+	if (baseReflectance < (230.0 / 255.0)) {
 		fresnel = vec3(schlick(baseReflectance, nDotV));
 
 	} else {

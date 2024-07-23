@@ -178,3 +178,7 @@ const float zShrink = 4.0;
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
 
 #define WATER_BEHIND_TRANSLUCENTS
+
+#define FXAA
+#define FXAA_SUBPIXEL 0.75 //[0.00 0.25 0.50 0.75 1.00]
+#define FXAA_EDGE_SENSITIVITY 1 //[0 1 2]

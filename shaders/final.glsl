@@ -69,6 +69,8 @@ uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
 
 uniform vec2 pixelSize;
+uniform float viewWidth;
+uniform float viewHeight;
 
 uniform float rainStrength;
 
@@ -82,6 +84,9 @@ uniform float near;
 #include "/lib/Uniform/Shadow_View_Matrix.fsh"
 #include "/lib/Fragment/Masks.fsh"
 #include "/lib/Fragment/Tonemap.fsh"
+#include "/lib/Fragment/FXAA.glsl"
+
+const bool colortex3MipmapEnabled = true;
 
 vec3 GetColor(vec2 coord) {
 	return DecodeColor(texture2D(colortex3, coord).rgb);
@@ -190,14 +195,16 @@ void main() {
 	float linearDepth = linearizeDepth(depth);
 	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
 	vec3  color = GetColor(texcoord);
+	show(color);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
 	
-
+	color = FXAA311(color);
 	color = MotionBlur(color, depth);
 	color =   GetBloom(color);
 	color =   Vignette(color);
 	color =    Tonemap(color);
+	
 
 	#ifdef DEBUG_ENABLE
 		color = texture(DEBUG_TEXTURE, texcoord).rgb;

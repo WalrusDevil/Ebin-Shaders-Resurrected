@@ -61,7 +61,7 @@ If you are experiencing a problem with Ebin you consider to be a bug, create a n
   - BuilderB0y
   - NinjaMike
   - CyanEmber
-- [Capt Tatsu](https://bitslablab.com/), whose shader, [BSL](https://bitslablab.com/bslshaders/) I ported the multicoloured blocklight code from.
+- [Capt Tatsu](https://bitslablab.com/), whose shader, [BSL](https://bitslablab.com/bslshaders/) I ported the multicoloured blocklight and FXAA code from.
 - [Sonic Ether](https://www.facebook.com/SonicEther/), creator of SEUS and inspiration for Ebin
 - [daxnitro](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272365), original creator of the Shaders Mod
 - [karyonix](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286604), longtime maintainer of the Shaders Mod
