@@ -188,8 +188,6 @@ void main() {
 	waterPos[1] = mat3(gbufferModelViewInverse) * waterPos[0];
 	
 	vec3 color = texture(colortex1, texcoord).rgb;
-	
-	show(normalize(waterColor));
 
 	#ifdef WATER_REFRACTION
 	if(mask.water > 0.5){

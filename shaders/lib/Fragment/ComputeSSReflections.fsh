@@ -50,6 +50,10 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 		screenPos.z = texture2D(depthtex1, screenPos.st).x;
 
 		float depth = screenPos.z * zMAD.x + zMAD.y;
+
+		if(depth < 0.56){
+			return false;
+		}
 		
 		if (ray.z * depth >= 1.0) { // if (1.0 / (depth * a + b) >= ray.z), quick way to compare ray with hyperbolic sample depth without doing a division
 			float diff = (1.0 / depth) - ray.z;
@@ -77,8 +81,10 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 }
 
 vec3 getMetalf0(float baseReflectance, vec3 color){
-	switch(int(baseReflectance * 255)){
+	show(1.0);
+	switch(int(baseReflectance * 255 + 0.5)){
 			case 230: // Iron
+					
 					return vec3(0.78, 0.77, 0.74);
 			case 231: // Gold
 					return vec3(1.00, 0.90, 0.61);
@@ -95,11 +101,13 @@ vec3 getMetalf0(float baseReflectance, vec3 color){
 			case 237: // Silver
 					return vec3(1.00, 1.00, 0.91);
 	}
+	show(1.0);
 	return clamp01(color);
 }
 
 vec3 getMetalf82(float baseReflectance, vec3 color){
-	switch(int(baseReflectance * 255)){
+	show(1.0);
+	switch(int(baseReflectance * 255 + 0.5)){
 			case 230: // Iron
 					return vec3(0.74, 0.76, 0.76);
 			case 231: // Gold
@@ -117,6 +125,7 @@ vec3 getMetalf82(float baseReflectance, vec3 color){
 			case 237: // Silver
 					return vec3(1.00, 1.00, 0.95);
 	}
+	
 	return clamp01(color);
 }
 
@@ -208,10 +217,11 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	vec3 fresnel;
 
-	if (baseReflectance < (230.0 / 255.0)) {
+	if (baseReflectance < (229.5 / 255.0)) {
 		fresnel = vec3(schlick(baseReflectance, nDotV));
 
 	} else {
+		
 		vec3 f0 = getMetalf0(baseReflectance, color); // lazanyi 2019 schlick
 		vec3 f82 = getMetalf82(baseReflectance, color);
 		vec3 a = 17.6513846 * (f0 - f82) + 8.16666667 * (1.0 - f0);
@@ -331,7 +341,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 
 	#ifdef MULTIPLY_METAL_ALBEDO
-		if (baseReflectance >= (229.0 / 255.0)) {
+		if (baseReflectance >= (229.5 / 255.0)) {
 			reflectionSum *= color;
 		}
 	#endif
