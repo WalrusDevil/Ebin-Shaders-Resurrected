@@ -14,8 +14,12 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	
 	// Beer's Law
 	float fogAccum = exp(-waterdepth * 0.05);
-	vec3 tint = sunlightColor * 0.9 + 0.1;
+	vec3 tint = (sunlightColor * skyLightmap) * 0.9 + 0.1;
 	tint = sqrt(tint * length(tint));
+
+	if(isEyeInWater != 1.0){
+		tint = vec3(0.0);
+	}
 
 	color *= pow(vec3(0.6, 0.7, 0.8), vec3(waterdepth));
 	color = mix(color, waterColor * tint, 1.0 - clamp01(fogAccum));

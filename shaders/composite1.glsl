@@ -144,7 +144,6 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 #include "/lib/Fragment/BilateralUpsample.fsh"
 
 #include "/lib/Misc/CalculateFogfactor.glsl"
-#include "/lib/Fragment/waterdepthFog.fsh"
 
 /* RENDERTARGETS:1,4,6,5 */
 #include "/lib/Exit.glsl"

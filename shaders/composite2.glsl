@@ -129,6 +129,7 @@ vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 
 float depth0;
 float depth1;
+float skyLightmap;
 
 #include "/lib/Fragment/waterdepthFog.fsh"
 #include "/lib/Fragment/ComputeSunlight.fsh"
@@ -149,7 +150,7 @@ void main() {
 	float specularity    = decode4.g;
 	float baseReflectance = ScreenTex(colortex9).g;
 	float perceptualSmoothness = ScreenTex(colortex9).r;
-	float skyLightmap   = decode4.a;
+	skyLightmap   = decode4.a;
 	vec4 transparentColor = texture(colortex3, texcoord);
 	mask.transparent = clamp01(step(0.01, transparentColor.a) + mask.water);
 	mask.transparent *= (1.0 - mask.hand);

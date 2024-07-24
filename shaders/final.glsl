@@ -187,7 +187,6 @@ vec3 Vignette(vec3 color) {
 
 #include "/lib/Exit.glsl"
 
-#include "/lib/Fragment/waterdepthFog.fsh"
 #include "/lib/Misc/CalculateFogfactor.glsl"
 
 void main() {
