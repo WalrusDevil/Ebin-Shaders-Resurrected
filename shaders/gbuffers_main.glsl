@@ -124,10 +124,6 @@ void main() {
 		materialIDs = max(materialIDs, blockEntityId);
 	#endif
 	
-#ifdef HIDE_ENTITIES
-//	if (isEntity(materialIDs)) { gl_Position = vec4(-1.0); return; }
-#endif
-	
 	SetupProjection();
 	
 	color        = abs(mc_Entity.x - 10.5) > 0.6 ? gl_Color.rgb : vec3(1.0);
