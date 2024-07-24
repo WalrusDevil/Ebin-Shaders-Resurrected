@@ -40,6 +40,7 @@ uniform mat4 gbufferModelViewInverse;
 uniform vec3  cameraPosition;
 uniform vec3  previousCameraPosition;
 uniform float far;
+uniform int blockEntityId;
 
 uniform float wetness;
 
@@ -118,7 +119,7 @@ uniform ivec2 atlasSize;
 void main() {
 	
 
-	materialIDs  = mc_Entity.x;
+	materialIDs  = max(mc_Entity.x, blockEntityId);
 	
 #ifdef HIDE_ENTITIES
 //	if (isEntity(materialIDs)) { gl_Position = vec4(-1.0); return; }
@@ -196,6 +197,7 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 uniform float viewWidth;
 uniform float viewHeight;
+uniform float rainStrength;
 
 uniform ivec2 atlasSize;
 
@@ -267,7 +269,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 #include "/lib/iPBR/iPBR.glsl"
 
-
+#include "/lib/Fragment/EndPortal.fsh"
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
@@ -338,14 +340,19 @@ void main() {
 
 	vertLightmap.r *= directionalLightingFactor.r;
 	vertLightmap.g *= directionalLightingFactor.g;
+
+	if (materialIDs == IPBR_END_PORTAL){
+		vec3 wDir = normalize(position[1]);
+		wDir.y = abs(wDir.y);
+		diffuse.rgb = CalculateEndPortal(wDir);
+		PBR.emission = 1.0;
+		PBR.baseReflectance = 0.0;
+		PBR.perceptualSmoothness = 0.0;
+	}
 	
 
 	#if defined gbuffers_water || defined gbuffers_textured
 		Mask mask = EmptyMask;
-
-		
-
-		
 
 		#ifdef gbuffers_water
 		
