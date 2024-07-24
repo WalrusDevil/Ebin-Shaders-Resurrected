@@ -119,7 +119,10 @@ uniform ivec2 atlasSize;
 void main() {
 	
 
-	materialIDs  = max(mc_Entity.x, blockEntityId);
+	materialIDs  = mc_Entity.x;
+	#ifdef gbuffers_terrain
+		materialIDs = max(materialIDs, blockEntityId);
+	#endif
 	
 #ifdef HIDE_ENTITIES
 //	if (isEntity(materialIDs)) { gl_Position = vec4(-1.0); return; }
@@ -340,15 +343,17 @@ void main() {
 
 	vertLightmap.r *= directionalLightingFactor.r;
 	vertLightmap.g *= directionalLightingFactor.g;
-
-	if (materialIDs == IPBR_END_PORTAL){
-		vec3 wDir = normalize(position[1]);
-		wDir.y = abs(wDir.y);
-		diffuse.rgb = CalculateEndPortal(wDir);
-		PBR.emission = 1.0;
-		PBR.baseReflectance = 0.0;
-		PBR.perceptualSmoothness = 0.0;
-	}
+	
+	#ifdef gbuffers_terrain
+		if (materialIDs == IPBR_END_PORTAL){
+			vec3 wDir = normalize(position[1]);
+			wDir.y = abs(wDir.y);
+			diffuse.rgb = CalculateEndPortal(wDir);
+			PBR.emission = 1.0;
+			PBR.baseReflectance = 0.0;
+			PBR.perceptualSmoothness = 0.0;
+		}
+	#endif
 	
 
 	#if defined gbuffers_water || defined gbuffers_textured
