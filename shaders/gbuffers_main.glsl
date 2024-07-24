@@ -306,12 +306,8 @@ void main() {
 			discard;
 		#endif
 
-		#ifndef WATER_BEHIND_TRANSLUCENTS
-			float rainNoise = ign(floor(gl_FragCoord.xy), frameCounter);
-			diffuse = vec4(0.9, 0.9, 1.0, step(0.5, rainNoise) * 0.5 * diffuse.a);
-		#else
-			diffuse = vec4(0.9, 0.9, 1.0, 0.1 * diffuse.a);
-		#endif
+		float rainNoise = ign(floor(gl_FragCoord.xy), frameCounter);
+		diffuse = vec4(0.9, 0.9, 1.0, step(0.5, rainNoise) * 0.5 * diffuse.a);
 
 	#endif
 
