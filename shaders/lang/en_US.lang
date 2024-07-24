@@ -297,7 +297,8 @@ option.DEFORM=Terrain Deformation
 option.DEFORMATION=Deformation Type
 value.DEFORMATION.1=Planetoid
 value.DEFORMATION.2=Acid Shaders
-value.DEFORMATION.3=User Deformation
+value.DEFORMATION.3=Animal Crossing
+value.DEFORMATION.4=User Deformation
 
 option.HIDE_ENTITIES=Hide Entities
 

@@ -23,6 +23,12 @@ vec3 Acid(vec3 position) {
 	return position;
 }
 
+vec3 AnimalCrossing(vec3 position){
+	float distance2D = position.x * position.x + position.z * position.z;
+	position.y -= min(distance2D / 20, 20);
+	return position;
+}
+
 vec3 TerrainDeformation(vec3 position) {
 	
 #ifdef DEFORM
@@ -39,6 +45,10 @@ vec3 TerrainDeformation(vec3 position) {
 		
 		position = Acid(position);
 		
+	#elif DEFORMATION == 3
+
+		position = AnimalCrossing(position);
+
 	#else
 		
 		position = UserDeformation(position);

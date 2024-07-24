@@ -140,7 +140,7 @@ const float zShrink = 4.0;
 #define WAVE_SPEED 1.0 // [0.0 0.5 1.0 2.0]
 
 //#define DEFORM
-#define DEFORMATION 1 // [1 2 3]
+#define DEFORMATION 1 // [1 2 3 4]
 
 //#define HIDE_ENTITIES
 //#define CLEAR_WATER
