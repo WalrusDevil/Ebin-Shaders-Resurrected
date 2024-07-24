@@ -190,7 +190,7 @@ float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
 	return sunlightCoeff * pow(sunlight, mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1)));
 }
 
-vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, float sunlightCoeff, float SSS) {
+vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, float sunlightCoeff, float SSS, float skyLightmap) {
 	#ifndef WORLD_OVERWORLD
 	return vec3(0.0);
 	#endif
@@ -222,6 +222,10 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, wetness);
+
+	#if SUNLIGHT_TYPE == 0
+	sunlight *= skyLightmap;
+	#endif
 
 	return sunlight;
 	

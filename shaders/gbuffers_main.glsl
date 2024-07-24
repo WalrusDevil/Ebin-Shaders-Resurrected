@@ -242,18 +242,27 @@ bool handLight = false;
 
 // adapted from NinjaMike's method
 // https://discord.com/channels/237199950235041794/525510804494221312/1004459522095579186
-float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worldPos, float lightmap){
+vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worldPos, vec2 lightmap){
 	vec3 viewPos = worldPos * mat3(gbufferModelViewInverse);
 	vec3 viewNormal = mappedNormal * mat3(gbufferModelViewInverse);
 
 	vec3 dFdViewposX = dFdx(viewPos);
 	vec3 dFdViewposY = dFdy(viewPos);
-	vec2 dFdLight = vec2(dFdx(lightmap), dFdy(lightmap));
+
+	float torch = 1.0;
+	vec2 dFdTorch = vec2(dFdx(lightmap.r), dFdy(lightmap.r));
 	
-	vec3 lightDir = dFdViewposX * dFdLight.x + dFdViewposY * dFdLight.y;
-	if(length(dFdLight) > 1e-6) return clamp(dot(normalize(lightDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
+	vec3 torchDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
+	if(length(dFdTorch) > 1e-6) torch = clamp(dot(normalize(torchDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
 	
-	return 1.0;
+	float sky = 1.0;
+	// vec2 dFdSky = vec2(dFdx(lightmap.g), dFdy(lightmap.g));
+
+	// vec3 skyDir = dFdViewposX * dFdSky.x + dFdViewposY * dFdSky.y;
+	// if(length(dFdSky) > 1e-6) sky = clamp(dot(normalize(skyDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
+
+
+	return(vec2(torch, sky));
 }
 
 #include "/lib/iPBR/iPBR.glsl"
@@ -273,7 +282,7 @@ float getDirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worl
 #include "/lib/Exit.glsl"
 
 void main() {
-
+	vec2 vertLightmap = vertLightmap;
 
 	PBRData PBR;
 	PBR = getRawPBRData(texcoord);
@@ -312,19 +321,27 @@ void main() {
 	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);
 	vec3  normal      		= tbnMatrix * PBR.normal;
 	#ifdef DIRECTIONAL_LIGHTING
-		float directionalLightingFactor = getDirectionalLightingFactor(faceNormal, normal, position[1], vertLightmap.r);
+		vec2 directionalLightingFactor = getdirectionalLightingFactor(faceNormal, normal, position[1], vertLightmap.rg);
 	#else
-		float directionalLightingFactor = 1.0;
+		vec2 directionalLightingFactor = vec2(1.0);
 	#endif
 	
 	#ifdef gbuffers_hand
-	directionalLightingFactor = 1.0;
+	directionalLightingFactor = vec2(1.0);
 	#endif
 
 	#ifdef gbuffers_spidereyes
 		PBR.emission = 1.0;
 	#endif
 
+	#ifdef gbuffers_textured
+		PBR.perceptualSmoothness = 0.0;
+		PBR.baseReflectance = 0.0;
+		directionalLightingFactor = vec2(1.0);
+	#endif
+
+	vertLightmap.r *= directionalLightingFactor.r;
+	vertLightmap.g *= directionalLightingFactor.g;
 	
 
 	#if defined gbuffers_water || defined gbuffers_textured
@@ -332,11 +349,7 @@ void main() {
 
 		
 
-		#ifdef gbuffers_textured
-		PBR.perceptualSmoothness = 0.0;
-		PBR.baseReflectance = 0.0;
-		directionalLightingFactor = 1.0;
-		#endif
+		
 
 		#ifdef gbuffers_water
 		
@@ -364,12 +377,12 @@ void main() {
 
 		
 		
-		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, PBR.SSS));
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r * directionalLightingFactor, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], texture(colortex10, texcoord).rgb);
+		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], texture(colortex10, texcoord).rgb);
 		gl_FragData[3] = vec4(sunlight, 1.0);
 
 		vec2 encode;
-		encode.x = Encode4x8F(vec4(directionalLightingFactor, vertLightmap.g, mask.water, 0.1));
+		encode.x = Encode4x8F(vec4(0.0, vertLightmap.g, mask.water, 0.1));
 		encode.y = EncodeNormal(normal, 11.0);
 		
 		#ifdef gbuffers_water
@@ -407,7 +420,7 @@ void main() {
 		gl_FragData[1] = vec4(
 			Encode4x8F(vec4(
 				encodedMaterialIDs, 
-				directionalLightingFactor, 
+				0.0, 
 				vertLightmap.rg
 			)), 
 

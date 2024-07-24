@@ -155,7 +155,6 @@ void main() {
 	vec4  decode4       = Decode4x8F(texture4.r);
 	vec4 	decode4b			= Decode4x8F(texture4.b);
 	Mask  mask          = CalculateMasks(decode4.r);
-	float directionalLightingFactor    = decode4.g;
 	float torchLightmap = decode4.b;
 	float skyLightmap   = decode4.a;
 	float emission			= texture(colortex9, texcoord).b;
@@ -165,8 +164,6 @@ void main() {
 	
 	
 	float depth0 = (GetDepth(texcoord));
-
-	torchLightmap *= directionalLightingFactor;
 
 	#ifdef COLORED_BLOCKLIGHT
 	blockLightOverrideColor = getColoredBlockLight(torchColor, vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z));

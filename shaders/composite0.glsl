@@ -192,7 +192,7 @@ void main() {
 	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
 	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
 
-	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS);
+	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
 	gl_FragData[3] = vec4(sunlight, 1.0);
 	
 	float AO = ComputeSSAO(backPos[0], wNormal * mat3(gbufferModelViewInverse));

@@ -171,7 +171,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		if(preCalculatedSunlight.r >= 0.0){
 			shading.sunlight = preCalculatedSunlight;
 		} else {
-			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS));
+			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS, skyLightmap));
 		}
 		//show(shading.sunlight);
 
