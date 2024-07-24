@@ -24,8 +24,7 @@ vec3 Acid(vec3 position) {
 }
 
 vec3 AnimalCrossing(vec3 position){
-	float distance2D = position.x * position.x + position.z * position.z;
-	position.y -= min(distance2D / 20, 20);
+	position.y -= min(length2(position.xz) / 20, 20);
 	return position;
 }
 
