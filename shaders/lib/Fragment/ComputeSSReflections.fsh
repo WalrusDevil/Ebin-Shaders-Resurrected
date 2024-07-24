@@ -82,7 +82,6 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 }
 
 vec3 getMetalf0(float baseReflectance, vec3 color){
-	show(1.0);
 	switch(int(baseReflectance * 255 + 0.5)){
 			case 230: // Iron
 					
@@ -102,12 +101,10 @@ vec3 getMetalf0(float baseReflectance, vec3 color){
 			case 237: // Silver
 					return vec3(1.00, 1.00, 0.91);
 	}
-	show(1.0);
 	return clamp01(color);
 }
 
 vec3 getMetalf82(float baseReflectance, vec3 color){
-	show(1.0);
 	switch(int(baseReflectance * 255 + 0.5)){
 			case 230: // Iron
 					return vec3(0.74, 0.76, 0.76);
