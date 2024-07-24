@@ -6,7 +6,7 @@ Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 
 **This repo contains the latest development versions of Ebin resurrected. To download stable releases, get them from [Modrinth](https://modrinth.com/mod/ebin-resurrected) or head over to the [releases tab](https://github.com/jbritain/Ebin-Shaders-Resurrected/latest).**
 
-[Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed by [BruceKnowsHow](https://github.com/BruceKnowsHow) from 2016-2020. [jbritain](https://github.com/jbritain) resumed development of the shader in 2024 under the name 'Ebin Resurrected'. This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and also improves upon some aspects of the shader, using more modern features and standards.
+[Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed by [BruceKnowsHow](https://github.com/BruceKnowsHow) from 2016-2020. [jbritain](https://github.com/jbritain) resumed development of the shader in 2024 under the name 'Ebin Resurrected'. This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and significantly improves upon aspects of the shader, such as PBR.
 
 ## Community
 If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join my [Discord server](https://discord.gg/b9SHNcvs6c).
@@ -18,6 +18,8 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Bloom / Glow
 - Procedural 2D/3D Clouds
 - Procedural Water Waves
+- Deferred Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
+- Terrain Deformation - "Animal Crossing" and "Acid" deformations
 ### LabPBR Compliant
   - Rough Screen Space Reflections - accurate specular reflections on all blocks.
   - Normal Mapped Lighting.
@@ -25,22 +27,20 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
   - Material Ambient Occlusion.
   - Hardcoded Metal Support.
   - Porosity - materials look 'wet' in the rain.
-- Deferred Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
-- Terrain Deformation - "Animal Crossing" and "Acid" deformations
 
 ## Planned Features
 - Distant Horizons support
 - End skybox
 
 ## Compatibility
+### Minecraft
+- **Optifine is no longer supported**. The last version of Ebin Resurrected known to work with Optifine is *beta 1.11*. Newer versions may work, they may not. This is due to the fact that whilst Iris is adding features, Optifine is not, and as the loaders grow further apart, it becomes tedious to support both.
 ### Hardware
 - Nvidia GeForce 400, AMD Radeon HD 5000, Intel HD 3rd gen **or later**. Any modern device should work fine.
 - Intel GPUs are untested and you may encounter issues.
 ### Operating System
 - MacOS is **NOT SUPPORTED**.
-### Minecraft
-- Ebin Resurrected has been tested on Optifine and Iris and is known to work on versions as far back as 1.17. Older versions are **unsupported**, however as [Legacy Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) was still in development during this time, it should work for versions as far back as 1.7.
-  
+
 ## If you run into problems
 Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and create a thread in `#support`. Alternatively, if you are experiencing a problem with Ebin you consider to be a bug, create a new [issue](https://github.com/jbritain/Ebin-Shaders-Resurrected/issues). Please read the issue guidelines before creating one and make sure somebody else hasn't raised the same issue already. **You are likely to get a faster response on Discord**.
 
