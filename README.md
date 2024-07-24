@@ -19,11 +19,11 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - Procedural 2D/3D Clouds
 - Procedural Water Waves
 - Deferred Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
-- Terrain Deformation - "Animal Crossing" and "Acid" deformations
+- Terrain Deformation - "Animal Crossing", "Planetoid" and "Acid" deformations
 ### LabPBR Compliant
   - Rough Screen Space Reflections - accurate specular reflections on all blocks.
   - Normal Mapped Lighting.
-  - Terrain Parallax (POM).
+  - Parallax Object Mapping.
   - Material Ambient Occlusion.
   - Hardcoded Metal Support.
   - Porosity - materials look 'wet' in the rain.
@@ -70,6 +70,6 @@ Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and cre
 - [IMS](https://github.com/IMS212), for maintaining Iris and Sodium, which are really cool mods.
 - [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years
 
-## Evidence of written proof from BruceKnowsHow to distribute this shaderpack
+## Evidence of written permission from BruceKnowsHow to distribute this shaderpack
 ![evidence](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/0cca45b6-dd21-4718-a271-80afe12f0546)
 

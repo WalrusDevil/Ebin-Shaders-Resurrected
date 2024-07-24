@@ -113,7 +113,7 @@ const float zShrink = 4.0;
 #define MOTION_BLUR_INTENSITY                   1.0   // [0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define MAX_MOTION_BLUR_AMOUNT                  1.0   // [0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
-#define TERRAIN_PARALLAX_QUALITY    1.0  // [0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define TERRAIN_PARALLAX_QUALITY    2.0  // [0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define TERRAIN_PARALLAX_DISTANCE  32.0  // [4.0 8.0 16.0 32.0 64.0 128.0]
 #define TERRAIN_PARALLAX_INTENSITY  1.0 // [0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
