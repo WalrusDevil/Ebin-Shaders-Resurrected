@@ -162,7 +162,7 @@ void main() {
 
 	#ifdef FLOODFILL_BLOCKLIGHT
 	if(IPBR_EMITS_LIGHT(materialIDs)){
-		imageStore(lightvoxel, mapVoxelPos(position), vec4(normalize(getLightColor(int(materialIDs))), 1.0));
+		imageStore(lightvoxel, mapVoxelPos(position + at_midBlock * rcp(64.0)), vec4(normalize(getLightColor(int(materialIDs))), 1.0));
 	}
 	#endif
 
