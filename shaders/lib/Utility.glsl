@@ -197,3 +197,10 @@ vec3 projectAndDivide(mat4 projectionMatrix, vec3 position){
 	vec4 homPos = projectionMatrix * vec4(position, 1.0);
 	return homPos.xyz / homPos.w;
 }
+
+vec3 colorNormalize(vec3 c){
+	c = hsv(c);
+	c.z = 1.0;
+	c = rgb(c);
+	return c;
+}

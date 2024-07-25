@@ -353,9 +353,6 @@ option.ANIMATION_FRAMERATE.comment=The fixed-framerate to assume when animating 
 option.WARM_TORCHLIGHT=Warm Torchlight
 option.WARM_TORCHLIGHT.comment=Whether the torchlight (and other artificial light) is warm, or neutral.
 
-option.COLORED_BLOCKLIGHT=Colored Blocklight
-option.COLORED_BLOCKLIGHT.comment=Set colour of artificial lighting based on light sources onscreen.
-
 option.DIRECTIONAL_LIGHTING=Directional Lighting
 option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
 
@@ -366,6 +363,9 @@ option.WATER_REFRACTION=Water Refraction
 option.WATER_REFRACTION.comment=Distort stuff visible through water due to the refraction of light. §cThis feature currently has mild artifacts (pixels refracted offscreen keep their original colour).
 
 option.LABPBR_VERSION=labPBR Version
+
+option.FLOODFILL_BLOCKLIGHT=Colored Blocklight
+option.FLOODFILL_BLOCKLIGHT.comment=Uses a floodfill algorithm in the shadow pass to determine the colour of blocklighting. §cThis feature currently has noticeable artifacts (colors flicker as the player moves).
 
 option.VERSION=Version
 value.VERSION.0=SOURCE

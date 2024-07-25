@@ -133,7 +133,6 @@ float ExpToLinearDepth(float depth) {
 	return 2.0 * near * (far + near - depth * (far - near));
 }
 
-#include "/lib/Fragment/ColoredBlockLight.fsh"
 #include "/lib/Fragment/ComputeGI.fsh"
 #include "/lib/Fragment/ComputeSSAO.fsh"
 #include "/lib/Fragment/ComputeVolumetricLight.fsh"
@@ -204,24 +203,6 @@ void main() {
 	vec3 GI = ComputeGI(backPos[1], wNormal, skyLightmap, GI_RADIUS * 2.0, noise2D, mask);
 	
 	gl_FragData[0] = vec4(sqrt(GI * 0.2), AO);
-
-	#ifdef COLORED_BLOCKLIGHT
-		vec3 blockLightColor = calculateColoredBlockLight(texcoord, depth0, bayer8(gl_FragCoord.xy));
-
-		if(blockLightColor == vec3(0.0)){
-			gl_FragData[2] = vec4(0.0);
-		} else {
-			gl_FragData[2] = vec4(blockLightColor, 1.0);
-		}
-	#endif
-
-	
-	
-
-	
-
-	
-	
 	exit();
 }
 

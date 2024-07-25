@@ -17,9 +17,14 @@ varying float materialIDs;
 /***********************************************************************/
 #if defined vsh
 
+
+
+layout (rgba8) uniform image3D lightvoxel;
+
 attribute vec4 mc_Entity;
 attribute vec2 mc_midTexCoord;
 attribute vec4 at_tangent;
+attribute vec3 at_midBlock;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
@@ -37,6 +42,8 @@ uniform float thunderStrength;
 
 #include "/lib/Utility.glsl"
 
+#include "/lib/Voxel/VoxelPosition.glsl"
+#include "/lib/iPBR/lightColors.glsl"
 
 #include "/UserProgram/centerDepthSmooth.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
@@ -130,6 +137,8 @@ void main() {
 	#endif
 	
 	materialIDs  = mc_Entity.x;
+
+	
 	
 
 	
@@ -150,7 +159,14 @@ void main() {
 	
 	vec3 position  = GetWorldSpacePositionShadow();
 	     position += CalculateVertexDisplacements(position);
-	
+
+	#ifdef FLOODFILL_BLOCKLIGHT
+	if(IPBR_EMITS_LIGHT(materialIDs)){
+		imageStore(lightvoxel, mapVoxelPos(position), vec4(normalize(getLightColor(int(materialIDs))), 1.0));
+	}
+	#endif
+
+
 	gl_Position = ProjectShadowMap(position.xyzz);
 	
 	// if (CullVertex(position)) { gl_Position.z += 100000.0; return; }
@@ -175,14 +191,14 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-uniform sampler2D tex;
+uniform sampler2D gtexture;
 
 void main() {
 	#ifndef SHADOWS
 	discard;
 	#endif
 
-	vec4 diffuse = color * texture2D(tex, texcoord);
+	vec4 diffuse = color * texture2D(gtexture, texcoord);
 
 	if (materialIDs == IPBR_WATER) {
 		// discard;

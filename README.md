@@ -12,7 +12,7 @@ Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join my [Discord server](https://discord.gg/b9SHNcvs6c).
 
 ## Features
-- Screen Space Multicoloured Blocklight
+- Multicoloured Blocklight
 - Sunlight Shadows / Shading
 - PCSS 'Variable Penumbra' Shadows with transparency.
 - Bloom / Glow
@@ -62,13 +62,14 @@ Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and cre
   - BuilderB0y
   - NinjaMike
   - CyanEmber
-- [Capt Tatsu](https://bitslablab.com/), whose shader, [BSL](https://bitslablab.com/bslshaders/) I ported the multicoloured blocklight and FXAA code from.
+- [Capt Tatsu](https://bitslablab.com/), whose shader, [BSL](https://bitslablab.com/bslshaders/) I ported the FXAA code from.
 - [Sonic Ether](https://www.facebook.com/SonicEther/), creator of SEUS and inspiration for Ebin
 - [daxnitro](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272365), original creator of the Shaders Mod
 - [karyonix](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286604), longtime maintainer of the Shaders Mod
 - [sp614x](https://twitter.com/sp614x), Ebin would not be possible without #include.
 - [IMS](https://github.com/IMS212), for maintaining Iris and Sodium, which are really cool mods.
-- [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years
+- [sixthsurge](https://github.com/sixthsurge) & [The Complementary Team](https://github.com/ComplementaryDevelopment), because when I don't know how to do something, the question is "how do photon or complementary do it?"
+- [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years [BRUCE]
 
 ## Evidence of written permission from BruceKnowsHow to distribute this shaderpack
 ![evidence](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/0cca45b6-dd21-4718-a271-80afe12f0546)

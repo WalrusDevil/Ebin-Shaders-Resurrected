@@ -17,6 +17,8 @@ flat varying float materialIDs;
 
 varying float blocklight;
 
+varying vec3 blockCentre;
+
 
 
 #include "/lib/Uniform/Shading_Variables.glsl"
@@ -142,6 +144,9 @@ void main() {
 
 	position[1] = worldSpacePosition + worldDisplacement;
 	position[0] = position[1] * mat3(gbufferModelViewInverse);
+	blockCentre = position[1] + gbufferModelViewInverse[3].xyz;
+	blockCentre += at_midBlock.xyz / 64;
+
 	
 	gl_Position = ProjectViewSpace(position[0]);
 	
@@ -170,7 +175,7 @@ void main() {
 
 
 
-uniform sampler2D tex;
+uniform sampler2D gtexture;
 uniform sampler2D normals;
 uniform sampler2D specular;
 uniform sampler2D noisetex;
@@ -179,6 +184,9 @@ uniform sampler2D shadowtex1;
 uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform sampler2D colortex10;
+
+layout (rgba8) uniform image3D lightvoxel;
+uniform sampler3D lightVoxelTex;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -216,6 +224,7 @@ uniform float far;
 uniform sampler3D gaux1;
 
 #include "/lib/Uniform/Shadow_View_Matrix.fsh"
+#include "/lib/Voxel/VoxelPosition.glsl"
 #include "/lib/Fragment/ComputeShadedFragment.fsh"
 #include "/lib/Fragment/ComputeWaveNormals.fsh"
 
@@ -236,7 +245,7 @@ float LOD;
 
 
 vec4 GetDiffuse(vec2 coord) {
-	return vec4(color.rgb, 1.0) * GetTexture(tex, coord);
+	return vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
 }
 
 bool handLight = false;
@@ -268,6 +277,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 #include "/lib/iPBR/iPBR.glsl"
 
+
 #include "/lib/Fragment/EndPortal.fsh"
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
@@ -288,7 +298,6 @@ void main() {
 	PBRData PBR;
 	PBR = getRawPBRData(texcoord);
 	injectIPBR(PBR, materialIDs);
-	
 
 	#ifdef gbuffers_hand
 	if(heldBlockLightValue + heldBlockLightValue2 > 0){
@@ -402,7 +411,7 @@ void main() {
 		vec3 blockLightColor = vec3(0.0);
 
 		if(IPBR_EMITS_LIGHT(materialIDs)){
-			blockLightColor = texture(tex, texcoord).rgb * clamp01(PBR.emission);
+			blockLightColor = texture(gtexture, texcoord).rgb * clamp01(PBR.emission);
 		}
 
 		
@@ -447,7 +456,7 @@ void main() {
 
 		vec3 blockLightColor = vec3(0.0);
 		if(IPBR_EMITS_LIGHT(materialIDs) || handLight){
-			blockLightColor = texture(tex, texcoord).rgb * clamp01(PBR.emission);
+			blockLightColor = texture(gtexture, texcoord).rgb * clamp01(PBR.emission);
 		}
 
 		if(materialIDs == IPBR_TORCH){

@@ -125,11 +125,8 @@ vec3 ColorSaturate(vec3 base, float saturation) {
 }
 
 cvec3 nightColor = vec3(0.25, 0.35, 0.7);
-#ifndef COLORED_BLOCKLIGHT
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
-#else
-cvec3 torchColor = vec3(0.3, 0.22, 0.2) / 0.42;
-#endif
+
 
 vec3 LightDesaturation(vec3 color, float torchlight, float skylight, float emissive) {
 //	if (emissive > 0.5) return vec3(color);
@@ -198,7 +195,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
 
-	shading.torchlight = clamp01(pow(shading.torchlight, 5.06) * (TORCH_LIGHT_LEVEL * 10));
+	shading.torchlight = clamp01(pow(shading.torchlight, 3) * (TORCH_LIGHT_LEVEL * 10));
 
 	shading.torchlight *= GI.a;
 
@@ -229,11 +226,14 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	lightmap.ambient = vec3(shading.ambient) * vec3(1.0, 1.2, 1.4);
 	
 	
-
-	#ifdef COLORED_BLOCKLIGHT
-	lightmap.torchlight = shading.torchlight * blockLightOverrideColor;
+	#ifdef FLOODFILL_BLOCKLIGHT
+		vec3 torchlightColor = colorNormalize(texture(lightVoxelTex, mapVoxelPosInterp(position[1])).rgb);
+		if(torchlightColor == vec3(0.0)){
+			torchlightColor = torchColor;
+		}
+		lightmap.torchlight = shading.torchlight * torchlightColor;
 	#else
-	lightmap.torchlight = shading.torchlight * torchColor;
+		lightmap.torchlight = shading.torchlight * torchColor;
 	#endif
 	
 	lightmap.skylight *= clamp01(1.0 - dot(lightmap.GI, vec3(1.0)) / 6.0);

@@ -20,7 +20,7 @@ varying vec2 texcoord;
 layout (r32ui) uniform uimage2D waterdepth;
 
 void main(){
-  imageStore(waterdepth, ivec2(floor(gl_FragCoord.xy)), uvec4(floatBitsToUint(1.0), uvec3(0))); // clear water depth tex to 1.0 so atomic mins work correctly
+  imageStore(waterdepth, ivec2(floor(gl_FragCoord.xy)), uvec4(floatBitsToUint(1.0), uvec3(0))); // clear water depth gtexture to 1.0 so atomic mins work correctly
 }
 
 #endif

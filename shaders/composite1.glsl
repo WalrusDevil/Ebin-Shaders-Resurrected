@@ -59,6 +59,8 @@ uniform sampler3D colortex7;
 uniform sampler2D colortex9;
 uniform sampler2D colortex10;
 
+uniform sampler3D lightVoxelTex;
+
 #if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VOLUMETRIC_LIGHT)
 const bool colortex5MipmapEnabled = true;
 uniform sampler2D colortex5;
@@ -135,9 +137,9 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 }
 
 
-
-#include "/lib/Fragment/ColoredBlockLight.fsh"
+#include "/lib/Voxel/VoxelPosition.glsl"
 #include "/lib/Fragment/ComputeShadedFragment.fsh"
+
 
 
 
@@ -163,10 +165,6 @@ void main() {
 	
 	
 	float depth0 = (GetDepth(texcoord));
-
-	#ifdef COLORED_BLOCKLIGHT
-	blockLightOverrideColor = getColoredBlockLight(torchColor, vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z));
-	#endif
 	
 	vec3 wNormal = DecodeNormal(texture4.g, 11);
 	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
