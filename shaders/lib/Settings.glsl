@@ -186,3 +186,4 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define FXAA_EDGE_SENSITIVITY 1 //[0 1 2]
 
 #define FLOODFILL_BLOCKLIGHT
+#define HANDLIGHT

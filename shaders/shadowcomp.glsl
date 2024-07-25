@@ -40,14 +40,13 @@
 
     vec3 colorSum = imageLoad(READ_IMAGE, pos).rgb;
     
-    #ifdef shadowcomp0
+    #if defined shadowcomp0 && defined HANDLIGHT
     if(pos == mapVoxelPos(vec3(0, 0, 0))){
       colorSum += getLightColor(heldItemId);
       colorSum += getLightColor(heldItemId2);
       colorSum = normalize(colorSum);
     }
     #endif
-    //vec3 colorSum = texelFetch(lightVoxelTex, pos, 0).rgb;
     
     for(int i = 0; i < 6; i++){
       ivec3 offsetPos = pos + sampleOffsets[i];

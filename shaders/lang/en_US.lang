@@ -365,7 +365,10 @@ option.WATER_REFRACTION.comment=Distort stuff visible through water due to the r
 option.LABPBR_VERSION=labPBR Version
 
 option.FLOODFILL_BLOCKLIGHT=Colored Blocklight
-option.FLOODFILL_BLOCKLIGHT.comment=Uses a floodfill algorithm in the shadow pass to determine the colour of blocklighting. §cThis feature currently has noticeable artifacts (colors flicker as the player moves).
+option.FLOODFILL_BLOCKLIGHT.comment=Uses a floodfill algorithm in the shadow pass to determine the colour of blocklighting.
+
+option.HANDLIGHT=Dynamic Handlight
+option.HANDLIGHT.comment=Illuminates an area around the player when a light source is held in their hand.
 
 option.VERSION=Version
 value.VERSION.0=SOURCE
