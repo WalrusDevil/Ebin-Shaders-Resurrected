@@ -25,6 +25,7 @@
   const ivec3 workGroups = ivec3(32, 32, 32); // 32*8 = 256
 
   void main(){
+    #ifdef FLOODFILL_BLOCKLIGHT
     ivec3 pos = ivec3(gl_GlobalInvocationID); // position in the voxel map we are working with
 
     const ivec3[6] sampleOffsets = ivec3[6](
@@ -66,6 +67,7 @@
     #endif
     
     imageStore(WRITE_IMAGE, pos, vec4(normalize(color), 1.0));
+    #endif
   }
 
 #endif

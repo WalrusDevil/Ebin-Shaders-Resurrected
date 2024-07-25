@@ -47,6 +47,8 @@ const vec4 colortex4ClearColor = vec4(0.0, 0.0, 0.0, 1.0);
 const vec4 colortex5ClearColor = vec4(0.1, 0.1, 0.1, 1.0);
 */
 
+const float voxelDistance = 256.0;
+
 const int noiseTextureResolution = 64; // [16 32 64 128 256 512 1024]
 cfloat noiseRes = float(noiseTextureResolution);
 cfloat noiseResInverse = 1.0 / noiseRes;
