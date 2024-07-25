@@ -1,4 +1,5 @@
 #include "/lib/Syntax.glsl"
+#include "/lib/Settings.glsl"
 
 /***********************************************************************/
 #if defined csh
@@ -61,7 +62,7 @@
 
     #ifdef shadowcomp15
       if(color == vec3(0.0)){
-        color = vec3(1.0);
+        color = torchColor;
       }
     #endif
     

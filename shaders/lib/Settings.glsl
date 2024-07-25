@@ -77,6 +77,8 @@ const float zShrink = 4.0;
     #define VARIABLE_PENUMBRA_SHADOWS
 #endif
 
+cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
+
 #define SUBSURFACE_SCATTERING
 
 #define RAIN
