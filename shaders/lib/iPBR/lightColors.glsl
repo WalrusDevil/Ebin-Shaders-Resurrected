@@ -25,8 +25,6 @@ vec3 getLightColor(int ID){
       return vec3(0.7, 1.5, 1.5) * 1.7;
     case IPBR_AMETHYST_BUD:
       return vec3(0.325, 0.15, 0.425) * 2.0;
-    case IPBR_FROGLIGHT:
-      return vec3(1.1, 0.85, 0.35) * 5.0; // TODO: SPLIT FROGLIGHTS
     case IPBR_SCULK:
       return vec3(0.1, 0.3, 0.4) * 0.5;
     case IPBR_RESPAWN_ANCHOR:
@@ -55,8 +53,16 @@ vec3 getLightColor(int ID){
       return soulFireColor;
     case IPBR_SEA_LANTERN:
       return vec3(1.0, 1.25, 1.5) * 3.4;
+    case IPBR_CRYING_OBSIDIAN:
+      return vec3(1.8, 0.4, 2.9) * 0.8;
+    case IPBR_OCHRE_FROGLIGHT:
+      return vec3(1.1, 0.85, 0.35) * 5.0;
+    case IPBR_VERDANT_FROGLIGHT:
+      return vec3(0.6, 1.3, 0.6) * 4.5;
+    case IPBR_PEARLESCENT_FROGLIGHT:
+      return vec3(1.1, 0.5, 0.9) * 4.5;
     default:
-      return vec3(1.0, 1.0, 1.0);
+      return vec3(torchColor);
     
   }
 }
