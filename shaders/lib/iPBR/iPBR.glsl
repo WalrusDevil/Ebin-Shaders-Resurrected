@@ -107,11 +107,6 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.baseReflectance, 0.02);
         applyiPBR(data.perceptualSmoothness, 0.8);
 
-      case IPBR_COPPER:
-        applyiPBR(data.baseReflectance, 234.0/255.0);
-        applyiPBR(data.perceptualSmoothness, max(data.albedo.r, 0.3));
-        break;
-
       case IPBR_GRASS_BLOCK:
         float isGrass = float(
           data.albedo.g - data.albedo.r > 0.05 || // green grass
@@ -134,15 +129,36 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.SSS, 0.5);
         applyiPBR(data.baseReflectance, 0.03);
         applyiPBR(data.perceptualSmoothness, 1.0);
+        break;
+
+      case IPBR_SEA_LANTERN:
+        applyiPBR(data.emission, pow2(1.0 - data.hsv.g) * 0.7);
+        break;
+
+      case IPBR_COPPER_BULB_LIT:
+        applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.9, data.hsv.b)));
+        break;
+
+      case IPBR_CANDLES:
+        applyiPBR(data.emission, 0.01);
     }
 
-    if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));
+    
 
     if(IPBR_IS_FOLIAGE(ID)){
       applyiPBR(data.SSS, 1.0);
       applyiPBR(data.baseReflectance, 0.03);
       applyiPBR(data.perceptualSmoothness, 0.5 * smoothstep(0.16, 0.5, data.hsv.b));
     }   
+
+    if(IPBR_IS_FROGLIGHT(ID)){
+      applyiPBR(data.emission, pow2(1.0 - data.hsv.g) * 0.5);
+    }
+
+    if(IPBR_IS_COPPER(ID)){
+      applyiPBR(data.baseReflectance, 234.0/255.0);
+      applyiPBR(data.perceptualSmoothness, max(data.albedo.r, 0.3));
+    }
 
     // not a great way of doing this but otherwise I'd have to reorganise and make things overall more complicated
     #ifndef HARDCODED_SPECULAR
@@ -165,6 +181,8 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 			data.baseReflectance = mix(data.baseReflectance, 0.02, (1.0 - data.porosity) * wetness * vertLightmap.g);
 			data.perceptualSmoothness = mix(data.perceptualSmoothness, (1.0 - data.porosity), wetness * vertLightmap.g);
 		}
+
+    if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));
 
   }
 #endif

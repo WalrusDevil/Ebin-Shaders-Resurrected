@@ -61,8 +61,10 @@ vec3 getLightColor(int ID){
       return vec3(0.6, 1.3, 0.6) * 4.5;
     case IPBR_PEARLESCENT_FROGLIGHT:
       return vec3(1.1, 0.5, 0.9) * 4.5;
+    case IPBR_COPPER_BULB_LIT:
+      return vec3(1.7, 0.9, 0.4) * 4.0;
     default:
-      return vec3(torchColor);
+      return torchColor;
     
   }
 }

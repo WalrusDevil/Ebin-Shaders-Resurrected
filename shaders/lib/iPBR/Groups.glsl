@@ -16,4 +16,13 @@ bool IPBR_IS_TALL_GRASS(float ID){
     (ID >= 2008 && ID <= 2009);
 }
 
+bool IPBR_IS_FROGLIGHT(float ID){
+  return
+    (ID >= 1026 && ID <= 1028);
+}
+
+bool IPBR_IS_COPPER(float ID){
+  return ID == IPBR_COPPER || ID == IPBR_COPPER_BULB_LIT;
+}
+
 #endif
