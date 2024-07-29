@@ -19,7 +19,7 @@ vec3 getLightColor(int ID){
       return redstoneColor;
     case IPBR_SOUL_TORCH:
       return soulFireColor;
-    case IPBR_FIRELIT:
+    case IPBR_JACK_O_LANTERN:
       return fireColor;
     case IPBR_BIOLUMINESCENT:
       return vec3(0.7, 1.5, 1.5) * 1.7;

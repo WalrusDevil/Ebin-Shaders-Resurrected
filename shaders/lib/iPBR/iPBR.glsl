@@ -145,6 +145,10 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_SCULK:
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.2, data.hsv.b)));
         break;
+
+      case IPBR_JACK_O_LANTERN:
+        applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.9, data.hsv.b)));
+        break;
     }
 
     
