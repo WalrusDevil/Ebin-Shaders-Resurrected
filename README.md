@@ -62,6 +62,7 @@ Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and cre
   - BuilderB0y
   - NinjaMike
   - CyanEmber
+- [Zombye](https://github.com/zombye) (again, for providing the GGX VNDF function used for rough reflections, long after they stopped contributing).
 - [Capt Tatsu](https://bitslablab.com/), whose shader, [BSL](https://bitslablab.com/bslshaders/) I ported the FXAA code from.
 - [Sonic Ether](https://www.facebook.com/SonicEther/), creator of SEUS and inspiration for Ebin
 - [daxnitro](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272365), original creator of the Shaders Mod

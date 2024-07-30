@@ -17,20 +17,10 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 	return min(75, int(x));
 }
 
-
-
-vec3 randomVector(int sampleCount){
-	int seed = frameCounter * REFLECTION_SAMPLES + sampleCount;
-
-	float theta = acos(ign(floor(gl_FragCoord.xy), seed));
-	float phi = 2 * PI * ign(texcoord * vec2(viewWidth, viewHeight) + vec2(97, 23), seed);
-	return vec3(sin(phi)*cos(theta), sin(phi)*sin(theta), cos(phi));
-}
-
 bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	cfloat rayGrowth      = 1.15;
 	cfloat rayGrowthL2    = log2(rayGrowth);
-	cint   maxRefinements = 0;
+	cint   maxRefinements = 4;
 	cbool  doRefinements  = maxRefinements != 0;
 	float  maxRayDepth    = far * 1.75;
 	int    maxSteps       = GetMaxSteps(vPos, dir, maxRayDepth, rayGrowth);
@@ -125,6 +115,38 @@ vec3 getMetalf82(float baseReflectance, vec3 color){
 	}
 	
 	return clamp01(color);
+}
+
+mat3 CalculateTBN(vec3 normal){
+	vec3 tangent = normal.y == 1.0 ? vec3(1.0, 0.0, 0.0) : normalize(cross(vec3(0.0, 1.0, 0.0), normal));
+	vec3 bitangent = normalize(cross(tangent, normal));
+	return mat3(tangent, bitangent, normal);
+}
+
+// by Zombye
+// https://discordapp.com/channels/237199950235041794/525510804494221312/1118170604160421918
+vec3 SampleVNDFGGX(
+    vec3 viewerDirection, // Direction pointing towards the viewer, oriented such that +Z corresponds to the surface normal
+    vec2 alpha, // Roughness parameter along X and Y of the distribution
+    vec2 xy // Pair of uniformly distributed numbers in [0, 1)
+) {
+    // Transform viewer direction to the hemisphere configuration
+    viewerDirection = normalize(vec3(alpha * viewerDirection.xy, viewerDirection.z));
+
+    // Sample a reflection direction off the hemisphere
+    const float tau = 6.2831853; // 2 * pi
+    float phi = tau * xy.x;
+    float cosTheta = fma(1.0 - xy.y, 1.0 + viewerDirection.z, -viewerDirection.z);
+    float sinTheta = sqrt(clamp(1.0 - cosTheta * cosTheta, 0.0, 1.0));
+    vec3 reflected = vec3(vec2(cos(phi), sin(phi)) * sinTheta, cosTheta);
+
+    // Evaluate halfway direction
+    // This gives the normal on the hemisphere
+    vec3 halfway = reflected + viewerDirection;
+
+    // Transform the halfway direction back to hemiellispoid configuation
+    // This gives the final sampled normal
+    return normalize(vec3(alpha * halfway.xy, halfway.z));
 }
 
 // https://advances.realtimerendering.com/s2017/DecimaSiggraph2017.pdf
@@ -248,7 +270,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	} else {
 		sunlight = texture(colortex13, texcoord).rgb;
 	}
-	
+
 	for(int i = 0; i < REFLECTION_SAMPLES; i++){
 		
 		if(roughness > ROUGH_REFLECTION_THRESHOLD){
@@ -256,12 +278,12 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		}
 
 		if (roughness > 0){ // rough reflections
-			vec3 randomNormal = randomVector(i);
-			if (dot(randomNormal, normal) < 0){ // new random normal faces into surface
-				randomNormal *= -1;
-			}
+			float r1 = ign(floor(gl_FragCoord.xy), frameCounter * REFLECTION_SAMPLES + i);
+			float r2 = ign(floor(gl_FragCoord.xy) + vec2(97, 23), frameCounter * REFLECTION_SAMPLES + i);
 
-			offsetNormal = slerp(normal, randomNormal, roughness);
+			mat3 tbn = CalculateTBN(normal);
+			offsetNormal = tbn * (SampleVNDFGGX(normalize(-position[0] * tbn), vec2(pow2(roughness)), vec2(r1, r2)));
+			
 		}
 
 		refRay[0] = reflect(position[0], offsetNormal);
@@ -298,7 +320,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			transmit = vec3(1.0);
 
 			float sunFactor = 0.0;
-			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor) * skyLightmap;
+			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor);
 			in_scatter *= (1.0 - float(isEyeInWater == 1.0));
 
 			if(isEyeInWater == 1.0){
@@ -310,6 +332,10 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		}
 		
 		reflection = reflection * transmit + in_scatter;
+		if(!hit){
+			reflection = mix(reflection, color, 1.0 - skyLightmap); // horrible way to reduce sky reflections without making reflections too dark
+		}
+		
 		reflectionSum += reflection;
 
 		
@@ -336,7 +362,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	reflectionSum += sunspot;
 	
-
+	
 
 	#ifdef MULTIPLY_METAL_ALBEDO
 		if (baseReflectance >= (229.5 / 255.0)) {
@@ -346,9 +372,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	if (baseReflectance < 1.0){
 		color = mix(color, reflectionSum, clamp01(fresnel));
-
-		
-		
 	}
 	
 }
