@@ -266,10 +266,10 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 	if(length2(dFdTorch) > 1e-12) torch = clamp(dot(normalize(torchDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
 	
 	float sky = 1.0;
-	vec2 dFdSky = vec2(dFdx(lightmap.g), dFdy(lightmap.g));
+	// vec2 dFdSky = vec2(dFdx(lightmap.g), dFdy(lightmap.g));
 
-	vec3 skyDir = dFdViewposX * dFdSky.x + dFdViewposY * dFdSky.y;
-	if(length2(dFdSky) > 1e-12) sky = clamp(dot(normalize(skyDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
+	// vec3 skyDir = dFdViewposX * dFdSky.x + dFdViewposY * dFdSky.y;
+	// if(length2(dFdSky) > 1e-12) sky = clamp(dot(normalize(skyDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
 
 
 	return(vec2(torch, sky));
