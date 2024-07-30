@@ -95,12 +95,12 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
       case IPBR_IRON:
         applyiPBR(data.baseReflectance, 230.0/255.0);
-        applyiPBR(data.perceptualSmoothness, 0.8);
+        applyiPBR(data.perceptualSmoothness, data.hsv.b);
         break;
 
       case IPBR_GOLD:
         applyiPBR(data.baseReflectance, 231.0/255.0);
-        applyiPBR(data.perceptualSmoothness, 0.8);
+        applyiPBR(data.perceptualSmoothness, data.hsv.b);
         break;
 
       case IPBR_GLASS:
