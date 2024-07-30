@@ -234,7 +234,7 @@ void main() {
 	if(((mask.water == 0.0 && isEyeInWater == 0.0) || (mask.water == 1.0 && isEyeInWater == 1.0)) && depth1 != 1.0){ // surface not behind water so apply atmospheric fog
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit);
-		color += fog;
+		color = mix(fog, color, fogTransmit);
 	}
 	#else
 		color = mix(color, fogColor, vec3(CalculateFogFactor(backPos[1])));
@@ -248,7 +248,7 @@ void main() {
 		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), waterPos[1], fogTransmit);
-		color += fog;
+		color = mix(fog, color, fogTransmit);
 	} else
 	#endif
 	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // render water fog directly
@@ -271,7 +271,7 @@ void main() {
 	if(mask.transparent == 1.0 && isEyeInWater == 0.0){
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit);
-		color += fog;
+		color = mix(fog, color, fogTransmit);
 	}
 	#else
 		if(mask.transparent == 1.0) color = mix(color, fogColor, vec3(CalculateFogFactor(frontPos[1])));
