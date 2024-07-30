@@ -253,17 +253,18 @@ bool handLight = false;
 // adapted from NinjaMike's method
 // https://discord.com/channels/237199950235041794/525510804494221312/1004459522095579186
 vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 worldPos, vec2 lightmap){
-	vec3 viewPos = worldPos * mat3(gbufferModelViewInverse);
-	vec3 viewNormal = mappedNormal * mat3(gbufferModelViewInverse);
-
-	vec3 dFdViewposX = dFdx(viewPos);
-	vec3 dFdViewposY = dFdy(viewPos);
+	vec3 dFdworldPosX = dFdx(worldPos);
+	vec3 dFdworldPosY = dFdy(worldPos);
 
 	float torch = 1.0;
 	vec2 dFdTorch = vec2(dFdx(lightmap.r), dFdy(lightmap.r));
 	
-	vec3 torchDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
-	if(length2(dFdTorch) > 1e-12) torch = clamp(dot(normalize(torchDir), viewNormal) + 0.8, 0.0, 1.0) * 0.8 + 0.2;
+	vec3 torchDir = dFdworldPosX * dFdTorch.x + dFdworldPosY * dFdTorch.y;
+	if(length(dFdTorch) > 1e-6) {
+		torch = clamp01(dot(normalize(torchDir), mappedNormal) + 0.8) * 0.8 + 0.2;
+	} else {
+		torch = clamp01(dot(mappedNormal, faceNormal)) * 0.8 + 0.2;
+	}
 	
 	float sky = 1.0;
 	// vec2 dFdSky = vec2(dFdx(lightmap.g), dFdy(lightmap.g));
