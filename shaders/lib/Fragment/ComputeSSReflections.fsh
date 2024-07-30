@@ -282,7 +282,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			float r2 = ign(floor(gl_FragCoord.xy) + vec2(97, 23), frameCounter * REFLECTION_SAMPLES + i);
 
 			mat3 tbn = CalculateTBN(normal);
-			offsetNormal = tbn * (SampleVNDFGGX(normalize(-position[0] * tbn), vec2(pow2(roughness)), vec2(r1, r2)));
+			offsetNormal = tbn * (SampleVNDFGGX(normalize(-position[0] * tbn), vec2(roughness), vec2(r1, r2))); // I should be squaring roughness for alpha but it makes things way too reflective
 			
 		}
 
