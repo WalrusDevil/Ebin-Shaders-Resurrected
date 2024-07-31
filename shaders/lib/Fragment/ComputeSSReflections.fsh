@@ -20,7 +20,7 @@ int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Ret
 bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	cfloat rayGrowth      = 1.15;
 	cfloat rayGrowthL2    = log2(rayGrowth);
-	cint   maxRefinements = 8;
+	cint   maxRefinements = 0;
 	cbool  doRefinements  = maxRefinements != 0;
 	float  maxRayDepth    = far * 1.75;
 	int    maxSteps       = GetMaxSteps(vPos, dir, maxRayDepth, rayGrowth);
