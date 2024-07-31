@@ -8,6 +8,8 @@
   uniform int frameCounter;
   uniform int heldItemId;
   uniform int heldItemId2;
+  uniform int heldBlockLightValue;
+  uniform int heldBlockLightValue2;
 
   #include "/lib/Voxel/VoxelPosition.glsl"
   #include "/lib/iPBR/lightColors.glsl"
@@ -21,6 +23,22 @@
   const ivec3 workGroups = ivec3(32, 32, 32); // 32*8 = 256
 
   vec3 getColor(ivec3 voxelPos){
+    #ifdef HANDLIGHT
+    if(voxelPos == ivec3(VOXEL_MAP_SIZE / 2)){
+      vec3 handColor = vec3(0.0);
+      if(heldBlockLightValue > 0){
+        handColor += getLightColor(heldItemId);
+      }
+      if(heldBlockLightValue2 > 0){
+        handColor += getLightColor(heldItemId2);
+        handColor /= 2;
+      }
+      if(handColor != vec3(0.0)){
+        return handColor;
+      }
+    }
+    #endif
+
     if(EVEN_FRAME){
       return imageLoad(lightvoxelf, voxelPos).rgb;
     } else {
@@ -49,10 +67,11 @@
       if(isWithinVoxelBounds(offsetPos)){
         color += getColor(offsetPos);
       }
-      
     }
 
     color /= 6;
+
+    color *= 0.97; // ever so slight falloff to prevent positive feedback
 
     if(length(color) < 0.001){
       color = vec3(0.0);
