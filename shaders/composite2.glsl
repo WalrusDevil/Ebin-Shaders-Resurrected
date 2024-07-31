@@ -131,7 +131,7 @@ float depth0;
 float depth1;
 float skyLightmap;
 
-#include "/lib/Fragment/waterdepthFog.fsh"
+#include "/lib/Fragment/WaterDepthFog.fsh"
 #include "/lib/Fragment/ComputeSunlight.fsh"
 #include "/lib/Fragment/Sky.fsh"
 #include "/lib/Fragment/ComputeSSReflections.fsh"
