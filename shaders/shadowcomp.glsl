@@ -53,6 +53,11 @@
     }
 
     color /= 6;
+
+    if(length(color) < 0.001){
+      color = vec3(0.0);
+    }
+
     //color = getColor(previousPos);
 
     if(EVEN_FRAME){
