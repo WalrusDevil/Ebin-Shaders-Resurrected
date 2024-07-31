@@ -42,11 +42,11 @@
       ivec3( 0,  0, -1)
     );
 
-    vec3 color;
+    vec3 color = vec3(0.0);
     
     for(int i = 0; i < 6; i++){
       ivec3 offsetPos = previousPos + sampleOffsets[i];
-      if(isWithinVoxelBounds(offsetPos) || true){
+      if(isWithinVoxelBounds(offsetPos)){
         color += getColor(offsetPos);
       }
       
