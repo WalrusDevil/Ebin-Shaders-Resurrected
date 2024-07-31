@@ -197,6 +197,10 @@ uniform vec3 eyePosition;
 
 uniform float nightVision;
 
+#ifdef gbuffers_entities
+uniform vec4 entityColor;
+#endif
+
 uniform ivec2 eyeBrightnessSmooth;
 
 uniform int isEyeInWater;
@@ -245,7 +249,13 @@ float LOD;
 
 
 vec4 GetDiffuse(vec2 coord) {
-	return vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
+	vec4 diffuse = vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
+	
+	#ifdef gbuffers_entities
+		diffuse.rgb = mix(diffuse.rgb, entityColor.rgb, entityColor.a);
+	#endif
+
+	return diffuse;
 }
 
 bool handLight = false;
