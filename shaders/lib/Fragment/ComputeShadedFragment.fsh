@@ -55,7 +55,7 @@ float CalculateWaterCaustics(vec3 worldPos, float skyLightmap, float waterMask) 
 	return 1.0;
 #endif
 	
-	if (skyLightmap <= 0.0 || WAVE_MULT == 0.0 || isEyeInWater == waterMask || isEyeInWater > 1.0r) return 1.0;
+	if (skyLightmap <= 0.0 || WAVE_MULT == 0.0 || isEyeInWater == waterMask || isEyeInWater > 1.0) return 1.0;
 	
 	SetupWaveFBM();
 	
