@@ -41,7 +41,7 @@ float GetHeldLight(vec3 viewSpacePosition, vec3 normal, float handMask) {
 	}
 
 	#ifdef DIRECTIONAL_LIGHTING
-	falloff *= clamp01(dot(normal, -normalize(lightPos)));
+	falloff *= clamp01(dot(normal, -normalize(lightPos))) * 0.8 + 0.2;
 	#endif
 
 	return falloff;
@@ -55,7 +55,7 @@ float CalculateWaterCaustics(vec3 worldPos, float skyLightmap, float waterMask) 
 	return 1.0;
 #endif
 	
-	if (skyLightmap <= 0.0 || WAVE_MULT == 0.0 || isEyeInWater == waterMask) return 1.0;
+	if (skyLightmap <= 0.0 || WAVE_MULT == 0.0 || isEyeInWater == waterMask || isEyeInWater > 1.0r) return 1.0;
 	
 	SetupWaveFBM();
 	

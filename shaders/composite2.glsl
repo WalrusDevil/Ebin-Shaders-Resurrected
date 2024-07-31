@@ -263,7 +263,7 @@ void main() {
 
 
 
-	if(isEyeInWater != 0.0){ // surface in water
+	if(isEyeInWater == 1.0){ // surface in water
 		color = waterdepthFog(frontPos[0], backPos[0], color);
 	}
 	
@@ -276,6 +276,10 @@ void main() {
 	#else
 		if(mask.transparent == 1.0) color = mix(color, fogColor, vec3(CalculateFogFactor(frontPos[1])));
 	#endif
+
+	if(isEyeInWater > 1.0){
+		color = mix(color, fogColor, vec3(CalculateFogFactor(frontPos[1] * 64)));
+	}
 		
 	gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
 	exit();
