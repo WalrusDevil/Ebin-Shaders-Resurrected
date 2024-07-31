@@ -9,7 +9,7 @@ Ebin Resurrected is a vibrant and performant Minecraft shaderpack.
 [Ebin](https://github.com/BruceKnowsHow/Ebin-Shaders) began with the goal of being fast, beautiful, configurable, feature-rich, and having a base of well-written code. It was developed by [BruceKnowsHow](https://github.com/BruceKnowsHow) from 2016-2020. [jbritain](https://github.com/jbritain) resumed development of the shader in 2024 under the name 'Ebin Resurrected'. This is a fork of Ebin which brings compatibility with modern versions of Minecraft, and significantly improves upon aspects of the shader, such as PBR.
 
 ## Community
-If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join my [Discord server](https://discord.gg/b9SHNcvs6c).
+If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, join my [Discord server](https://discord.gg/b9SHNcvs6c). Alternatively, in the [shaderLABS](https://discord.gg/RpzWN9S) discord, you can head over to `#ebin-resurrected-jbritain`.
 
 ## Features
 - Multicoloured Blocklight
