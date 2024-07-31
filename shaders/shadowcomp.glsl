@@ -4,29 +4,34 @@
 /***********************************************************************/
 #if defined csh
   uniform vec3 cameraPosition;
+  uniform vec3 previousCameraPosition;
+  uniform int frameCounter;
   uniform int heldItemId;
   uniform int heldItemId2;
 
   #include "/lib/Voxel/VoxelPosition.glsl"
   #include "/lib/iPBR/lightColors.glsl"
 
-  layout (rgba8) uniform image3D lightvoxel;
-  layout (rgba8) uniform image3D lightvoxelf;
+  layout (rgba16f) uniform image3D lightvoxel;
+  layout (rgba16f) uniform image3D lightvoxelf;
 
-  #ifdef SHADOWCOMP_EVEN
-    #define READ_IMAGE lightvoxel
-    #define WRITE_IMAGE lightvoxelf
-  #else
-    #define READ_IMAGE lightvoxelf
-    #define WRITE_IMAGE lightvoxel
-  #endif
+  bool EVEN_FRAME = frameCounter % 2 == 0;
 
   layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
   const ivec3 workGroups = ivec3(32, 32, 32); // 32*8 = 256
 
+  vec3 getColor(ivec3 voxelPos){
+    if(EVEN_FRAME){
+      return imageLoad(lightvoxelf, voxelPos).rgb;
+    } else {
+      return imageLoad(lightvoxel, voxelPos).rgb;
+    }
+  }
+
   void main(){
     #ifdef FLOODFILL_BLOCKLIGHT
     ivec3 pos = ivec3(gl_GlobalInvocationID); // position in the voxel map we are working with
+    ivec3 previousPos = pos - getPreviousVoxelOffset();
 
     const ivec3[6] sampleOffsets = ivec3[6](
       ivec3( 1,  0,  0),
@@ -37,36 +42,25 @@
       ivec3( 0,  0, -1)
     );
 
-    int sampleCount = 1;
-
-    vec3 colorSum = imageLoad(READ_IMAGE, pos).rgb;
-    
-    #if defined shadowcomp0 && defined HANDLIGHT
-    if(pos == mapVoxelPos(vec3(0, 0, 0))){
-      colorSum += getLightColor(heldItemId);
-      colorSum += getLightColor(heldItemId2);
-      colorSum = normalize(colorSum);
-    }
-    #endif
+    vec3 color;
     
     for(int i = 0; i < 6; i++){
-      ivec3 offsetPos = pos + sampleOffsets[i];
-      vec3 colorSample = imageLoad(READ_IMAGE, offsetPos).rgb;
-      if(length(colorSample) > 0.01){
-        colorSum += colorSample;
-        sampleCount++;
+      ivec3 offsetPos = previousPos + sampleOffsets[i];
+      if(isWithinVoxelBounds(offsetPos) || true){
+        color += getColor(offsetPos);
       }
+      
     }
 
-    vec3 color = colorSum / float(sampleCount);
+    color /= 6;
+    //color = getColor(previousPos);
 
-    #ifdef shadowcomp15
-      if(color == vec3(0.0)){
-        color = torchColor;
-      }
-    #endif
+    if(EVEN_FRAME){
+      imageStore(lightvoxel, pos, vec4(color.rgb, 1.0));
+    } else {
+      imageStore(lightvoxelf, pos, vec4(color.rgb, 1.0));
+    }
     
-    imageStore(WRITE_IMAGE, pos, vec4(normalize(color), 1.0));
     #endif
   }
 

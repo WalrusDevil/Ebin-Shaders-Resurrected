@@ -229,10 +229,27 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	
 	
 	#ifdef FLOODFILL_BLOCKLIGHT
-		vec3 torchlightColor = colorNormalize(texture(lightVoxelTex, mapVoxelPosInterp(position[1])).rgb);
+		vec3 torchlightColor;
+
+		vec3 voxelPosInterp = mapVoxelPosInterp(position[1]);
+
+		if(isWithinVoxelBoundsInterp(voxelPosInterp)){
+			if(frameCounter % 2 == 0){
+				torchlightColor = normalize(texture(lightVoxelTex, mapVoxelPosInterp(position[1])).rgb);
+			} else {
+				torchlightColor = normalize(texture(lightVoxelFlipTex, mapVoxelPosInterp(position[1])).rgb);
+			}
+		} else {
+			torchlightColor = torchColor;
+		}
+
+		torchlightColor = clamp01(torchlightColor);
+		
+
 		if(torchlightColor == vec3(0.0)){
 			torchlightColor = torchColor;
 		}
+		
 		lightmap.torchlight = shading.torchlight * torchlightColor;
 	#else
 		lightmap.torchlight = shading.torchlight * torchColor;

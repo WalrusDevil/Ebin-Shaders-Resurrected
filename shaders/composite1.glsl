@@ -60,6 +60,7 @@ uniform sampler2D colortex9;
 uniform sampler2D colortex10;
 
 uniform sampler3D lightVoxelTex;
+uniform sampler3D lightVoxelFlipTex;
 
 #if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VOLUMETRIC_LIGHT)
 const bool colortex5MipmapEnabled = true;

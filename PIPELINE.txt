@@ -1,5 +1,14 @@
 The following is a summary of how the pipeline for this shader operates. Specifically, it's a list of the outputs for each program. Some of this information may be out of date or incorrect, but I hope it helps you understand this mess.
 
+===LPV STUFF===
+The floodfill lighting uses two custom images - lightvoxel and lightvoxelf
+On even frames, lightvoxelf is the 'previous buffer' and lightvoxel is the 'current buffer'. On odd frames, this is swapped.
+
+In shadow.vsh, light emitting blocks have their emission colour written to the **previous buffer** at their voxel position from the **previous frame**.
+In shadowcomp.csh, for each voxel, samples are taken from **where that voxel was last frame** from the **previous buffer**, and then written to the **current buffer**.
+
+===PROGRAMS=== (not all of them)
+
 GBUFFERS TERRAIN - JUST ALBEDO + DATA
 1 solid diffuse
 4 solid material ID, nothin', material AO, SSS, normal, lighting data

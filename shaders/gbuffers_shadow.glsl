@@ -19,7 +19,8 @@ varying float materialIDs;
 
 
 
-layout (rgba8) uniform image3D lightvoxel;
+layout (rgba16f) uniform image3D lightvoxel;
+layout (rgba16f) uniform image3D lightvoxelf;
 
 attribute vec4 mc_Entity;
 attribute vec2 mc_midTexCoord;
@@ -35,10 +36,13 @@ uniform mat4 shadowModelViewInverse;
 uniform float entityId;
 
 uniform vec3 cameraPosition;
+uniform vec3 previousCameraPosition;
 
 uniform float sunAngle;
 
 uniform float thunderStrength;
+
+
 
 #include "/lib/Utility.glsl"
 
@@ -48,6 +52,8 @@ uniform float thunderStrength;
 #include "/UserProgram/centerDepthSmooth.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
+
+bool EVEN_FRAME = frameCounter % 2 == 0;
 
 vec2 GetDefaultLightmap() {
 	vec2 lightmapCoord = mat2(gl_TextureMatrix[1]) * gl_MultiTexCoord1.st;
@@ -137,11 +143,6 @@ void main() {
 	#endif
 	
 	materialIDs  = mc_Entity.x;
-
-	
-	
-
-	
 	
 #ifdef HIDE_ENTITIES
 //	if (mc_Entity.x < 0.5) { gl_Position = vec4(-1.0); return; }
@@ -158,11 +159,24 @@ void main() {
 	
 	
 	vec3 position  = GetWorldSpacePositionShadow();
+	vec3 previousPosition = position + (previousCameraPosition - cameraPosition);
 	     position += CalculateVertexDisplacements(position);
+
+	
 
 	#ifdef FLOODFILL_BLOCKLIGHT
 	if(IPBR_EMITS_LIGHT(materialIDs)){
-		imageStore(lightvoxel, mapVoxelPos(position + at_midBlock * rcp(64.0)), vec4(normalize(getLightColor(int(materialIDs))), 1.0));
+		ivec3 voxelPos = mapPreviousVoxelPos(previousPosition + at_midBlock * rcp(64.0));
+
+		if(isWithinVoxelBounds(voxelPos)) {
+			vec3 lightColor = getLightColor(int(materialIDs));
+
+			if(EVEN_FRAME){
+				imageStore(lightvoxelf, voxelPos, vec4(lightColor, 1.0));
+			} else {
+				imageStore(lightvoxel, voxelPos, vec4(lightColor, 1.0));
+			}
+		}
 	}
 	#endif
 
