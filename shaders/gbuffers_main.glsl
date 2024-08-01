@@ -185,7 +185,6 @@ uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform sampler2D colortex10;
 
-layout (rgba8) uniform image3D lightvoxel;
 uniform sampler3D lightVoxelTex;
 uniform sampler3D lightVoxelFlipTex;
 
@@ -388,7 +387,7 @@ void main() {
 		if (materialIDs == IPBR_WATER) {
 			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
 
-			#ifdef WATER_BEHIND_TRANSLUCENTS
+			#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
 				uint normalInt = floatBitsToUint(EncodeNormal(normal, 11));
 				float depth = gl_FragCoord.z;
 				uint depthInt = floatBitsToUint(depth);

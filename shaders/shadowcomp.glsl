@@ -3,6 +3,10 @@
 
 /***********************************************************************/
 #if defined csh
+  layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
+  const ivec3 workGroups = ivec3(32, 32, 32); // 32*8 = 256
+
+  #if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
   uniform vec3 cameraPosition;
   uniform vec3 previousCameraPosition;
   uniform int frameCounter;
@@ -19,8 +23,7 @@
 
   bool EVEN_FRAME = frameCounter % 2 == 0;
 
-  layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
-  const ivec3 workGroups = ivec3(32, 32, 32); // 32*8 = 256
+  
 
   vec3 getColor(ivec3 voxelPos){
     #ifdef HANDLIGHT
@@ -45,9 +48,10 @@
       return imageLoad(lightvoxel, voxelPos).rgb;
     }
   }
+  #endif
 
   void main(){
-    #ifdef FLOODFILL_BLOCKLIGHT
+    #if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
     ivec3 pos = ivec3(gl_GlobalInvocationID); // position in the voxel map we are working with
     ivec3 previousPos = pos - getPreviousVoxelOffset();
 

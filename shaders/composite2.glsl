@@ -241,7 +241,7 @@ void main() {
 	#endif
 
 
-	#ifdef WATER_BEHIND_TRANSLUCENTS
+	#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
 	if(depth1 > waterDepth && waterDepth != 0.0 && (waterDepth > depth0 || (mask.water < 0.5 && depth0 == waterDepth)) && isEyeInWater == 0.0){ // render water behind translucents when necessary
 		color = waterdepthFog(waterPos[0], backPos[0], color);
 		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));

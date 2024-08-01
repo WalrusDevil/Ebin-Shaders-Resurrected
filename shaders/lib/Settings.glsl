@@ -189,3 +189,9 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 #define FLOODFILL_BLOCKLIGHT
 #define HANDLIGHT
+
+// ifdef checks so they don't disappear from settings
+#ifdef FLOODFILL_BLOCKLIGHT
+#endif
+#ifdef WATER_BEHIND_TRANSLUCENTS
+#endif

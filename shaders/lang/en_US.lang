@@ -115,6 +115,7 @@ option.BLOOM_CURVE=Bloom Curve
 option.BLOOM_CURVE.comment=Higher values make the bloom more concentrated to bright areas, and also make the bloom more colorful
 
 option.MOTION_BLUR=Motion Blur
+option.MOTION_BLUR.commment=You monster
 
 option.VARIABLE_MOTION_BLUR_SAMPLES=Sample Rate
 value.VARIABLE_MOTION_BLUR_SAMPLES.0=Constant
@@ -357,7 +358,7 @@ option.DIRECTIONAL_LIGHTING=Directional Lighting
 option.DIRECTIONAL_LIGHTING.comment=Use normal maps and the lightmap to approximate 3D lighting from artifical light sources (i.e torches) on blocks.
 
 option.WATER_BEHIND_TRANSLUCENTS=Render Water Behind Translucents
-option.WATER_BEHIND_TRANSLUCENTS.comment=Generate a separate depth buffer for water and reconstruct normals for reflections from the depth. §cThis feature currently has mild artifacts.
+option.WATER_BEHIND_TRANSLUCENTS.comment=Generate a separate depth buffer for water and reconstruct normals for reflections from the depth. §cThis feature requires hardware which supports custom images.
 
 option.WATER_REFRACTION=Water Refraction
 option.WATER_REFRACTION.comment=Distort stuff visible through water due to the refraction of light. §cThis feature currently has mild artifacts (pixels refracted offscreen keep their original colour).
@@ -365,7 +366,7 @@ option.WATER_REFRACTION.comment=Distort stuff visible through water due to the r
 option.LABPBR_VERSION=labPBR Version
 
 option.FLOODFILL_BLOCKLIGHT=Colored Blocklight
-option.FLOODFILL_BLOCKLIGHT.comment=Uses a floodfill algorithm in the shadow pass to determine the colour of blocklighting.
+option.FLOODFILL_BLOCKLIGHT.comment=Uses a floodfill algorithm in the shadow pass to determine the colour of blocklighting. §cThis feature requires hardware which supports custom images.
 
 option.HANDLIGHT=Dynamic Handlight
 option.HANDLIGHT.comment=Illuminates an area around the player when a light source is held in their hand.

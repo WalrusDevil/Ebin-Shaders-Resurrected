@@ -228,7 +228,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	lightmap.ambient = vec3(shading.ambient) * vec3(1.0, 1.2, 1.4);
 	
 	
-	#ifdef FLOODFILL_BLOCKLIGHT
+	#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
 		vec3 torchlightColor;
 
 		vec3 voxelPosInterp = mapVoxelPosInterp(position[1]);

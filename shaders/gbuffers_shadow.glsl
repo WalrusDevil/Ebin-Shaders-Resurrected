@@ -17,10 +17,10 @@ varying float materialIDs;
 /***********************************************************************/
 #if defined vsh
 
-
-
+#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
 layout (rgba16f) uniform image3D lightvoxel;
 layout (rgba16f) uniform image3D lightvoxelf;
+#endif
 
 attribute vec4 mc_Entity;
 attribute vec2 mc_midTexCoord;
@@ -164,7 +164,7 @@ void main() {
 
 	
 
-	#ifdef FLOODFILL_BLOCKLIGHT
+	#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
 	if(IPBR_EMITS_LIGHT(materialIDs)){
 		ivec3 voxelPos = mapPreviousVoxelPos(previousPosition + at_midBlock * rcp(64.0));
 
