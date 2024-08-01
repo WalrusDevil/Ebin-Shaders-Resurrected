@@ -29,4 +29,16 @@ bool IPBR_IS_RAIL(float ID){
   return ID == IPBR_RAIL || ID == IPBR_POWERED_RAIL;
 }
 
+bool IPBR_IS_ORE(float ID){
+  return ID >= 200 && ID < 300;
+}
+
+bool IPBR_IS_OVERWORLD_ORE(float ID){
+  return ID >= 200 && ID < 250;
+}
+
+bool IPBR_IS_NETHER_ORE(float ID){
+  return ID >= 250 && ID < 300;
+}
+
 #endif

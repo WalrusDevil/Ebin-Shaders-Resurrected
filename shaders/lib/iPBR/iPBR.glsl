@@ -81,6 +81,8 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
     bool hasRPPorosity = !(data.SSS == 0.0 && data.porosity == 0.0);
 
+    // =================================================================================
+
     switch(int(ID + 0.5)){
       case IPBR_ICE:
         applyiPBR(data.perceptualSmoothness, 1.0);
@@ -149,6 +151,10 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.2, data.hsv.b)));
         break;
 
+      case IPBR_BIOLUMINESCENT:
+        applyiPBR(data.emission, pow2(clamp01(data.hsv.b - 0.3)) * rcp(0.7));
+        break;
+
       case IPBR_JACK_O_LANTERN:
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.9, data.hsv.b)));
         break;
@@ -165,6 +171,10 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         break;
 
       case IPBR_REDSTONE_COMPONENT:
+        applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6) * step(0.8, data.hsv.g), 0.001));
+        break;
+
+      case IPBR_NO_LIGHT_REDSTONE:
         applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6) * step(0.8, data.hsv.g), 0.001));
         break;
     }
@@ -192,6 +202,18 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       applyiPBR(data.baseReflectance, data.emission > 0.1 ? 0.0 : 234.0/255.0);
       applyiPBR(data.perceptualSmoothness, max(data.albedo.r, 0.3));
     }
+
+    #ifdef GLOWING_ORES
+      if(IPBR_IS_OVERWORLD_ORE(ID)){
+        applyiPBR(data.emission, clamp01(step(0.3, data.hsv.g) + step(0.8, data.hsv.b)));
+      }
+
+      if(IPBR_IS_NETHER_ORE(ID)){
+        applyiPBR(data.emission, step(0.6, data.hsv.b));
+      }
+    #endif
+
+    // =================================================================================
 
     // not a great way of doing this but otherwise I'd have to reorganise and make things overall more complicated
     #ifndef HARDCODED_SPECULAR

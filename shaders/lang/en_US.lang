@@ -54,6 +54,9 @@ option.HARDCODED_SPECULAR.comment=Hardcoded specular mapping for blocks like met
 option.HARDCODED_SSS=Hardcoded Subsurface Scattering
 option.HARDCODED_SSS.comment=Hardcoded subsurface scattering for blocks like leaves.
 
+option.GLOWING_ORES=Glowing Ores
+option.GLOWING_ORES.comment=Makes ores glow, so they are easier to spot.
+
 option.MULTIPLY_METAL_ALBEDO=Metal Albedo Tinting
 option.MULTIPLY_METAL_ALBEDO.comment=Tints metal reflections with the albedo colour. Disable if resource pack does not support this.
 
