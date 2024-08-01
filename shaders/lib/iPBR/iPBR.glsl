@@ -143,6 +143,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
 
       case IPBR_CANDLES:
         applyiPBR(data.emission, 0.01);
+        break;
 
       case IPBR_SCULK:
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.2, data.hsv.b)));
@@ -151,9 +152,31 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_JACK_O_LANTERN:
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.9, data.hsv.b)));
         break;
+
+      case IPBR_POWERED_RAIL:
+        if(data.hsv.r < 72.0/255.0 && data.hsv.r > 25.0/255.0 && data.hsv.g > 0.6){ // gold
+          applyiPBR(data.baseReflectance, 231.0/255.0);
+          applyiPBR(data.perceptualSmoothness, 0.9);
+        }
+        break;
+
+      case IPBR_REDSTONE_WIRE:
+        applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6), 0.001));
+        break;
+
+      case IPBR_REDSTONE_COMPONENT:
+        applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6) * step(0.8, data.hsv.g), 0.001));
+        break;
     }
 
-    
+    if(IPBR_IS_RAIL(ID)){
+      applyiPBR(data.baseReflectance, data.hsv.g < 0.2 ? 230.0/255.0 : 0.0);
+      applyiPBR(data.perceptualSmoothness, data.hsv.g < 0.2 ? 0.9 : 0.0);
+
+      if((data.hsv.r > 357.0/360.0 || data.hsv.r < 5.0/255.0) && data.hsv.b > 0.5 && data.hsv.g > 0.5){
+        applyiPBR(data.emission, 0.4);
+      }
+    }
 
     if(IPBR_IS_FOLIAGE(ID)){
       applyiPBR(data.SSS, 1.0);

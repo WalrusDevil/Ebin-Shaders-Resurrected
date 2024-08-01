@@ -25,4 +25,8 @@ bool IPBR_IS_COPPER(float ID){
   return ID == IPBR_COPPER || ID == IPBR_COPPER_BULB_LIT;
 }
 
+bool IPBR_IS_RAIL(float ID){
+  return ID == IPBR_RAIL || ID == IPBR_POWERED_RAIL;
+}
+
 #endif

@@ -51,5 +51,7 @@
 #define IPBR_COPPER 3004
 #define IPBR_GEM 3005
 
+#define IPBR_RAIL 3006
+#define IPBR_POWERED_RAIL 3007
 
 #endif
