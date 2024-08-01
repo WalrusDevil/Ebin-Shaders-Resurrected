@@ -306,12 +306,6 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 void main() {
 	vec2 vertLightmap = vertLightmap;
 
-	if(frameCounter % 2 == 0){
-		show(texture(lightVoxelTex, mapVoxelPosInterp(position[1])).rgb);
-	} else {
-		show(texture(lightVoxelFlipTex, mapVoxelPosInterp(position[1])).rgb);
-	}
-
 	PBRData PBR;
 	PBR = getRawPBRData(texcoord);
 	injectIPBR(PBR, materialIDs);
