@@ -83,9 +83,9 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 #define SUBSURFACE_SCATTERING
 
-#define RAIN
+#define RAIN 
 
-#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VOLUMETRIC_LIGHT)
+#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VL_ENABLED)
     #define COMPOSITE0_ENABLED
 #endif
 
@@ -97,6 +97,10 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 //#define GI_ENABLED
 //#define AO_ENABLED
+#define VL_ENABLED
+
+#define VL_STRENGTH 1 // [1 2 4 8 16 32 64]
+#define VL_QUALITY 4 // [1 2 3 4 5 6 7 8]
 
 //#define PLAYER_GI_BOUNCE
 #define GI_RADIUS        8   // [2 4 6 8 12 16 24 32]

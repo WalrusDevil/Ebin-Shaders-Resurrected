@@ -62,7 +62,7 @@ uniform sampler2D colortex10;
 uniform sampler3D lightVoxelTex;
 uniform sampler3D lightVoxelFlipTex;
 
-#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VOLUMETRIC_LIGHT)
+#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VL_ENABLED)
 const bool colortex5MipmapEnabled = true;
 uniform sampler2D colortex5;
 uniform sampler2D colortex6;
@@ -191,6 +191,7 @@ void main() {
 	
 	vec4 GI; vec2 VL;
 	BilateralUpsample(wNormal, depth1, GI, VL);
+	show(VL.x);
 	
 	gl_FragData[1] = vec4(texture4.rg, 0.0, 1.0);
 	gl_FragData[2] = vec4(VL.xy, 0.0, 1.0);

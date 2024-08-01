@@ -18,6 +18,7 @@ screen.CLOUDS3D=Volumetric Cloud Settings
 screen.STARS=Stars
 screen.SHADOWS=Shadow Settings
 screen.LIGHT_LEVELS=Light Levels
+screen.VL=Volumetric Fog Settings
 screen.AO=Ambient Occlusion Settings
 screen.GI=Global Illumination Settings
 screen.RESOURCE_PACK=Resource Pack Settings
@@ -221,6 +222,11 @@ option.AO_SAMPLE_COUNT=AO Sample Count
 option.AO_RADIUS=AO Radius
 
 option.AO_INTENSITY=AO Intensity
+
+option.VL_ENABLED=Volumetric Fog
+option.VL_ENABLED.comment=Scatters sunlight through fog based on shadows.
+option.VL_QUALITY=Volumetric Fog Quality
+option.VL_STRENGTH=Volumetric Fog Strength
 
 option.CLOUDS_ENABLED=Clouds
 

@@ -316,8 +316,10 @@ void main() {
 	}
 	#endif
 
+	#ifndef VL_ENABLED
 	if (CalculateFogFactor(position[0]) >= 1.0)
 		{ discard; }
+	#endif
 	
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
 	vec4  diffuse     		= GetDiffuse(coord);

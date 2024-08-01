@@ -140,7 +140,6 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_COPPER_BULB_LIT:
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.9, data.hsv.b)));
         //applyiPBR(data.baseReflectance, data.emission > 0.1 ? 0.0 : data.baseReflectance);
-        show(data.baseReflectance > 0);
         break;
 
       case IPBR_CANDLES:

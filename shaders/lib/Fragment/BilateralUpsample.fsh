@@ -43,7 +43,7 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 	totalWeight = 0.0;
 #endif
 	
-#ifdef VOLUMETRIC_LIGHT
+#ifdef VL_ENABLED
 	for (float y = -range; y <= range; y++) {
 		for (float x = -range; x <= range; x++) {
 			vec2 offset = vec2(x, y) * pixelSize;

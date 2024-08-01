@@ -57,6 +57,7 @@ uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform sampler2D colortex3;
 uniform sampler2D colortex4;
+uniform sampler2D colortex6;
 uniform sampler2D colortex10;
 uniform sampler2D gdepthtex;
 uniform sampler2D depthtex1;
@@ -130,6 +131,7 @@ vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 float depth0;
 float depth1;
 float skyLightmap;
+vec2 VL;
 
 #include "/lib/Fragment/WaterDepthFog.fsh"
 #include "/lib/Fragment/ComputeSunlight.fsh"
@@ -154,6 +156,8 @@ void main() {
 	vec4 transparentColor = texture(colortex3, texcoord);
 	mask.transparent = clamp01(step(0.01, transparentColor.a) + mask.water);
 	mask.transparent *= (1.0 - mask.hand);
+	VL = ScreenTex(colortex6).xy;
+	show(VL.x);
 
 	float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
 
@@ -233,7 +237,7 @@ void main() {
 	// apply atmospheric fog to solid things
 	if(((mask.water == 0.0 && isEyeInWater == 0.0) || (mask.water == 1.0 && isEyeInWater == 1.0)) && depth1 != 1.0){ // surface not behind water so apply atmospheric fog
 		vec3 fogTransmit = vec3(1.0);
-		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit);
+		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit, VL);
 		color = mix(fog, color, fogTransmit);
 	}
 	#else
@@ -247,7 +251,7 @@ void main() {
 		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));
 		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
 		vec3 fogTransmit = vec3(1.0);
-		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), waterPos[1], fogTransmit);
+		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), waterPos[1], fogTransmit, VL);
 		color = mix(fog, color, fogTransmit);
 	} else
 	#endif
@@ -270,7 +274,7 @@ void main() {
 	#ifdef WORLD_OVERWORLD
 	if(mask.transparent == 1.0 && isEyeInWater == 0.0){
 		vec3 fogTransmit = vec3(1.0);
-		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit);
+		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), frontPos[1], fogTransmit, VL);
 		color = mix(fog, color, fogTransmit);
 	}
 	#else
