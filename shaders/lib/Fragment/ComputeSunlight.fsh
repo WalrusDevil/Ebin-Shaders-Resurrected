@@ -114,7 +114,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 			float penumbraWidth = (receiverDepth - blockerDepth) * sunWidth / blockerDepth;
 			penumbraWidth = clamp(penumbraWidth, -maxPenumbraWidth, maxPenumbraWidth);
 
-			float range = max(SHADOW_SOFTNESS, penumbraWidth * pixelsPerBlock);
+			float range = max(1, penumbraWidth * pixelsPerBlock);
 		#else
 
 			float blockerDepth = texture2D(shadowtex0, shadowPosition.xy).r * shadowDepthRange;

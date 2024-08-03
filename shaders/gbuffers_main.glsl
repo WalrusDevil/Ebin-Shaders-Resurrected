@@ -184,6 +184,7 @@ uniform sampler2D shadowtex1;
 uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform sampler2D colortex10;
+uniform float alphaTestRef;
 
 uniform sampler3D lightVoxelTex;
 uniform sampler3D lightVoxelFlipTex;
@@ -334,7 +335,7 @@ void main() {
 
 	#endif
 
-	 if (diffuse.a < 0.01) { discard; }
+	 if (diffuse.a < alphaTestRef) { discard; }
 	
 
 	vec3	faceNormal			= tbnMatrix * vec3(0.0, 0.0, 1.0);
