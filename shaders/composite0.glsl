@@ -179,8 +179,7 @@ void main() {
 		mask.water = Decode4x8F(texture2D(colortex0, texcoord).r).b;
 	
 	vec2 VL = ComputeVolumetricLight(backPos[1], frontPos[1], noise2D, mask.water);
-	show(VL.x);
-	
+
 	gl_FragData[1] = vec4(VL, 0.0, 0.0);
 	
 	if (depth1 >= 1.0) // Back surface is sky

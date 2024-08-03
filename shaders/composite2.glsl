@@ -49,6 +49,8 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
+const bool colortex5MipmapEnabled = true;
+
 uniform sampler3D colortex7;
 uniform sampler2D colortex8;
 uniform sampler2D colortex9;
@@ -70,6 +72,7 @@ uniform mat4 gbufferModelView;
 uniform sampler2D colortex13;
 uniform usampler2D waterDepthTex;
 uniform usampler2D waterNormalTex;
+uniform sampler2D colortex5;
 
 uniform vec3 shadowLightPosition;
 
@@ -157,7 +160,6 @@ void main() {
 	mask.transparent = clamp01(step(0.01, transparentColor.a) + mask.water);
 	mask.transparent *= (1.0 - mask.hand);
 	VL = ScreenTex(colortex6).xy;
-	show(VL.x);
 
 	float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
 
@@ -193,6 +195,8 @@ void main() {
 	
 	vec3 color = texture(colortex1, texcoord).rgb;
 
+	vec4 cloud;
+
 	#ifdef WATER_REFRACTION
 	if(mask.water > 0.5){
 		vec3 refracted = normalize(refract(frontPos[0], normal, isEyeInWater == 1.0 ? 1.33 : (1.0 / 1.33)));
@@ -205,14 +209,24 @@ void main() {
 			backPos[0] = CalculateViewSpacePosition(refractedPos);
 			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 			color = texture(colortex1, refractedPos.xy).rgb;
-		} else if(isEyeInWater == 1.0 && EBS == 1.0) {
-			color = normalize(waterColor);
-			depth1 = 1.0;
-			backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
-			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
+			cloud = textureLod(colortex5, refractedPos.xy, VolCloudLOD);
+
+		} else {
+			cloud = textureLod(colortex5, texcoord, VolCloudLOD);
+			if(isEyeInWater == 1.0 && EBS == 1.0) {
+				color = normalize(waterColor);
+				depth1 = 1.0;
+				backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
+				backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
+			}
 		}
+
 	}
+	#else
+	cloud = textureLod(colortex5, texcoord, VolCloudLOD);
 	#endif
+	cloud.rgb = pow2(cloud.rgb) * 50.0;
+	cloud.a *= clamp01(1.5 - sqrt(length(backPos[1] * ((CLOUD3D_START_HEIGHT - cameraPosition.y) / backPos[1].y)) / 5000.0));
 
 	
 
@@ -230,6 +244,9 @@ void main() {
 		}
 
 		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
+		
+		
+		color = mix(color, cloud.rgb, cloud.a);
 
 	}
 

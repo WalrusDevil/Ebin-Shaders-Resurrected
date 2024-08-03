@@ -172,17 +172,37 @@ void CloudFBM1(cfloat speed) {
 	cloudAdd[3] = vec3(t * 19.721, 0.0, t * 6.62);
 }
 
+void CloudLighting1(float sunglow) {
+	directColor  = sunlightColor;
+	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - rainStrength * 0.8);
+	
+	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.15);
+	ambientColor *= 2.0 * mix(vec3(1.0), vec3(0.6, 0.8, 1.0), timeNight);
+	
+	bouncedColor = mix(skylightColor, sunlightColor, 0.5);
+}
+
 void CloudLighting2(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, wetness);
+	directColor *= 100.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, rainStrength);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.5);
-	ambientColor *= 0.5 + timeHorizon * 0.5;
+	ambientColor *= 1.7 + timeHorizon * 1.0;
 	
 	directColor += ambientColor * 20.0 * timeHorizon;
 	
 	bouncedColor = vec3(0.0);
 }
+
+void CloudLighting3(float sunglow) {
+	directColor  = sunlightColor;
+	directColor *= 140.0 * mix(1.0, 0.5, timeNight);
+	
+	ambientColor = mix(skylightColor, sunlightColor, 0.15) * 7.0;
+	
+	bouncedColor = vec3(0.0);
+}
+
 
 void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat noise, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
 	if (cloud.a >= 1.0) return;
@@ -208,6 +228,7 @@ void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, 
 	} else {
 		if (position.y >= 0.0) return;
 	}
+
 	
 	rayIncrement = (b - a) / (samples + 1.0);
 	rayPosition = a + cameraPosition + rayIncrement * (1.0 + CalculateDitherPattern1() * noise);
@@ -218,10 +239,11 @@ void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, 
 	float denseFactor = 1.0 / (1.0 - density);
 	
 	for (float i = 0.0; i < samples && cloud.a < 1.0; i++, rayPosition += rayIncrement) {
-		vec4 cloud = CloudColor(rayPosition, cloudLowerHeight, cloudDepth, denseFactor, coverage, sunglow);
+		vec4 cloudSample = CloudColor(rayPosition, cloudLowerHeight, cloudDepth, denseFactor, coverage, sunglow);
+
 		
-		cloud.rgb += cloud.rgb * (1.0 - cloud.a) * cloud.a;
-		cloud.a += cloud.a;
+		cloud.rgb += cloudSample.rgb * (1.0 - cloud.a) * cloudSample.a;
+		cloud.a += cloudSample.a;
 	}
 	
 	cloud.a = clamp01(cloud.a);
@@ -243,6 +265,8 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	
 	if (depth < 1.0) return vec4(0.0);
 	const ivec2[4] offsets = ivec2[4](ivec2(2), ivec2(-2, 2), ivec2(2, -2), ivec2(-2));
+
+	
 //	if (all(lessThan(textureGatherOffsets(depthtex1, texcoord, offsets, 0), vec4(1.0)))) return vec4(0.0);
 	
 	float sunglow  = pow8(clamp01(dotNorm(wPos, worldLightVector) - 0.01)) * pow4(max(timeDay, timeNight));

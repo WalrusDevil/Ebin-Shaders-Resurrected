@@ -199,3 +199,5 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #endif
 #ifdef WATER_BEHIND_TRANSLUCENTS
 #endif
+
+#define VolCloudLOD 1 // [0 1 2]

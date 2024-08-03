@@ -49,11 +49,6 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-#define DEBUG_TEXTURE shadowtex0
-// #define DEBUG_ENABLE
-
-uniform sampler2D DEBUG_TEXTURE;
-
 uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform sampler2D colortex3;
@@ -194,7 +189,7 @@ void main() {
 	float linearDepth = linearizeDepth(depth);
 	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
 	vec3  color = GetColor(texcoord);
-	show(color);
+	//(color);
 	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
 	
 	
@@ -203,11 +198,6 @@ void main() {
 	color =   GetBloom(color);
 	color =   Vignette(color);
 	color =    Tonemap(color);
-	
-
-	#ifdef DEBUG_ENABLE
-		color = texture(DEBUG_TEXTURE, texcoord).rgb;
-	#endif
 	
 	gl_FragColor = vec4(color, 1.0);
 	

@@ -111,6 +111,7 @@ uniform int heldBlockLightValue2;
 #include "/lib/Uniform/Projection_Matrices.fsh"
 #include "/lib/Uniform/Shadow_View_Matrix.fsh"
 #include "/lib/Fragment/Masks.fsh"
+#include "/lib/Fragment/3D_Clouds.fsh"
 
 //#include "/UserProgram/centerDepthSmooth.glsl" // Doesn't seem to be enabled unless it's initialized in a fragment.
 
@@ -191,7 +192,7 @@ void main() {
 	
 	vec4 GI; vec2 VL;
 	BilateralUpsample(wNormal, depth1, GI, VL);
-	show(VL.x);
+
 	
 	gl_FragData[1] = vec4(texture4.rg, 0.0, 1.0);
 	gl_FragData[2] = vec4(VL.xy, 0.0, 1.0);
@@ -200,6 +201,9 @@ void main() {
 	mat2x3 backPos;
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
+
+	vec4 cloud = CalculateClouds3(backPos[1], depth1);
+	gl_FragData[3] = vec4(sqrt(cloud.rgb / 50.0), cloud.a);
 	
 	if (depth1 - mask.hand >= 1.0) {
 		 exit(); 
