@@ -195,7 +195,7 @@ void main() {
 	
 	vec3 color = texture(colortex1, texcoord).rgb;
 
-	vec4 cloud;
+	
 
 	#ifdef WATER_REFRACTION
 	if(mask.water > 0.5){
@@ -209,29 +209,22 @@ void main() {
 			backPos[0] = CalculateViewSpacePosition(refractedPos);
 			backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 			color = texture(colortex1, refractedPos.xy).rgb;
-			cloud = textureLod(colortex5, refractedPos.xy, VolCloudLOD);
 
-		} else {
-			cloud = textureLod(colortex5, texcoord, VolCloudLOD);
-			if(isEyeInWater == 1.0 && EBS == 1.0) {
+		} else if(isEyeInWater == 1.0 && EBS == 1.0) {
 				color = normalize(waterColor);
 				depth1 = 1.0;
 				backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 				backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 			}
 		}
-
-	}
-	#else
-	cloud = textureLod(colortex5, texcoord, VolCloudLOD);
 	#endif
-	cloud.rgb = pow2(cloud.rgb) * 50.0;
-	cloud.a *= clamp01(1.5 - sqrt(length(backPos[1] * ((CLOUD3D_START_HEIGHT - cameraPosition.y) / backPos[1].y)) / 5000.0));
-
+	
 	
 
 	// render sky
 	if(depth1 == 1.0) {
+		
+
 
 		vec3 transmit = vec3(1.0);
 
@@ -245,8 +238,14 @@ void main() {
 
 		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
 		
-		
+		#ifdef WORLD_OVERWORLD
+		vec4 cloud = textureLod(colortex5, texcoord, VolCloudLOD);
+		cloud.rgb = pow2(cloud.rgb) * 50.0;
+		cloud.a *= clamp01(1.5 - sqrt(length(backPos[1] * ((CLOUD3D_START_HEIGHT - cameraPosition.y) / backPos[1].y)) / 5000.0));
 		color = mix(color, cloud.rgb, cloud.a);
+		#endif
+
+		
 
 	}
 

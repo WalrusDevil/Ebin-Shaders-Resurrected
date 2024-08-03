@@ -174,7 +174,7 @@ void CloudFBM1(cfloat speed) {
 
 void CloudLighting1(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - rainStrength * 0.8);
+	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - wetness * 0.8);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.15);
 	ambientColor *= 2.0 * mix(vec3(1.0), vec3(0.6, 0.8, 1.0), timeNight);
@@ -184,10 +184,10 @@ void CloudLighting1(float sunglow) {
 
 void CloudLighting2(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 100.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, rainStrength);
+	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, wetness);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.5);
-	ambientColor *= 1.7 + timeHorizon * 1.0;
+	ambientColor *= 0.5 + timeHorizon * 0.5;
 	
 	directColor += ambientColor * 20.0 * timeHorizon;
 	
@@ -249,14 +249,7 @@ void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, 
 	cloud.a = clamp01(cloud.a);
 }
 
-#define CLOUD3D
-#define CLOUD3D_START_HEIGHT 400    // [260 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000]
-#define CLOUD3D_DEPTH        150    // [50 100 150 200 250 300 350 400 450 500]
-#define CLOUD3D_SAMPLES       10    // [3 4 5 6 7 8 9 10 15 20 25 30 40 50 100]
-#define CLOUD3D_NOISE          1.0  // [0.0 1.0]
-#define CLOUD3D_COVERAGE       0.5  // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9]
-#define CLOUD3D_DENSITY        0.95 // [0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 0.97 0.99]
-#define CLOUD3D_SPEED          1.0  // [0.25 0.5 1.0 2.5 5.0 10.0]
+
 
 vec4 CalculateClouds3(vec3 wPos, float depth) {
 #ifndef CLOUD3D
@@ -274,12 +267,16 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	
 	vec4 cloudSum = vec4(0.0);
 	
-	coverage = CLOUD3D_COVERAGE + rainStrength * 0.335;
+	coverage = CLOUD3D_COVERAGE + wetness * 0.335;
 	CloudFBM1(CLOUD3D_SPEED);
-	CloudLighting2(sunglow);
+	CloudLighting3(sunglow);
 	RaymarchClouds(cloudSum, wPos, sunglow, CLOUD3D_SAMPLES, CLOUD3D_NOISE, CLOUD3D_DENSITY, coverage, CLOUD3D_START_HEIGHT, CLOUD3D_DEPTH);
 	
 	cloudSum.rgb *= 0.1;
+
+	cloudSum.a *= 0.5;
+
+	cloudSum.a *= clamp01((acos(dot(normalize(wPos), normalize(vec3(wPos.x, 0.0, wPos.z))))));
 	
 	return cloudSum;
 }

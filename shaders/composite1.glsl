@@ -202,8 +202,10 @@ void main() {
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 
+	#ifdef WORLD_OVERWORLD
 	vec4 cloud = CalculateClouds3(backPos[1], depth1);
 	gl_FragData[3] = vec4(sqrt(cloud.rgb / 50.0), cloud.a);
+	#endif
 	
 	if (depth1 - mask.hand >= 1.0) {
 		 exit(); 

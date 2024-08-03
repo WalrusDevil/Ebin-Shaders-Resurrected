@@ -228,13 +228,13 @@ option.VL_ENABLED.comment=Scatters sunlight through fog based on shadows.
 option.VL_QUALITY=Volumetric Fog Quality
 option.VL_STRENGTH=Volumetric Fog Strength
 
-option.CLOUDS_ENABLED=Clouds
+option.CLOUD2D=2D Clouds
 
-option.CLOUD_HEIGHT_2D=2D Cloud Plane Height
+option.CLOUD2D_HEIGHT=2D Cloud Plane Height
 
-option.CLOUD_COVERAGE_2D=Cloud Coverage
+option.CLOUD2D_COVERAGE=Cloud Coverage
 
-option.CLOUD_SPEED_2D=Cloud Speed
+option.CLOUD2D_SPEED=Cloud Speed
 
 option.CLOUD3D=Volumetric Clouds
 option.CLOUD3D_START_HEIGHT=Starting Height
