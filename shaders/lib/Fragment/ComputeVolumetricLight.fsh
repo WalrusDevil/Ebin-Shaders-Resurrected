@@ -36,7 +36,6 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	
 	result = isEyeInWater == 0 ? result.xy : result.yx;
 	
-	result *= VL_STRENGTH;
 	return result / end;
 }
 
