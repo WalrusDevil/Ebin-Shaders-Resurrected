@@ -188,7 +188,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define GLOWING_ORES
 
 
-#define REFLECTION_SAMPLES 8 // [1 2 4 8 16 32 64]
+#define REFLECTION_SAMPLES 4 // [1 2 4 8 16 32 64]
 
 
 #define FOG_ENABLED

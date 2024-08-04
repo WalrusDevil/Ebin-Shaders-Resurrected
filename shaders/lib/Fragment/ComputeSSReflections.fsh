@@ -216,6 +216,21 @@ float schlick(float f0, float nDotV){
 	
 }
 
+// https://www.shadertoy.com/view/DdlGWM
+// weird place to get it from, I know
+vec3 lazanyi2019(vec3 f0, vec3 f82, float nDotV) {
+    // vec3 a = (f0 + (1.-f0)*pow(1.-(1./7.),5.)-f82)/((1./7.)*pow(1.-(1./7.),6.));
+    // vec3 a = 7.*(pow(7./6.,6.) * (f0 - f82) + (7./6.) * (1.0 - f0));
+    vec3 a = (823543./46656.) * (f0 - f82) + (49./6.) * (1.0 - f0);
+
+    float p1 = 1.0 - nDotV;
+    float p2 = p1*p1;
+    float p4 = p2*p2;
+
+    return clamp(f0 + ((1.0 - f0) * p1 - a * nDotV * p2) * p4, 0., 1. );
+    //return clamp(f0 + (1.0 - f0) * pow(1.0 - cosTheta, 5.0) - a * cosTheta * pow(1.0 - cosTheta, 6.0),0.,1.);
+}
+
 void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap) {
 	if (baseReflectance == 0) return;
 
@@ -244,15 +259,22 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		
 		vec3 f0 = getMetalf0(baseReflectance, color); // lazanyi 2019 schlick
 		vec3 f82 = getMetalf82(baseReflectance, color);
-		vec3 a = 17.6513846 * (f0 - f82) + 8.16666667 * (1.0 - f0);
-		float m = pow(1 - nDotV, 5);
-		fresnel = clamp01(f0 + (1.0 - f0) * m - a * nDotV * (m - m * nDotV));
+		fresnel = lazanyi2019(f0, f82, nDotV);
+	}
+
+	if(length(fresnel) < 0.01){
+		return;
 	}
 
 
 	mat2x3 refRay;
 	
 	vec3 refCoord;
+
+	int samples = REFLECTION_SAMPLES;
+
+	samples = int(mix(1.0, float(samples), pow3(length(fresnel)))); // reduce samples for weaker reflections
+	samples = max(1, samples);
 	
 	
 	float fogFactor = 1.0;
@@ -271,15 +293,15 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 		sunlight = texture(colortex13, texcoord).rgb;
 	}
 
-	for(int i = 0; i < REFLECTION_SAMPLES; i++){
+	for(int i = 0; i < samples; i++){
 		
 		if(roughness > ROUGH_REFLECTION_THRESHOLD){
 			break;
 		}
 
 		if (roughness > 0){ // rough reflections
-			float r1 = ign(floor(gl_FragCoord.xy), frameCounter * REFLECTION_SAMPLES + i);
-			float r2 = ign(floor(gl_FragCoord.xy) + vec2(97, 23), frameCounter * REFLECTION_SAMPLES + i);
+			float r1 = ign(floor(gl_FragCoord.xy), frameCounter * samples + i);
+			float r2 = ign(floor(gl_FragCoord.xy) + vec2(97, 23), frameCounter * samples + i);
 
 			mat3 tbn = CalculateTBN(normal);
 			offsetNormal = tbn * (SampleVNDFGGX(normalize(-position[0] * tbn), vec2(roughness), vec2(r1, r2))); // I should be squaring roughness for alpha but it makes things way too reflective
@@ -348,7 +370,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 	
 	
 	if (roughness > 0){
-		reflectionSum /= REFLECTION_SAMPLES;
+		reflectionSum /= samples;
 	}
 
 	

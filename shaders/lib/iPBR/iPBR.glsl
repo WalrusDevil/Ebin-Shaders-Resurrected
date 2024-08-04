@@ -86,7 +86,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     switch(int(ID + 0.5)){
       case IPBR_ICE:
         applyiPBR(data.perceptualSmoothness, 1.0);
-        applyiPBR(data.baseReflectance, 0.02);
+        applyiPBR(data.baseReflectance, 0.04);
         break;
 
       case IPBR_NETHER_PORTAL:
@@ -106,7 +106,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         break;
 
       case IPBR_GLASS:
-        applyiPBR(data.baseReflectance, 0.02);
+        applyiPBR(data.baseReflectance, 0.04);
         applyiPBR(data.perceptualSmoothness, 0.8);
 
       case IPBR_GRASS_BLOCK:
