@@ -29,17 +29,16 @@ GBUFFERS TEXTURED - SHADED + DATA
 8 transparent smoothness, f0
 13 transparent sunlight
 
-COMPOSITE0 - GI, AO, VL, COLOURED BLOCKLIGHT, SOLID SUNLIGHT
-5 solid GI, AO
+COMPOSITE0 - GI, AO, VL
+5 GI, AO
 6 volumetrics
-12 blurred blocklight colour
-10 solid sunlight 
 
 COMPOSITE1 - SOLID SHADING
 1 solid composite (lit)
 4 front material ID, nothin', front sky lighting
+5 clouds
 6 volumetrics (upscaled)
-5 nothing
+10 solid sunlight 
 
 COMPOSITE2 - REFLECTIONS, SKY BLENDING, TRANSPARENT BLENDING
 3 shaded colour

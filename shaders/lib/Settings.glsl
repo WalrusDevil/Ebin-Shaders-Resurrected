@@ -85,9 +85,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 #define RAIN 
 
-#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VL_ENABLED)
-    #define COMPOSITE0_ENABLED
-#endif
+
 
 
 #if SHADOW_TYPE != 0
@@ -95,8 +93,8 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #endif
 //#define LIMIT_SHADOW_DISTANCE
 
-//#define GI_ENABLED
-//#define AO_ENABLED
+#define GI_ENABLED
+#define AO_ENABLED
 #define VL_ENABLED
 
 #define VL_STRENGTH 1 // [1 2 4 8 16 32 64]
@@ -129,8 +127,11 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define WAVING_LEAVES
 #define WAVING_WATER
 
-#define COMPOSITE0_SCALE 1.0
+#define COMPOSITE0_SCALE 0.50 // [0.25 0.33 0.40 0.50 0.60 0.75 1.00]
 #define COMPOSITE0_NOISE
+#if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VL_ENABLED)
+    #define COMPOSITE0_ENABLED
+#endif
 
 //#define CLOUD2D
 #define CLOUD2D_HEIGHT   512  // [256 320 384 448 512 576 640 704 768 832 896 960 1024]

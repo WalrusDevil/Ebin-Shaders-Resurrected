@@ -149,7 +149,7 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 
 #include "/lib/Misc/CalculateFogfactor.glsl"
 
-/* RENDERTARGETS:1,4,6,5 */
+/* RENDERTARGETS:1,4,6,5,10 */
 #include "/lib/Exit.glsl"
 
 void main() {
@@ -202,6 +202,8 @@ void main() {
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 
+	
+
 	#ifdef WORLD_OVERWORLD
 	vec4 cloud = CalculateClouds3(backPos[1], depth1);
 	gl_FragData[3] = vec4(sqrt(cloud.rgb / 50.0), cloud.a);
@@ -216,8 +218,10 @@ void main() {
 	vec3 diffuse = GetDiffuse(texcoord);
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
-	vec3 sunlight = texture(colortex10, texcoord).rgb;
+	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);
+
+	gl_FragData[4] = vec4(sunlight, 1.0);
 
 	gl_FragData[0] = vec4(max0(composite), 1.0);
 	

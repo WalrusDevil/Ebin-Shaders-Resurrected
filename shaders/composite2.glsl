@@ -49,8 +49,6 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-const bool colortex5MipmapEnabled = true;
-
 uniform sampler3D colortex7;
 uniform sampler2D colortex8;
 uniform sampler2D colortex9;
@@ -107,6 +105,10 @@ uniform vec3 fogColor;
 
 //const bool colortex1MipmapEnabled = true;
 
+#ifdef CLOUD3D
+const bool colortex5MipmapEnabled = true;
+#endif
+
 vec3 GetColor(vec2 coord) {
 	return texture2D(colortex1, coord).rgb;
 }
@@ -148,6 +150,7 @@ vec2 VL;
 #include "/lib/Exit.glsl"
 
 void main() {
+	
 	vec2 texture4 = ScreenTex(colortex4).rg;
 	
 	vec4  decode4       = Decode4x8F(texture4.r);

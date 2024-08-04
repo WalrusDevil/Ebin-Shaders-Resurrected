@@ -37,7 +37,7 @@ void main() {
 	texcoord    = gl_MultiTexCoord0.st;
 	gl_Position = ftransform();
 	
-	//gl_Position.xy = ((gl_Position.xy * 0.5 + 0.5) * COMPOSITE0_SCALE) * 2.0 - 1.0;
+	gl_Position.xy = ((gl_Position.xy * 0.5 + 0.5) * COMPOSITE0_SCALE) * 2.0 - 1.0;
 	
 	
 	SetupProjection();
@@ -138,7 +138,7 @@ float ExpToLinearDepth(float depth) {
 #include "/lib/Fragment/ComputeVolumetricLight.fsh"
 #include "/lib/Fragment/ComputeSunlight.fsh"
 
-/* RENDERTARGETS:5,6,12,10 */
+/* RENDERTARGETS:5,6,12 */
 #include "/lib/Exit.glsl"
 
 void main() {
@@ -150,7 +150,7 @@ void main() {
 	
 	
 #ifdef COMPOSITE0_NOISE
-	vec2 noise2D = vec2(ign(floor(gl_FragCoord.xy), 4), ign(floor(gl_FragCoord.xy), 5));
+	vec2 noise2D = GetDitherred2DNoise(texcoord * COMPOSITE0_SCALE, 4.0) * 2.0 - 1.0;
 #else
 	vec2 noise2D = vec2(0.0);
 #endif
@@ -190,9 +190,6 @@ void main() {
 	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
 	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
 	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
-
-	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
-	gl_FragData[3] = vec4(sunlight, 1.0);
 	
 	float AO = ComputeSSAO(backPos[0], wNormal * mat3(gbufferModelViewInverse));
 	
