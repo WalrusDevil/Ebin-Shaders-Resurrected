@@ -163,6 +163,7 @@ void main() {
 	mask.transparent = clamp01(step(0.01, transparentColor.a) + mask.water);
 	mask.transparent *= (1.0 - mask.hand);
 	VL = ScreenTex(colortex6).xy;
+	vec3 sunlight = ScreenTex(colortex10).rgb;
 
 	float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
 
@@ -189,6 +190,7 @@ void main() {
 		backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 		baseReflectance = ScreenTex(colortex8).g;
 		perceptualSmoothness = ScreenTex(colortex8).r;
+		sunlight = ScreenTex(colortex13).rgb;
 	}
 
 	mat2x3 waterPos;
@@ -226,9 +228,6 @@ void main() {
 
 	// render sky
 	if(depth1 == 1.0) {
-		
-
-
 		vec3 transmit = vec3(1.0);
 
 		vec3 incident = normalize(frontPos[1]);
@@ -268,7 +267,7 @@ void main() {
 	if(depth1 > waterDepth && waterDepth != 0.0 && (waterDepth > depth0 || (mask.water < 0.5 && depth0 == waterDepth)) && isEyeInWater == 0.0){ // render water behind translucents when necessary
 		color = waterdepthFog(waterPos[0], backPos[0], color);
 		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));
-		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap);
+		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap, sunlight);
 		vec3 fogTransmit = vec3(1.0);
 		vec3 fog = SkyAtmosphereToPoint(vec3(0.0), waterPos[1], fogTransmit, VL);
 		color = mix(fog, color, fogTransmit);
@@ -282,7 +281,7 @@ void main() {
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
 
-	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap);
+	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
 
 
 

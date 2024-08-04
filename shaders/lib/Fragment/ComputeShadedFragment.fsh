@@ -169,14 +169,14 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 		} else {
 			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS, skyLightmap));
 		}
-
-		
 		
 		
 		
 		shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
 		shading.skylight *= GI.a;
 		shading.skylight *= 2.0 * SKY_LIGHT_LEVEL;
+
+
 		#ifdef GI_ENABLED
 			shading.skylight *= 0.9 * SKY_LIGHT_LEVEL;
 		#endif
@@ -220,6 +220,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	Lightmap lightmap;
 	
 	lightmap.sunlight = shading.sunlight * shading.caustics * sunlightColor;
+	
 	
 	lightmap.skylight = shading.skylight * sqrt(skylightColor);
 	

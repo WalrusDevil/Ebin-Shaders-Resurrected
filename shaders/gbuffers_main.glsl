@@ -53,7 +53,7 @@ uniform float wetness;
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
 
-#if defined gbuffers_water || defined gbuffers_textured
+#if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
 uniform sampler3D gaux1;
 
 uniform mat4 shadowModelView;
@@ -153,7 +153,7 @@ void main() {
 	
 	tbnMatrix = CalculateTBN(worldSpacePosition);
 
-	#if defined gbuffers_water || defined gbuffers_textured
+	#if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
 		SetupShading();
 	#endif
 
@@ -296,7 +296,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 #if defined gbuffers_water
 /* RENDERTARGETS: 0,3,8,13,11 */
-#elif defined gbuffers_textured
+#elif defined gbuffers_textured || defined gbuffers_hand
 /* RENDERTARGETS: 0,3,8,13 */
 #else
 /* RENDERTARGETS: 1,4,9,10,11 */
@@ -375,7 +375,7 @@ void main() {
 	#endif
 	
 
-	#if defined gbuffers_water || defined gbuffers_textured
+	#if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
 		Mask mask = EmptyMask;
 
 		#ifdef gbuffers_water
@@ -403,9 +403,9 @@ void main() {
 
 
 		
-		
 		vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
-		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], vec3(0.0));
+		vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
+
 		gl_FragData[3] = vec4(sunlight, 1.0);
 
 		vec2 encode;

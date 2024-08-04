@@ -208,7 +208,9 @@ void main() {
 	vec4 cloud = CalculateClouds3(backPos[1], depth1);
 	gl_FragData[3] = vec4(sqrt(cloud.rgb / 50.0), cloud.a);
 	#endif
-	
+
+
+
 	if (depth1 - mask.hand >= 1.0) {
 		 exit(); 
 		 return; 
@@ -216,6 +218,7 @@ void main() {
 	
 	
 	vec3 diffuse = GetDiffuse(texcoord);
+
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);

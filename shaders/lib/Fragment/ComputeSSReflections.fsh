@@ -231,7 +231,7 @@ vec3 lazanyi2019(vec3 f0, vec3 f82, float nDotV) {
     //return clamp(f0 + (1.0 - f0) * pow(1.0 - cosTheta, 5.0) - a * cosTheta * pow(1.0 - cosTheta, 6.0),0.,1.);
 }
 
-void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap) {
+void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float baseReflectance, float perceptualSmoothness, float skyLightmap, vec3 sunlight) {
 	if (baseReflectance == 0) return;
 
 	float roughness = pow(1.0 - perceptualSmoothness, 2.0);
@@ -284,14 +284,6 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	refRay[0] = reflect(position[0], offsetNormal);
 	refRay[1] = mat3(gbufferModelViewInverse) * refRay[0];
-	
-	vec3 sunlight;
-
-	if(abs(depth0 - depth1) < 0.0001){
-		sunlight = texture(colortex10, texcoord).rgb;
-	} else {
-		sunlight = texture(colortex13, texcoord).rgb;
-	}
 
 	for(int i = 0; i < samples; i++){
 		
