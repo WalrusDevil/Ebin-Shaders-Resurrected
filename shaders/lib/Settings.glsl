@@ -140,7 +140,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 #define CLOUD3D
 #define CLOUD3D_START_HEIGHT 260    // [0 100 200 260 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000]
-#define CLOUD3D_DEPTH        500    // [50 100 150 200 250 300 350 400 450 500]
+#define CLOUD3D_DEPTH        250    // [50 100 150 200 250 300 350 400 450 500]
 #define CLOUD3D_SAMPLES       20    // [3 4 5 6 7 8 9 10 15 20 25 30 40 50 100]
 #define CLOUD3D_NOISE          1.0  // [0.0 1.0]
 #define CLOUD3D_COVERAGE       0.5  // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9]

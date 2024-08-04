@@ -233,19 +233,26 @@ void main() {
 
 		vec3 incident = normalize(frontPos[1]);
 		vec3 refracted = incident;
+		vec2 refractedTexCoord = texcoord;
+		
 		if(mask.water > 0.5){
 			#ifdef WATER_REFRACTION
 			refracted = refract(incident, normalize(mat3(gbufferModelViewInverse) * normal), isEyeInWater == 1.0 ? 1.33 : 1.0 / 1.33);
+			refractedTexCoord = ViewSpaceToScreenSpace(refracted * mat3(gbufferModelViewInverse)).xy;
 			#endif
 		}
 
 		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
 		
-		#ifdef WORLD_OVERWORLD
-		vec4 cloud = textureLod(colortex5, texcoord, VolCloudLOD);
-		cloud.rgb = pow2(cloud.rgb) * 50.0;
-		cloud.a *= clamp01(1.5 - sqrt(length(backPos[1] * ((CLOUD3D_START_HEIGHT - cameraPosition.y) / backPos[1].y)) / 5000.0));
-		color = mix(color, cloud.rgb, cloud.a);
+		#if defined WORLD_OVERWORLD && defined CLOUD3D
+		if(clamp01(refractedTexCoord) == refractedTexCoord){
+			vec4 cloud = textureLod(colortex5, refractedTexCoord, VolCloudLOD);
+			cloud.rgb = pow2(cloud.rgb) * 50.0;
+			if(isEyeInWater == 1.0){
+				cloud.a = clamp01(mix(cloud.a, 0.0, pow4(length(abs(refractedTexCoord - 0.5) * 2))));
+			}
+			color = mix(color, cloud.rgb, cloud.a);
+		}
 		#endif
 
 		
