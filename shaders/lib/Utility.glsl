@@ -164,16 +164,6 @@ float ReshapeUniformToTriangle(float v) {
     v = sign(v) * (1.0 - sqrt(max(0.0, 1.0 - abs(v)))); // [-1, 1], max prevents NaNs
     return v + 0.5; // [-0.5, 1.5]
 }
-
-float blueNoise(vec2 coord){
-	uint m = HilbertIndex(uvec2(coord));
-	m = OwenHash(ReverseBits(m), 0xe7843fbfu);
-	m = OwenHash(ReverseBits(m), 0x8d8fb1e0u);
-	float mask = float(ReverseBits(m)) / 4294967296.0;
-
-	mask = ReshapeUniformToTriangle(mask);
-	return mask;
-}
 // ---------------------------------------
 
 // https://blog.demofox.org/2022/01/01/interleaved-gradient-noise-a-different-kind-of-low-discrepancy-sequence/

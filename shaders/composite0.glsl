@@ -73,7 +73,6 @@ uniform sampler2D shadowtex0;
 uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
 uniform sampler2D colortex11;
-uniform sampler2D colortex12;
 uniform sampler2D depthtex0;
 uniform usampler2D waterDepthTex;
 

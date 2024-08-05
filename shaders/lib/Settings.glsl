@@ -25,7 +25,6 @@ const int colortex4Format = RGBA32F;
 const int colortex5Format = RGBA16;
 const int colortex6Format = RG8;
 const int colortex11Format = RGB8;
-const int colortex12Format = RGB16F;
 
 
 
@@ -39,8 +38,6 @@ const bool colortex3Clear = true;
 const bool colortex4Clear = true;
 const bool colortex5Clear = true;
 const bool colortex6Clear = false;
-
-const bool colortex12Clear = false;
 
 const vec4 colortex3ClearColor = vec4(0.0, 0.0, 0.0, 0.0);
 const vec4 colortex4ClearColor = vec4(0.0, 0.0, 0.0, 1.0);

@@ -33,7 +33,7 @@ uniform mat4 shadowProjectionInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
 
-uniform float entityId;
+uniform int entityId;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;

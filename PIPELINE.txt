@@ -1,5 +1,8 @@
 The following is a summary of how the pipeline for this shader operates. Specifically, it's a list of the outputs for each program. Some of this information may be out of date or incorrect, but I hope it helps you understand this mess.
 
+colortex7 contains atmosphere data
+bluenoisetex contains blue noise
+
 ===LPV STUFF===
 The floodfill lighting uses two custom images - lightvoxel and lightvoxelf
 On even frames, lightvoxelf is the 'previous buffer' and lightvoxel is the 'current buffer'. On odd frames, this is swapped.
@@ -13,7 +16,6 @@ GBUFFERS TERRAIN - JUST ALBEDO + DATA
 1 solid diffuse
 4 solid material ID, nothin', material AO, SSS, normal, lighting data
 9 solid smoothness, f0, emission
-10 nothing wtf
 11 blocklight colour
 
 GBUFFERS WATER - SHADED + DATA
@@ -49,3 +51,4 @@ COMPOSITE3 - BLOOM
 
 FINAL - FINAL SHADING
 0 final data
+

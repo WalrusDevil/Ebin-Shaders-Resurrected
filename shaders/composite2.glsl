@@ -63,6 +63,7 @@ uniform sampler2D gdepthtex;
 uniform sampler2D depthtex1;
 uniform sampler2D depthtex2;
 uniform sampler2D noisetex;
+uniform sampler2D bluenoisetex;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
 uniform sampler2DShadow shadow;
@@ -130,6 +131,19 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 
 vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
 	return (diagonal2(projMatrix) * viewSpacePosition.xy + projMatrix[3].xy) / -viewSpacePosition.z * 0.5 + 0.5;
+}
+
+vec4 blueNoise(ivec2 texelcoord){
+	texelcoord.x = texelcoord.x % 1024;
+	texelcoord.y = texelcoord.y % 1024;
+
+	return texelFetch(bluenoisetex, texelcoord, 0);
+}
+
+vec2 GetDitherred2DNoise(vec2 coord, float n) { // Returns a random noise pattern ranging {-1.0 to 1.0} that repeats every n pixels
+	coord *= vec2(viewWidth, viewHeight);
+	coord  = mod(coord, vec2(n));
+	return texelFetch(noisetex, ivec2(coord), 0).xy;
 }
 
 float depth0;

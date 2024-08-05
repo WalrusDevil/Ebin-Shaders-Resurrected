@@ -294,10 +294,13 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 		if (roughness > 0){ // rough reflections
 			float r1 = ign(floor(gl_FragCoord.xy), frameCounter * samples + i);
-			float r2 = ign(floor(gl_FragCoord.xy) + vec2(97, 23), frameCounter * samples + i);
+			float r2 = ign(floor(gl_FragCoord.xy) + vec2(23, 97), frameCounter * samples + i);
+
+			vec2 noise = vec2(r1, r2);
+			//vec4 noise = blueNoise(ivec2(floor(gl_FragCoord.xy) + ivec2(23, 97) * (frameCounter * samples + i)));
 
 			mat3 tbn = CalculateTBN(normal);
-			offsetNormal = tbn * (SampleVNDFGGX(normalize(-position[0] * tbn), vec2(roughness), vec2(r1, r2))); // I should be squaring roughness for alpha but it makes things way too reflective
+			offsetNormal = tbn * (SampleVNDFGGX(normalize(-position[0] * tbn), vec2(roughness), noise.xy)); // I should be squaring roughness for alpha but it makes things way too reflective
 			
 		}
 
