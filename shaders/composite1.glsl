@@ -21,7 +21,7 @@ uniform vec3 previousCameraPosition;
 uniform float sunAngle;
 uniform float far;
 
-uniform float rainStrength;
+;
 uniform float wetness;
 
 #include "/lib/Settings.glsl"
@@ -95,7 +95,7 @@ uniform float aspectRatio;
 uniform float viewWidth;
 uniform float viewHeight;
 uniform float wetness;
-uniform float rainStrength;
+;
 uniform float nightVision;
 uniform float near;
 uniform float far;

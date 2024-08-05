@@ -59,6 +59,10 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     data.porosity = porositySSS <= 0.25 ? porositySSS * 4.0 : 0.0;
     data.SSS = porositySSS > 0.25 ? (porositySSS - 0.25) * (4.0/3.0) : 0.0;
 
+    if(data.porosity == 0){
+      data.porosity = (1.0 - data.perceptualSmoothness) * data.baseReflectance;
+    }
+
     data.emission = specularData.a != 1.0 ? specularData.a : 0.0;
     #endif
 

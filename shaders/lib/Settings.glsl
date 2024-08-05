@@ -150,7 +150,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 //#define WATER_PARALLAX
 #define WATER_CAUSTICS
 #include "/UserProgram/WaterHeight.glsl"
-//#define VARIABLE_WATER_HEIGHT
+#define VARIABLE_WATER_HEIGHT
 #define WATER_REFRACTION
 #define UNDERWATER_LIGHT_DEPTH 16 // [4 8 16 32 64 65536]
 

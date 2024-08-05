@@ -32,7 +32,7 @@ attribute vec4 at_tangent;
 attribute vec2 mc_midTexCoord;
 attribute vec4 at_midBlock;
 
-uniform float rainStrength;
+;
 uniform float thunderStrength;
 
 uniform sampler2D lightmap;
@@ -209,7 +209,7 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 uniform float viewWidth;
 uniform float viewHeight;
-uniform float rainStrength;
+;
 
 uniform ivec2 atlasSize;
 
@@ -439,7 +439,7 @@ void main() {
 	#else
 
 
-		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), wetness);
+		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), wetness * vertLightmap.y);
 		
 		float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
 		
