@@ -260,7 +260,8 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	const ivec2[4] offsets = ivec2[4](ivec2(2), ivec2(-2, 2), ivec2(2, -2), ivec2(-2));
 
 	
-//	if (all(lessThan(textureGatherOffsets(depthtex1, texcoord, offsets, 0), vec4(1.0)))) return vec4(0.0);
+	// I think this just checks if the pixel is surrounded by pixels where clouds should not be computed
+	if (all(lessThan(textureGatherOffsets(depthtex1, texcoord, offsets, 0), vec4(1.0)))) return vec4(0.0);
 	
 	float sunglow  = pow8(clamp01(dotNorm(wPos, worldLightVector) - 0.01)) * pow4(max(timeDay, timeNight));
 	float coverage = 0.0;
