@@ -117,9 +117,23 @@ vec3 getMetalf82(float baseReflectance, vec3 color){
 	return clamp01(color);
 }
 
+// from bliss, which means it's probably by chocapic
+// https://backend.orbit.dtu.dk/ws/portalfiles/portal/126824972/onb_frisvad_jgt2012_v2.pdf
+void frisvad(in vec3 n, out vec3 f, out vec3 r){
+    if(n.z < -0.9) {
+        f = vec3(0.,-1,0);
+        r = vec3(-1, 0, 0);
+    } else {
+    	float a = 1./(1.+n.z);
+    	float b = -n.x*n.y*a;
+    	f = vec3(1. - n.x*n.x*a, b, -n.x) ;
+    	r = vec3(b, 1. - n.y*n.y*a , -n.y);
+    }
+}
+
 mat3 CalculateTBN(vec3 normal){
-	vec3 tangent = normal.y == 1.0 ? vec3(1.0, 0.0, 0.0) : normalize(cross(vec3(0.0, 1.0, 0.0), normal));
-	vec3 bitangent = normalize(cross(tangent, normal));
+	vec3 tangent, bitangent;
+	frisvad(normal, tangent, bitangent);
 	return mat3(tangent, bitangent, normal);
 }
 
