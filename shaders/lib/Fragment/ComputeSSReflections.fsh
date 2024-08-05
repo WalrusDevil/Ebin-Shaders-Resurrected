@@ -254,6 +254,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	if (baseReflectance < (229.5 / 255.0)) {
 		fresnel = vec3(schlick(baseReflectance, nDotV));
+		fresnel = mix(vec3(baseReflectance), vec3(1.0), fresnel);
 
 	} else {
 		
@@ -273,7 +274,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	int samples = REFLECTION_SAMPLES;
 
-	samples = int(mix(1.0, float(samples), pow3(length(fresnel)))); // reduce samples for weaker reflections
+	//samples = int(mix(1.0, float(samples), pow3(length(fresnel)))); // reduce samples for weaker reflections
 	samples = max(1, samples);
 	
 	

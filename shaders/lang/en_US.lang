@@ -332,7 +332,7 @@ option.Shadow_Focus_Z=Shadow Focus Z
 option.Shadow_Focus_Z.comment=The Z coordinate of the shadow map's highest quality zone. This coordinate can be set in: /UserProgram/Shadow_Focus.glsl. These coordinates are overwritten by the "Focus Center" option
 
 option.RAIN=Rain
-option.RAIN.comment=Enables rain particles. If rendering water behind translucents is disabled, rain will be dithered such that water still renders behind it.
+option.RAIN.comment=Enables rain particles. If rendering water behind translucents is disabled, rain will be dithered such that water still renders behind it. §cWith volumetric fog enabled, this does not look good.
 
 option.WATER_SHADOW=Water Shadow
 
