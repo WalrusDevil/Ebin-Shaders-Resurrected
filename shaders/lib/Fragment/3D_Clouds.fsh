@@ -276,7 +276,7 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 
 	cloudSum.a *= 0.5;
 
-	cloudSum.a *= clamp01((acos(dot(normalize(wPos), normalize(vec3(wPos.x, 0.0, wPos.z))))));
+	cloudSum.a *= clamp01((facos(dot(normalize(wPos), normalize(vec3(wPos.x, 0.0, wPos.z))))));
 	
 	return cloudSum;
 }

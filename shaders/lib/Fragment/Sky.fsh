@@ -47,7 +47,7 @@ vec3 CalculateStars(vec3 wDir, vec3 transmit, cbool reflection) {
 		vec3 shadowCoord     = mat3(shadowViewMatrix) * wDir;
 		     shadowCoord.xz *= sign(sunVector.y);
 		
-		coord  = vec2(atan(shadowCoord.x, shadowCoord.z), acos(shadowCoord.y));
+		coord  = vec2(atan(shadowCoord.x, shadowCoord.z), facos(shadowCoord.y));
 		coord *= 3.0 * STAR_SCALE * noiseScale;
 	} else
 		coord = wDir.xz * (2.5 * STAR_SCALE * (2.0 - wDir.y) * noiseScale);

@@ -112,7 +112,7 @@ vec3 slerp(vec3 start, vec3 end, float percent)
 {
      float dot = dot(start, end);     
      dot = clamp(dot, -1.0, 1.0);
-     float theta = acos(dot) * percent;
+     float theta = facos(dot) * percent;
      vec3 relativeVec = normalize(end - start*dot); // Orthonormal basis
      // The final result.
      return ((start * cos(theta)) + (relativeVec * sin(theta)));

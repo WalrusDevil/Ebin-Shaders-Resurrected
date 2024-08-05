@@ -81,8 +81,6 @@ uniform float near;
 #include "/lib/Fragment/Tonemap.fsh"
 #include "/lib/Fragment/FXAA.glsl"
 
-const bool colortex3MipmapEnabled = true;
-
 vec3 GetColor(vec2 coord) {
 	return DecodeColor(texture2D(colortex3, coord).rgb);
 }

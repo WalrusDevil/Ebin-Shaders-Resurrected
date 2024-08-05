@@ -104,8 +104,6 @@ uniform vec3 fogColor;
 #include "/lib/Fragment/Masks.fsh"
 #include "/lib/Misc/CalculateFogfactor.glsl"
 
-//const bool colortex1MipmapEnabled = true;
-
 #ifdef CLOUD3D
 const bool colortex5MipmapEnabled = true;
 #endif
