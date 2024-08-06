@@ -206,6 +206,11 @@ void main() {
 #if defined fsh
 
 uniform sampler2D gtexture;
+uniform vec3 fogColor;
+uniform ivec2 eyeBrightnessSmooth;
+
+#define pow2(x) x*x
+#define EBS eyeBrightnessSmooth.g / 240.0
 
 void main() {
 	#ifndef SHADOWS
@@ -216,7 +221,7 @@ void main() {
 
 	if (materialIDs == IPBR_WATER) {
 		// discard;
-		diffuse = vec4(0.215, 0.356, 0.533, 0.75); 
+		diffuse = vec4(pow2(fogColor) * (EBS * 0.8 + 0.2), 0.75); 
 	}
 	
 	gl_FragData[0] = diffuse;

@@ -1,7 +1,7 @@
 #if !defined waterdepthFOG_FSH
 #define waterdepthFOG_FSH
 
-cvec3 waterColor = vec3(0.015, 0.04, 0.098);
+cvec3 waterColor = pow2(fogColor) * (EBS * 0.8 + 0.2);
 
 vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 #ifdef CLEAR_WATER
@@ -14,12 +14,11 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	
 	// Beer's Law
 	float fogAccum = exp(-waterdepth * 0.05);
-	vec3 tint = (sunlightColor * sqrt(skyLightmap * 0.5 + 0.5)) * 0.9 + 0.1;
+	vec3 tint = sunlightColor * EBS + 0.05;
 
-	if(length(frontPos) > far){ // fix for depth 1.0 (i.e sky underwater)
-		tint = (sunlightColor) * 0.9 + 0.1;
-	}
-	
+	#ifdef VL_ENABLED
+	tint *= (VL.x * 0.7 + 0.3);
+	#endif
 
 	tint = sqrt(tint * length(tint));
 
