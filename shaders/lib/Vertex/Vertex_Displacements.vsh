@@ -11,7 +11,7 @@ vec3 CalculateVertexDisplacements(vec3 worldSpacePosition) {
 	if      (materialIDs == IPBR_LEAVES)
 		{ displacement += GetWavingLeaves(worldPosition); }
 
-	else if (materialIDs == IPBR_GRASS)
+	else if (materialIDs == IPBR_GRASS || materialIDs == IPBR_FLOWERS)
 		{ displacement += GetWavingGrass(worldPosition, false); }
 
 	else if (IPBR_IS_TALL_GRASS(materialIDs))
