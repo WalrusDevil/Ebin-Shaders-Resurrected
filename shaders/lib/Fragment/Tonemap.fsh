@@ -1,7 +1,7 @@
 #if !defined TONEMAP_GLSL
 #define TONEMAP_GLSL
 
-#define TONEMAP 1 // [1 2 3 4 5 6]
+#define TONEMAP 3 // [1 2 3 4 5 6]
 
 #if TONEMAP == 2
 	#define Tonemap(x) ACESFitted(x)
@@ -75,7 +75,7 @@ void BurgessTonemap(io vec3 color) {
 #endif
 
 	e *= smoothstep(0.1, -0.1, worldLightVector.y);
-	g *= 1.0 - wetness * 0.5; // reduces saturation in the rain
+	g *= 1.0 - biomeWetness * 0.2; // reduces saturation in the rain
 
 	color = Curve(color, a, b, c, d, e);
 

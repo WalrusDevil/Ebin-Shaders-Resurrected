@@ -22,7 +22,7 @@ uniform float sunAngle;
 uniform float far;
 
 ;
-uniform float wetness;
+uniform float biomeWetness;
 
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
@@ -93,8 +93,10 @@ uniform float aspectRatio;
 
 uniform float viewWidth;
 uniform float viewHeight;
-uniform float wetness;
-;
+uniform float biomeWetness;
+uniform float humiditySmooth;
+uniform float biomeCanRainSmooth;
+
 uniform float nightVision;
 uniform float near;
 uniform float far;
@@ -153,6 +155,8 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 
 void main() {
 	vec4 texture4 = ScreenTex(colortex4);
+
+	show(biomeCanRainSmooth);
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
 	vec4 	decode4b			= Decode4x8F(texture4.b);
@@ -162,8 +166,7 @@ void main() {
 	float emission			= texture(colortex9, texcoord).b;
 	float materialAO		= clamp01(decode4b.r);
 	float SSS				= clamp01(decode4b.g);
-	
-	
+
 	
 	float depth0 = (GetDepth(texcoord));
 	

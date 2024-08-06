@@ -241,14 +241,18 @@ option.CLOUD3D_START_HEIGHT=Starting Height
 value.CLOUD3D_START_HEIGHT.260=250
 option.CLOUD3D_SAMPLES=Sample Count
 option.CLOUD3D_NOISE=Dithered Noise
-value.CLOUD3D_NOISE.0.0=OFF
-value.CLOUD3D_NOISE.1.0=ON
+value.CLOUD3D_NOISE.0.0=Off
+value.CLOUD3D_NOISE.1.0=On
 option.CLOUD3D_DEPTH=Height
 option.CLOUD3D_DEPTH.comment=The height of the 3D cloud volume
 option.CLOUD3D_COVERAGE=Coverage
 option.CLOUD3D_DENSITY=Density
 option.CLOUD3D_SPEED=Speed
+option.CLOUD3D_LIGHTING=Cloud Lighting Function
+option.CLOUD3D_LIGHTING.comment=Select from a choice of 3 lighting functions for the clouds.
 
+option.BIOME_WEATHER=Biome Specific Weather
+option.BIOME_WEATHER.comment=Affects volumetric cloud density based on biome humidity and prevents clouds from getting denser in the rain in biomes where it can't rain.
 
 option.STARS=Stars
 

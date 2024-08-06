@@ -209,7 +209,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
-	sunlight *= mix(1.0, 0.0, wetness);
+	sunlight *= mix(1.0, 0.0, biomeWetness);
 
 	#if SUNLIGHT_TYPE == 0
 	sunlight *= skyLightmap;

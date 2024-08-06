@@ -28,29 +28,34 @@ vec3 ComputeSunspot(vec3 wDir, inout vec3 transmit) {
 	return color;
 }
 
-#define STARS            ON    // [ON OFF]
-#define REFLECT_STARS    OFF   // [ON OFF]
-#define ROTATE_STARS     OFF   // [ON OFF]
+#define STARS
+//#define REFLECT_STARS
+//#define ROTATE_STARS
 #define STAR_SCALE       1.0   // [0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0]
 #define STAR_BRIGHTNESS  1.0   // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define STAR_COVERAGE    1.000 // [0.950 0.975 1.000 1.025 1.050]
 
 vec3 CalculateStars(vec3 wDir, vec3 transmit, cbool reflection) {
-	if (!STARS) return vec3(0.0);
-	if (!REFLECT_STARS && reflection) return vec3(0.0);
+	#ifndef STARS
+	return vec3(0.0);
+	#endif
+	#ifndef REFLECT_STARS
+	if (reflection) return vec3(0.0);
+	#endif
 	
 	if (transmit.r + transmit.g + transmit.b <= 0.0) return vec3(0.0);
 	
 	vec2 coord;
 	
-	if (ROTATE_STARS) {
+	#ifdef ROTATE_STARS
 		vec3 shadowCoord     = mat3(shadowViewMatrix) * wDir;
 		     shadowCoord.xz *= sign(sunVector.y);
 		
 		coord  = vec2(atan(shadowCoord.x, shadowCoord.z), facos(shadowCoord.y));
 		coord *= 3.0 * STAR_SCALE * noiseScale;
-	} else
+	#else
 		coord = wDir.xz * (2.5 * STAR_SCALE * (2.0 - wDir.y) * noiseScale);
+	#endif
 	
 	float noise  = texture2D(noisetex, coord * 0.5).r;
 	      noise += texture2D(noisetex, coord).r * 0.5;

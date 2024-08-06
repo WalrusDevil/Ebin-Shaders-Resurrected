@@ -22,7 +22,7 @@ uniform float sunAngle;
 uniform float far;
 
 ;
-uniform float wetness;
+uniform float biomeWetness;
 
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
@@ -92,7 +92,7 @@ uniform float far;
 uniform float viewWidth;
 uniform float viewHeight;
 
-uniform float wetness;
+uniform float biomeWetness;
 
 uniform int isEyeInWater;
 

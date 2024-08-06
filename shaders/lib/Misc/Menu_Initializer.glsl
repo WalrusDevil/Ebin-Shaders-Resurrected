@@ -10,5 +10,7 @@
 #endif
 #ifdef WEATHER
 #endif
+#ifdef STARS
+#endif
 
 */

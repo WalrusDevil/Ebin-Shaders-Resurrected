@@ -174,7 +174,7 @@ void CloudFBM1(cfloat speed) {
 
 void CloudLighting1(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - wetness * 0.8);
+	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - biomeWetness * 0.8);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.15);
 	ambientColor *= 2.0 * mix(vec3(1.0), vec3(0.6, 0.8, 1.0), timeNight);
@@ -184,7 +184,7 @@ void CloudLighting1(float sunglow) {
 
 void CloudLighting2(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, wetness);
+	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, biomeWetness);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.5);
 	ambientColor *= 0.5 + timeHorizon * 0.5;
@@ -202,6 +202,14 @@ void CloudLighting3(float sunglow) {
 	
 	bouncedColor = vec3(0.0);
 }
+
+#if CLOUD3D_LIGHTING == 1
+	#define CloudLighting(x) CloudLighting1(x)
+#elif CLOUD3D_LIGHTING == 2
+	#define CloudLighting(x) CloudLighting2(x)
+#else
+	#define CloudLighting(x) CloudLighting3(x)
+#endif
 
 
 void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat noise, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
@@ -268,9 +276,13 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	
 	vec4 cloudSum = vec4(0.0);
 	
-	coverage = CLOUD3D_COVERAGE + wetness * 0.335;
+	coverage = CLOUD3D_COVERAGE + biomeWetness * 0.335;
+	#ifdef BIOME_WEATHER
+	coverage += -0.2 + (0.15 * humiditySmooth);
+	#endif
+
 	CloudFBM1(CLOUD3D_SPEED);
-	CloudLighting3(sunglow);
+	CloudLighting(sunglow);
 	RaymarchClouds(cloudSum, wPos, sunglow, CLOUD3D_SAMPLES, CLOUD3D_NOISE, CLOUD3D_DENSITY, coverage, CLOUD3D_START_HEIGHT, CLOUD3D_DEPTH);
 	
 	cloudSum.rgb *= 0.1;

@@ -44,7 +44,8 @@ uniform vec3  previousCameraPosition;
 uniform float far;
 uniform int blockEntityId;
 
-uniform float wetness;
+uniform float biomeWetness;
+uniform float biomeCanRainSmooth;
 
 #include "/lib/iPBR/IDs.glsl"
 #include "/lib/iPBR/Groups.glsl"
@@ -213,7 +214,7 @@ uniform float viewHeight;
 
 uniform ivec2 atlasSize;
 
-uniform float wetness;
+uniform float biomeWetness;
 uniform float near;
 uniform float far;
 
@@ -439,7 +440,7 @@ void main() {
 	#else
 
 
-		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), wetness * vertLightmap.y);
+		diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), biomeWetness * vertLightmap.y);
 		
 		float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
 		
