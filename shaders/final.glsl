@@ -66,8 +66,7 @@ uniform vec3 previousCameraPosition;
 uniform vec2 pixelSize;
 uniform float viewWidth;
 uniform float viewHeight;
-
-;
+uniform float wetness;
 
 uniform float far;
 uniform float near;
@@ -195,7 +194,7 @@ void main() {
 	color = MotionBlur(color, depth);
 	color =   GetBloom(color);
 	color =   Vignette(color);
-	color =    Tonemap(color);
+	Tonemap(color);
 	
 	gl_FragColor = vec4(color, 1.0);
 	

@@ -93,7 +93,7 @@ option.EXPOSURE=Exposure
 option.EXPOSURE.comment=The brightness level of the entire scene
 
 option.SATURATION=Saturation
-option.SATURATION.comment=The saturation level of the entire scene
+option.SATURATION.comment=The saturation level of the entire scene. On Bruce's version of Ebin, this was set to 1.2, or 1.0 in older versions.
 
 option.SUN_LIGHT_LEVEL=Sun Light Level
 option.SUN_LIGHT_LEVEL.comment=The brightness level of sunlight
@@ -379,6 +379,18 @@ option.FLOODFILL_BLOCKLIGHT.comment=Uses a floodfill algorithm in the shadow pas
 
 option.HANDLIGHT=Dynamic Handlight
 option.HANDLIGHT.comment=Illuminates an area around the player when a light source is held in their hand.
+
+option.TONEMAP=Tonemap
+option.TONEMAP.comment=Modern versions of Ebin use the ACES tonemap. Older versions used Reinhard.
+value.TONEMAP.1=Reinhard
+
+value.TONEMAP.2=ACES
+
+value.TONEMAP.3=Burgess (Stock)
+value.TONEMAP.4=Burgess (Ebin)
+value.TONEMAP.5=Burgess (Continuity)
+
+value.TONEMAP.6=Uncharted 2
 
 option.VERSION=Version
 value.VERSION.0=SOURCE
