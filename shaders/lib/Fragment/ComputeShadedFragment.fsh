@@ -126,7 +126,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
 	#endif
 
-	shading.torchlight = clamp01(pow(shading.torchlight, 3) * (TORCH_LIGHT_LEVEL * 10));
+	shading.torchlight = clamp01(pow(shading.torchlight, 10.0) + shading.torchlight * 0.7 * 1.5);
 
 	shading.torchlight *= GI.a;
 
@@ -137,9 +137,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.ambient *= 0.04 * AMBIENT_LIGHT_LEVEL;
 	shading.ambient = mix(shading.ambient, shading.ambient / 2.0, materialAO);
 	#ifdef WORLD_THE_NETHER // nether - no sunlight or skylight so boost ambient
-		shading.ambient *= 3;
-		shading.ambient = clamp(shading.ambient, 0.2, 1.0);
-		shading.torchlight *= 2;
+		shading.ambient = clamp(shading.ambient, 0.05, 1.0);
 	#endif
 	#ifdef WORLD_THE_END // the end
 		shading.ambient *= 3;

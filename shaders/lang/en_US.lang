@@ -272,7 +272,7 @@ option.WATER_PARALLAX=Water Parallax
 option.WATER_PARALLAX.comment=High performance cost!
 
 option.WATER_CAUSTICS=Underwater Caustics
-option.WATER_CAUSTICS.comment=High performance cost!
+option.WATER_CAUSTICS.comment=Emulates the effect of sunlight refracting through water. Works best if volumetric fog is enabled as well!
 
 option.WATER_HEIGHT=Sea level
 option.WATER_HEIGHT.comment=Assumed constant height for water surface
