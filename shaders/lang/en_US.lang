@@ -320,7 +320,10 @@ option.LIGHT_DESATURATION=Light Desaturation
 option.LIGHT_DESATURATION.comment=Reduces saturation on light sources.
 
 option.CLEAR_WATER=Clear Water
-option.CLEAR_WATER.comment=Disables vertical depth based fog on things which are underwater.
+option.CLEAR_WATER.comment=Makes water much easier to see through.
+
+option.BIOME_WATER=Biome Water Tint
+option.BIOME_WATER.comment=Tints water colour based on biome.
 
 option.TELEFOCAL_SHADOWS=Telefocal Shadows
 option.TELEFOCAL_SHADOWS.comment=Focus the shadow quality-center to a coordinate, or the center of your screen

@@ -210,7 +210,6 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 uniform float viewWidth;
 uniform float viewHeight;
-;
 
 uniform ivec2 atlasSize;
 
@@ -250,14 +249,32 @@ float LOD;
 #endif
 
 
-vec4 GetDiffuse(vec2 coord) {
-	vec4 diffuse = vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
+
+vec4 GetDiffuse(vec2 coord, float materialIDs) {
+	vec4 diffuse;
+	if(materialIDs == 1){ // water
+		#ifdef BIOME_WATER
+			diffuse = vec4(mix(color.rgb, vec3(0.015, 0.04, 0.098), 0.65), 0.75);
+		#else
+			diffuse = vec4(0.015, 0.04, 0.098, 0.75);
+		#endif
+		#ifdef CLEAR_WATER
+			diffuse.a = 0.25;
+		#endif
+		return diffuse;
+	}
+
+	diffuse = vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
 	
 	#ifdef gbuffers_entities
 		diffuse.rgb = mix(diffuse.rgb, entityColor.rgb, entityColor.a);
 	#endif
 
 	return diffuse;
+}
+
+vec4 GetDiffuse(vec2 coord){
+	return GetDiffuse(coord, -1);
 }
 
 bool handLight = false;
@@ -288,9 +305,9 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 	return(vec2(torch, sky));
 }
 
+
+
 #include "/lib/iPBR/iPBR.glsl"
-
-
 #include "/lib/Fragment/EndPortal.fsh"
 #include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
@@ -306,6 +323,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 #include "/lib/Exit.glsl"
 
 void main() {
+	show(color);
 	vec2 vertLightmap = vertLightmap;
 
 	PBRData PBR;
@@ -324,7 +342,7 @@ void main() {
 	#endif
 	
 	vec2  coord       		= ComputeParallaxCoordinate(texcoord, position[1]);
-	vec4  diffuse     		= GetDiffuse(coord);
+	vec4  diffuse     		= GetDiffuse(coord, materialIDs);
 
 	#ifdef gbuffers_weather
 		#ifndef RAIN
@@ -401,7 +419,7 @@ void main() {
 			#endif
 
 			
-			diffuse     = vec4(0.015, 0.04, 0.098, 0.75);
+			//diffuse     = vec4(0.015, 0.04, 0.098, 0.75);
 			mask.water  = 1.0;
 		}
 		#endif
