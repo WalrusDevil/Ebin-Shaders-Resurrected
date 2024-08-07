@@ -417,6 +417,7 @@ void main() {
 		if (materialIDs == IPBR_WATER) {
 			composite *= 0.0;
 			diffuse.a = 0.0;	
+			
 		}
 		#endif
 		

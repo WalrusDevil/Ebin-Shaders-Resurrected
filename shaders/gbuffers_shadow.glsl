@@ -13,6 +13,8 @@ varying vec2 vertLightmap;
 flat varying vec3 vertNormal;
 varying float materialIDs;
 
+varying vec3 position;
+
 
 /***********************************************************************/
 #if defined vsh
@@ -158,7 +160,7 @@ void main() {
 	vertNormal   = normalize(mat3(shadowViewMatrix) * gl_Normal);
 	
 	
-	vec3 position  = GetWorldSpacePositionShadow();
+	position  = GetWorldSpacePositionShadow();
 	vec3 previousPosition = position + (previousCameraPosition - cameraPosition);
 	     position += CalculateVertexDisplacements(position);
 
@@ -208,9 +210,15 @@ void main() {
 uniform sampler2D gtexture;
 uniform vec3 fogColor;
 uniform ivec2 eyeBrightnessSmooth;
+uniform sampler2D noisetex;
+uniform float far;
+uniform float near;
+uniform vec3 cameraPosition;
+
+#include "/lib/Utility.glsl"
+#include "/lib/Fragment/ComputeWaveNormals.fsh"
 
 #define pow2(x) x*x
-#define EBS eyeBrightnessSmooth.g / 240.0
 
 void main() {
 	#ifndef SHADOWS
@@ -220,8 +228,13 @@ void main() {
 	vec4 diffuse = color * texture2D(gtexture, texcoord);
 
 	if (materialIDs == IPBR_WATER) {
-		// discard;
-		diffuse = vec4(pow2(fogColor) * (EBS * 0.8 + 0.2), 0.75); 
+		diffuse = vec4(pow2(fogColor), 0.75);
+		#ifdef WATER_CAUSTICS
+			SetupWaveFBM();
+			float height = GetWaves(position.xz + cameraPosition.xz);
+			height *= height * height * height;
+			diffuse.a = height;
+		#endif
 	}
 	
 	gl_FragData[0] = diffuse;

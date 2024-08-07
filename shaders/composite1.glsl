@@ -155,8 +155,6 @@ vec3 CalculateViewSpacePosition(vec3 screenPos) {
 
 void main() {
 	vec4 texture4 = ScreenTex(colortex4);
-
-	show(biomeCanRainSmooth);
 	
 	vec4  decode4       = Decode4x8F(texture4.r);
 	vec4 	decode4b			= Decode4x8F(texture4.b);

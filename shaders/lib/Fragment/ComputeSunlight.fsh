@@ -141,8 +141,8 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 				#ifdef TRANSPARENT_SHADOWS
 				float fullShadow = shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread);
 				float opaqueShadow = shadowVisibility(shadowtex1, shadowPosition + vec3(offset, 0) * spread);
-				float shadowTransparency = 1.0 - texture2D(shadowcolor0, shadowPosition.xy).a;
-				vec3 shadowColor = texture2D(shadowcolor0, shadowPosition.xy).rgb * shadowTransparency;
+				vec4 shadowData = texture2D(shadowcolor0, shadowPosition.xy);
+				vec3 shadowColor = shadowData.rgb * (1.0 - shadowData.a);
 
 				sunlight += mix(shadowColor * opaqueShadow, vec3(1.0), fullShadow);
 				#else

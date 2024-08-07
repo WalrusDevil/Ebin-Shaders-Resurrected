@@ -306,7 +306,7 @@ void main() {
 
 
 
-	if(isEyeInWater == 1.0){ // surface in water
+	if(isEyeInWater == 1.0){ // stuff inside the water when the player is in the water
 		color = waterdepthFog(frontPos[0], backPos[0], color);
 	}
 	
