@@ -228,12 +228,12 @@ void main() {
 	vec4 diffuse = color * texture2D(gtexture, texcoord);
 
 	if (materialIDs == IPBR_WATER) {
-		diffuse = vec4(pow2(fogColor), 0.75);
+		diffuse = vec4(pow2(fogColor), 0.5);
 		#ifdef WATER_CAUSTICS
 			SetupWaveFBM();
 			float height = GetWaves(position.xz + cameraPosition.xz);
 			height *= height * height * height;
-			diffuse.a = (1.0 - height) * 0.75;
+			diffuse.a = (1.0 - height);
 		#endif
 	}
 	

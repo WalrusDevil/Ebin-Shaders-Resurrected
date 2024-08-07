@@ -2,9 +2,9 @@
 #define waterdepthFOG_FSH
 
 #ifdef BIOME_WATER
-cvec3 waterColor = pow2(normalize(fogColor)) * (EBS * 0.8 + 0.2);
+vec3 waterColor = pow2(normalize(fogColor)) * (EBS * 0.8 + 0.2) * vec3(1.5, 1.3, 1.0);
 #else
-cvec3 waterColor = pow2(normalize(vec3(0.015, 0.04, 0.098))) * (EBS * 0.8 + 0.2);
+vec3 waterColor = pow2(normalize(vec3(0.015, 0.04, 0.098))) * (EBS * 0.8 + 0.2);
 #endif
 
 vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
@@ -23,7 +23,6 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	#ifdef VL_ENABLED
 	tint *= (VL.x * 0.7 + 0.3);
 	#endif
-	show(VL.x);
 
 	tint = sqrt(tint * length(tint));
 

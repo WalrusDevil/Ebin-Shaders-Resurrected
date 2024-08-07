@@ -180,6 +180,20 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_NO_LIGHT_REDSTONE:
         applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6) * step(0.8, data.hsv.g), 0.001));
         break;
+
+      case IPBR_END_PORTAL_FRAME:
+        if(data.hsv.r > 70.0 / 360.0 && data.hsv.r < 160.0/360.0 && data.hsv.b > 0.3){
+          applyiPBR(data.emission, 1.0);
+        } else {
+          applyiPBR(data.emission, 0.01);
+        }
+
+      case IPBR_ENCHANTING_TABLE:
+        if(data.albedo.b > data.albedo.r && data.hsv.g > 0.1 && data.hsv.b > 0.5){
+          applyiPBR(data.emission, 1.0);
+        } else {
+          applyiPBR(data.emission, 0.01);
+        }
     }
 
     if(IPBR_IS_RAIL(ID)){
