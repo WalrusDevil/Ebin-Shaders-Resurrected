@@ -32,7 +32,6 @@ attribute vec4 at_tangent;
 attribute vec2 mc_midTexCoord;
 attribute vec4 at_midBlock;
 
-;
 uniform float thunderStrength;
 
 uniform sampler2D lightmap;
