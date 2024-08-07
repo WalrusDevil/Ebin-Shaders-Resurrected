@@ -286,7 +286,7 @@ void main() {
 
 	#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
 	if(depth2 > waterDepth && waterDepth != 0.0 && (waterDepth > depth0 || (mask.water < 0.5 && depth0 == waterDepth)) && isEyeInWater == 0.0){ // render water behind translucents when necessary
-		color = waterdepthFog(waterPos[0], backPos[0], color);
+		//color = waterdepthFog(waterPos[0], backPos[0], color);
 		vec3 waterNormal = normalize(DecodeNormal(uintBitsToFloat(texture(waterNormalTex, texcoord).r), 11));
 		ComputeSSReflections(color, waterPos, waterNormal * mat3(gbufferModelViewInverse), 0.02, 1.0, skyLightmap, sunlight);
 		vec3 fogTransmit = vec3(1.0);
@@ -295,7 +295,7 @@ void main() {
 	} else
 	#endif
 	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // render water fog directly
-		color = waterdepthFog(frontPos[0], backPos[0], color);
+		//color = waterdepthFog(frontPos[0], backPos[0], color);
 
 	}
 

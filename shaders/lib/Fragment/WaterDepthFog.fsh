@@ -13,7 +13,7 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	if (isEyeInWater == 1.0) waterdepth = clamp(length(frontPos), 0, far) * 0.5;
 	
 	// Beer's Law
-	float fogAccum = exp(-waterdepth * 0.05);
+	float fogAccum = exp(-3.0 * (waterdepth / far));
 	vec3 tint = sunlightColor * (EBS * 0.7 + 0.3);
 
 	#ifdef VL_ENABLED

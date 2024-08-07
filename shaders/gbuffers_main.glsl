@@ -383,6 +383,10 @@ void main() {
 		
 
 		if (materialIDs == IPBR_WATER) {
+			if(!gl_FrontFacing){
+				discard;
+			}
+
 			normal      = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
 
 			#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
@@ -397,7 +401,7 @@ void main() {
 			#endif
 
 			
-			diffuse     = vec4(0.215, 0.356, 0.533, 0.75);
+			diffuse     = vec4(0.015, 0.04, 0.098, 0.75);
 			mask.water  = 1.0;
 		}
 		#endif
@@ -412,14 +416,6 @@ void main() {
 		vec2 encode;
 		encode.x = Encode4x8F(vec4(0.0, vertLightmap.g, mask.water, 0.1));
 		encode.y = EncodeNormal(normal, 11.0);
-		
-		#ifdef gbuffers_water
-		if (materialIDs == IPBR_WATER) {
-			composite *= 0.0;
-			diffuse.a = 0.0;	
-			
-		}
-		#endif
 		
 		gl_FragData[0] = vec4(encode, 0.0, 1.0);
 		gl_FragData[1] = vec4(composite, diffuse.a);

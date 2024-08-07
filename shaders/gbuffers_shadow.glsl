@@ -233,7 +233,7 @@ void main() {
 			SetupWaveFBM();
 			float height = GetWaves(position.xz + cameraPosition.xz);
 			height *= height * height * height;
-			diffuse.a = height;
+			diffuse.a = (1.0 - height) * 0.75;
 		#endif
 	}
 	
