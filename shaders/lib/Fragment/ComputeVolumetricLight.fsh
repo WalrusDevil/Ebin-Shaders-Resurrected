@@ -40,7 +40,8 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		float shadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
 		#endif
 		
-		result += shadow * mix(vec2(1.0, 0.0), clamp01(vec2(1.0, -1.0) * (frontLength - count++)), 0.0);
+		result += shadow * vec2(1.0, 0.0);
+		count++;
 		ray += shadowStep;
 	}
 	
