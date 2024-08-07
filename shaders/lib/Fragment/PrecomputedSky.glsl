@@ -570,11 +570,11 @@ vec3 CalculateNightSky(vec3 wDir, io vec3 transmit) {
 
 #define PRECOMPUTED_ATMOSPHERE
 
-vec3 SkyAtmosphere(vec3 wDir, io vec3 transmit) {
+vec3 SkyAtmosphere(vec3 wDir, io vec3 transmit, vec2 VL) {
 #ifdef PRECOMPUTED_ATMOSPHERE
 	vec3 inScatter = vec3(0.0);
 	inScatter += CalculateNightSky(wDir, transmit);
-	inScatter += PrecomputedSky(kCamera, wDir, 0.0, sunVector, transmit) * 0.1;
+	inScatter += PrecomputedSky(kCamera, wDir, (1.0 - VL.x), sunVector, transmit) * 0.1;
 	inScatter = mix(inScatter, vec3(inScatter.b), biomeWetness);
 	return inScatter;
 #else

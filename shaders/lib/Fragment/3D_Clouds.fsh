@@ -212,21 +212,23 @@ void CloudLighting3(float sunglow) {
 #endif
 
 
-void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat noise, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
+void RaymarchClouds(io vec4 cloud, vec3 position, vec3 origin, float sunglow, float samples, cfloat noise, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
 	if (cloud.a >= 1.0) return;
+
+	vec3 originWorld = origin + cameraPosition;
 	
 	float cloudUpperHeight = cloudLowerHeight + cloudDepth;
 	
 	vec3 a, b, rayPosition, rayIncrement;
 	
-	a = position * ((cloudUpperHeight - cameraPosition.y) / position.y);
-	b = position * ((cloudLowerHeight - cameraPosition.y) / position.y);
+	a = position * ((cloudUpperHeight - originWorld.y) / position.y);
+	b = position * ((cloudLowerHeight - originWorld.y) / position.y);
 	
-	if (cameraPosition.y < cloudLowerHeight) {
+	if (originWorld.y < cloudLowerHeight) {
 		if (position.y <= 0.0) return;
 		
 		swap(a, b);
-	} else if (cloudLowerHeight <= cameraPosition.y && cameraPosition.y <= cloudUpperHeight) {
+	} else if (cloudLowerHeight <= originWorld.y && originWorld.y <= cloudUpperHeight) {
 		if (position.y < 0.0) swap(a, b);
 		
 		samples *= abs(a.y) / cloudDepth;
@@ -239,9 +241,9 @@ void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, 
 
 	
 	rayIncrement = (b - a) / (samples + 1.0);
-	rayPosition = a + cameraPosition + rayIncrement * (1.0 + CalculateDitherPattern1() * noise);
+	rayPosition = a + originWorld + rayIncrement * (1.0 + CalculateDitherPattern1() * noise);
 	
-	coverage *= clamp01(1.0 - length2((rayPosition.xz - cameraPosition.xz) / 10000.0));
+	coverage *= clamp01(1.0 - length2((rayPosition.xz - originWorld.xz) / 10000.0));
 	if (coverage <= 0.1) return;
 	
 	float denseFactor = 1.0 / (1.0 - density);
@@ -283,7 +285,7 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 
 	CloudFBM1(CLOUD3D_SPEED);
 	CloudLighting(sunglow);
-	RaymarchClouds(cloudSum, wPos, sunglow, CLOUD3D_SAMPLES, CLOUD3D_NOISE, CLOUD3D_DENSITY, coverage, CLOUD3D_START_HEIGHT, CLOUD3D_DEPTH);
+	RaymarchClouds(cloudSum, wPos, vec3(0.0), sunglow, CLOUD3D_SAMPLES, CLOUD3D_NOISE, CLOUD3D_DENSITY, coverage, CLOUD3D_START_HEIGHT, CLOUD3D_DEPTH);
 	
 	cloudSum.rgb *= 0.1;
 

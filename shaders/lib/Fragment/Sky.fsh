@@ -80,9 +80,9 @@ float CalculateCloudPhase(float vDotL){
 }
 
 
-vec3 ComputeBackSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor) {
+vec3 ComputeBackSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor, vec2 VL) {
 	vec3 color = vec3(0.0);
-	color += SkyAtmosphere(wDir, transmit);
+	color += SkyAtmosphere(wDir, transmit, VL);
 	
 	color += CalculateNightSky(wDir, transmit);
 	color += ComputeSunspot(wDir, transmit) * 16.0 * sunFactor;
@@ -106,7 +106,7 @@ vec3 computeEndSky(vec3 wDir){
 	return mix(vec3(0.333, 0.212, 0.49) * 0.2, vec3(0.486, 0.349, 0.561), dot(normalize(wDir), vec3(0, 1, 0)));
 }
 
-vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor) {
+vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool reflection, float sunFactor, vec2 VL) {
 	#ifdef WORLD_THE_NETHER
 		return vec3(0);
 	#endif
@@ -117,7 +117,7 @@ vec3 ComputeSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cbool re
 
 	vec3 color = vec3(0.0);
 	color += ComputeClouds(wDir, wPos, transmit);
-	color += ComputeBackSky(wDir, wPos, transmit, sunlight, reflection, sunFactor);
+	color += ComputeBackSky(wDir, wPos, transmit, sunlight, reflection, sunFactor, VL);
 
 	//color = mix(color, vec3(0.0), eyeBrightnessSmooth.y);
 	

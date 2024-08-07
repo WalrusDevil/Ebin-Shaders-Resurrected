@@ -228,6 +228,9 @@ option.VL_ENABLED.comment=Scatters sunlight through fog based on shadows.
 option.VL_QUALITY=Volumetric Fog Quality
 option.VL_STRENGTH=Volumetric Fog Strength
 
+option.CLOUD_VOLUMETRICS=Cloud Volumetrics
+option.CLOUD_VOLUMETRICS.comment=Samples clouds when calculating volumetric light. This is extremely slow and doesn't look good.
+
 option.CLOUD2D=2D Clouds
 
 option.CLOUD2D_HEIGHT=2D Cloud Plane Height

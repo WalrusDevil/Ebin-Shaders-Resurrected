@@ -352,7 +352,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 			transmit = vec3(1.0);
 
 			float sunFactor = 0.0;
-			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor);
+			in_scatter = ComputeSky(normalize(refRay[1]), position[1], transmit, 1.0, true, sunFactor, vec2(0.0));
 
 			#ifdef CLOUD3D
 				vec2 reflectedTexCoord = ViewSpaceToScreenSpace(refRay[0]);

@@ -21,7 +21,6 @@ uniform vec3 previousCameraPosition;
 uniform float sunAngle;
 uniform float far;
 
-;
 uniform float biomeWetness;
 
 #include "/lib/Settings.glsl"
@@ -85,12 +84,14 @@ uniform mat4 shadowProjectionInverse;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
+uniform vec3 sunPosition;
 
 uniform float aspectRatio;
 uniform float near;
 uniform float far;
 uniform float viewWidth;
 uniform float viewHeight;
+uniform float humiditySmooth;
 
 uniform float biomeWetness;
 
@@ -178,6 +179,7 @@ void main() {
 		mask.water = Decode4x8F(texture2D(colortex0, texcoord).r).b;
 	
 	vec2 VL = ComputeVolumetricLight(backPos[1], frontPos[1], noise2D, mask.water);
+	show(VL.x);
 
 	gl_FragData[1] = vec4(VL, 0.0, 0.0);
 	
