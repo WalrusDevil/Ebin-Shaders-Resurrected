@@ -21,7 +21,7 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	vec3 tint = sunlightColor * (EBS * 0.7 + 0.3);
 
 	#ifdef VL_ENABLED
-	tint *= (VL.x * 0.7 + 0.3);
+	tint *= (sqrt(VL.x) * 0.7 + 0.3) * sunlightColor;
 	#endif
 
 	tint = sqrt(tint * length(tint));
