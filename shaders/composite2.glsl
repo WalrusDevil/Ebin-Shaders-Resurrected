@@ -255,7 +255,7 @@ void main() {
 			#endif
 		}
 
-		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0, VL);
+		color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
 		
 		#if defined WORLD_OVERWORLD && defined CLOUD3D
 		if(clamp01(refractedTexCoord) == refractedTexCoord){
