@@ -5,6 +5,10 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 #ifndef VL_ENABLED
 	return vec2(0.0);
 #endif
+
+#ifndef WORLD_OVERWORLD
+	return vec2(0.0);
+#endif
 	
 	vec3 ray = normalize(position);
 	
