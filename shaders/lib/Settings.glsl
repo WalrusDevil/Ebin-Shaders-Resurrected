@@ -1,6 +1,6 @@
 const int   shadowMapResolution      = 2048;  // [1024 2048 3072 4096 6144 8192 16384]
 const float sunPathRotation          = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
-const float shadowDistance           = 256;   // [128 192 256 512]
+const float shadowDistance           = 192;   // [128 192 256 512]
 const float shadowIntervalSize       = 4.0;
 const bool  shadowHardwareFiltering0 = true;
 
@@ -91,7 +91,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define AO_ENABLED
 #define VL_ENABLED
 
-#define VL_QUALITY 4 // [1 2 3 4 5 6 7 8]
+#define VL_QUALITY 1 // [1 2 3 4 5 6 7 8]
 
 //#define PLAYER_GI_BOUNCE
 #define GI_RADIUS        8   // [2 4 6 8 12 16 24 32]

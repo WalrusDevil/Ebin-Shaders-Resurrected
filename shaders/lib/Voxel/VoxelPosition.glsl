@@ -1,6 +1,6 @@
 // this must also be the image resolution on all 3 axes in shaders.properties AND there's some stuff in shadowcomp you'd need to change as well
 // but honestly, just don't change it
-#define VOXEL_MAP_SIZE 256
+#define VOXEL_MAP_SIZE ivec3(128, 64, 128)
 
 // takes in a player space position and returns a position in the voxel map
 ivec3 mapVoxelPos(vec3 playerPos){

@@ -4,7 +4,7 @@
 /***********************************************************************/
 #if defined csh
   layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
-  const ivec3 workGroups = ivec3(32, 32, 32); // 32*8 = 256
+  const ivec3 workGroups = ivec3(16, 8, 16); // 16*8 = 256
 
   #if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
   uniform vec3 cameraPosition;
