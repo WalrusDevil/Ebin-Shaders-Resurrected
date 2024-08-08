@@ -271,7 +271,12 @@ void main() {
 
 	}
 
+	if(transparentColor.a == 0){ // check if there is something transparent in front of the reflective surface
+		ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
+	}
+
 	#ifdef WORLD_OVERWORLD
+
 	// apply atmospheric fog to solid things
 	if(((mask.water == 0.0 && isEyeInWater == 0.0) || (mask.water == 1.0 && isEyeInWater == 1.0)) && depth2 != 1.0){ // surface not behind water so apply atmospheric fog
 		vec3 fogTransmit = vec3(1.0);
@@ -293,17 +298,15 @@ void main() {
 		color = mix(fog, color, fogTransmit);
 	} else
 	#endif
-	if(isEyeInWater == 0.0 && mask.water == 1.0 && mask.hand == 0.0){ // render water fog directly
-		//color = waterdepthFog(frontPos[0], backPos[0], color);
 
-	}
+
 
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
+	
 	if(transparentColor.a != 0){
 		ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
 	}
-	
 
 
 
