@@ -300,8 +300,10 @@ void main() {
 
 	// blend in transparent stuff
 	color = mix(color, transparentColor.rgb, transparentColor.a);
-
-	ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
+	if(transparentColor.a != 0){
+		ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
+	}
+	
 
 
 
