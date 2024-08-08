@@ -322,7 +322,6 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 #include "/lib/Exit.glsl"
 
 void main() {
-	show(color);
 	vec2 vertLightmap = vertLightmap;
 
 	PBRData PBR;

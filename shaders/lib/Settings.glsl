@@ -67,7 +67,7 @@ const float zShrink = 4.0;
 //#define DIRECTIONAL_LIGHTING
 
 #define SHADOW_MAP_BIAS 0.80 // [0.00 0.60 0.70 0.80 0.85 0.90 0.95]
-#define SHADOW_TYPE 3 // [0 1 2 3]
+#define SHADOW_TYPE 2 // [0 1 2]
 #define PLAYER_SHADOW
 #define TRANSPARENT_SHADOWS
 #define SHADOW_SOFTNESS 1 // [1 2 3 4 5 6 7 8]
