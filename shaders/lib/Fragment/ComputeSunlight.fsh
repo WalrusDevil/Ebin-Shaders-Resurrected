@@ -25,10 +25,6 @@ float GetLambertianShading(vec3 normal, vec3 worldLightVector, Mask mask) {
 	return shading;
 }
 
-float shadowVisibility(sampler2D shadowMap, vec3 shadowPosition){
-	return step(shadowPosition.z, texture2D(shadowMap, shadowPosition.xy).r);
-}
-
 mat2 getRandomRotation(vec2 offset){
 	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y) * 720720u;
 	seed += floatBitsToInt(
@@ -76,114 +72,43 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 	return clamp01(scatter);
 }
 
-#if SHADOW_TYPE > 1 && defined SHADOWS
-	vec3 ComputeShadows(vec3 shadowPosition, float biasCoeff, float SSS, vec3 normal, vec3 geometryNormal) {
-		float spread = (1.0 - biasCoeff) / shadowMapResolution;
+vec3 SampleShadow(vec3 shadowClipPos){
 
-		float shadowDepthRange = 255; // distance that a depth of 1 indicates
-		
-		#ifdef VARIABLE_PENUMBRA_SHADOWS
-			
-
-			float sunWidth = 0.9; // approximation of sun width if it was 100m away from the player instead of several million km
-			float receiverDepth = shadowPosition.z * shadowDepthRange;
-			float blockerDepthSum;
-
-			float pixelsPerBlock = shadowMapResolution / shadowDistance;
-			float maxPenumbraWidth = 2 * pixelsPerBlock;
-
-
-			int blockerCount = 0;
-			float blockerSearchSamples = 4.0;
-			float blockerSearchInterval = maxPenumbraWidth / blockerSearchSamples;
-			for(float y = -maxPenumbraWidth; y < maxPenumbraWidth; y += blockerSearchInterval){
-				for(float x = -maxPenumbraWidth; x < maxPenumbraWidth; x += blockerSearchInterval){
-					float newBlockerDepth = texture2D(shadowtex0, shadowPosition.xy + vec2(x, y) * spread).r * shadowDepthRange;
-					if (newBlockerDepth < receiverDepth){
-						blockerDepthSum += newBlockerDepth;
-						blockerCount++;
-					}
-					
-				}
-			}
-
-			float blockerDepth = blockerDepthSum / blockerCount;
-
-			
-			
-			float penumbraWidth = (receiverDepth - blockerDepth) * sunWidth / blockerDepth;
-			penumbraWidth = clamp(penumbraWidth, -maxPenumbraWidth, maxPenumbraWidth);
-
-			float range = max(1, penumbraWidth * pixelsPerBlock);
-		#else
-
-			float blockerDepth = texture2D(shadowtex0, shadowPosition.xy).r * shadowDepthRange;
-			float receiverDepth = shadowPosition.z * shadowDepthRange;
-
-			float range       = SHADOW_SOFTNESS;
-		#endif
-
-		float scatter = calculateSSS(blockerDepth, receiverDepth, SSS, geometryNormal); // subsurface scattering
-
-
-		// float sampleCount = pow(range / interval * 2.0 + 1.0, 2.0);
-		float sampleCount = SHADOW_SAMPLES;
-		float interval = (range * 2) / sqrt(sampleCount);
-
-		
-		vec3 sunlight = vec3(0.0);
-
-		int samples = 0;
-		for (float y = -range; y <= range; y += interval){
-			for (float x = -range; x <= range; x += interval){
-				vec2 offset = vec2(x, y);
-				offset = getRandomRotation(offset) * offset;
-				#ifdef TRANSPARENT_SHADOWS
-				float fullShadow = shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread);
-				float opaqueShadow = shadowVisibility(shadowtex1, shadowPosition + vec3(offset, 0) * spread);
-				vec4 shadowData = texture2D(shadowcolor0, shadowPosition.xy);
-				vec3 shadowColor = shadowData.rgb * (1.0 - shadowData.a);
-
-				sunlight += mix(shadowColor * opaqueShadow, vec3(1.0), fullShadow);
-				#else
-				sunlight += vec3(shadowVisibility(shadowtex0, shadowPosition + vec3(offset, 0) * spread));
-				#endif
-				samples++;
-			}
-		}
-
-		
-		
-		sunlight /= samples;
-
-		sunlight *= clamp01(dot(mat3(gbufferModelViewInverse) * normal, worldLightVector));
-
-		sunlight = max(sunlight, vec3(scatter));
-		return sunlight;
-	}
-#elif SHADOW_TYPE == 1
-	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal) shadow2D(shadow, shadowPosition).rgb;
-#else
-	#define ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal) vec3(1.0);
-#endif
-
-float ComputeSunlightFast(vec3 worldSpacePosition, float sunlightCoeff){
-	if (sunlightCoeff <= 0.0) return sunlightCoeff;
-
-	float distCoeff = GetDistanceCoeff(worldSpacePosition);
-	
-	if (distCoeff >= 1.0) return sunlightCoeff;
-	
 	float biasCoeff;
-	
-	vec3 shadowPosition = BiasShadowProjection(projMAD(shadowProjection, transMAD(shadowViewMatrix, worldSpacePosition + gbufferModelViewInverse[3].xyz)), biasCoeff) * 0.5 + 0.5;
-	
-	if (any(greaterThan(abs(shadowPosition.xyz - 0.5), vec3(0.5)))) return sunlightCoeff;
-	
-	float sunlight = shadow2D(shadow, shadowPosition).r;
-	sunlight = mix(sunlight, 1.0, distCoeff);
+	vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 
-	return sunlightCoeff * pow(sunlight, mix(2.0, 1.0, clamp01(length(worldSpacePosition) * 0.1)));
+	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
+	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
+	vec4 shadowColor = texture2D(shadowtex0, shadowScreenPos.xy);
+
+	return mix(shadowColor.rgb * opaqueShadow, vec3(1.0), transparentShadow);
+}
+
+vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
+	if(penumbraWidthBlocks == 0.0){
+		return(SampleShadow(shadowClipPos));
+	}
+
+	float penumbraWidth = penumbraWidthBlocks / shadowDistance;
+	
+
+	float range = penumbraWidth / 2;
+	float interval = penumbraWidth / float(SHADOW_SAMPLES);
+
+	vec3 shadowSum = vec3(0.0);
+
+	for (float y = -range; y <= range; y += interval){
+		for (float x = -range; x <= range; x += interval){
+			vec3 offset = vec3(x, y, 0.0);
+			offset.xy = getRandomRotation(offset.xy) * offset.xy;
+
+			shadowSum += SampleShadow(shadowClipPos + offset);
+		}
+	}
+
+	shadowSum /= pow2(SHADOW_SAMPLES);
+
+	return shadowSum;
 }
 
 vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, float sunlightCoeff, float SSS, float skyLightmap) {
@@ -192,28 +117,20 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	#endif
 
 	float distCoeff = GetDistanceCoeff(worldSpacePosition);
+
 	
-	float biasCoeff;
-	
-	vec3 shadowPosition = BiasShadowProjection(projMAD(shadowProjection, transMAD(shadowViewMatrix, worldSpacePosition + gbufferModelViewInverse[3].xyz)), biasCoeff) * 0.5 + 0.5;
-	
+	vec3 shadowClipPos = projMAD(shadowProjection, transMAD(shadowViewMatrix, worldSpacePosition + gbufferModelViewInverse[3].xyz));
 	vec3 sunlight = vec3(1.0);
 
 	float nDotL = clamp01(dot(mat3(gbufferModelViewInverse) * normal, worldLightVector));
 
-	#if SHADOW_TYPE < 2 || !defined SUBSURFACE_SCATTERING
-		sunlight *= nDotL;
-	#endif
+	sunlight *= nDotL;
 
-	sunlight *= ComputeShadows(shadowPosition, biasCoeff, SSS, normal, geometryNormal);
+	sunlight *= ComputeShadows(shadowClipPos, SHADOW_SOFTNESS * rcp(10));
 	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, biomeWetness);
-
-	#if SUNLIGHT_TYPE == 0
-	sunlight *= skyLightmap;
-	#endif
 
 	return sunlight;
 }
