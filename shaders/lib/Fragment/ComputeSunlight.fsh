@@ -73,7 +73,6 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 }
 
 vec3 SampleShadow(vec3 shadowClipPos){
-
 	float biasCoeff;
 	vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 
@@ -82,6 +81,42 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	vec4 shadowColor = texture2D(shadowtex0, shadowScreenPos.xy);
 
 	return mix(shadowColor.rgb * opaqueShadow, vec3(1.0), transparentShadow);
+}
+
+float ComputePenumbraWidth(vec3 shadowClipPos){
+	cfloat shadowDepthRange = 255.0; // distance that a depth of 1 indicates
+	float range = float(MAX_PENUMBRA_WIDTH) / 2;
+	float interval = (range * 2) / BLOCKER_SEARCH_SAMPLES;
+
+	float biasCoeff;
+	vec3 recieverShadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
+	float receiverDepth = recieverShadowScreenPos.z * shadowDepthRange;
+
+	float blockerDepthSum;
+
+	float blockerCount = 0;
+
+	for (float y = -range; y <= range; y += interval){
+		for (float x = -range; x <= range; x += interval){
+			vec3 offset = vec3(x, y, 0.0);
+			offset.xy = getRandomRotation(offset.xy) * offset.xy;
+			vec3 newShadowScreenPos = BiasShadowProjection(shadowClipPos + offset * shadowDistance, biasCoeff) * 0.5 + 0.5;
+			float newBlockerDepth = texture2D(shadowtex0, newShadowScreenPos.xy).r * shadowDepthRange;
+			if (newBlockerDepth < receiverDepth){
+				blockerDepthSum += newBlockerDepth;
+				blockerCount += 1;
+			}
+		}
+	}
+
+	if(blockerCount == 0){
+		return 0.0;
+	}
+	float blockerDepth = blockerDepthSum / blockerCount;
+
+	float penumbraWidth = (receiverDepth - blockerDepth) * PENUMBRA_SUN_WIDTH / blockerDepth;
+	
+	return clamp(penumbraWidth, MIN_PENUMBRA_WIDTH, MAX_PENUMBRA_WIDTH);
 }
 
 vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
@@ -93,9 +128,11 @@ vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
 	
 
 	float range = penumbraWidth / 2;
-	float interval = penumbraWidth / float(SHADOW_SAMPLES);
+	float interval = (range * 2) / float(SHADOW_SAMPLES);
 
 	vec3 shadowSum = vec3(0.0);
+
+	int samples = 0;
 
 	for (float y = -range; y <= range; y += interval){
 		for (float x = -range; x <= range; x += interval){
@@ -103,10 +140,11 @@ vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
 			offset.xy = getRandomRotation(offset.xy) * offset.xy;
 
 			shadowSum += SampleShadow(shadowClipPos + offset);
+			samples++;
 		}
 	}
 
-	shadowSum /= pow2(SHADOW_SAMPLES);
+	shadowSum /= samples;
 
 	return shadowSum;
 }
@@ -126,11 +164,23 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 
 	sunlight *= nDotL;
 
-	sunlight *= ComputeShadows(shadowClipPos, SHADOW_SOFTNESS * rcp(10));
+	#if SHADOW_TYPE == 0
+	sunlight *= skyLightmap;
+	#elif SHADOW_TYPE == 1
+	float penumbraWidth = 0.0; // hard shadows
+	#elif SHADOW_TYPE == 2
+	float penumbraWidth = SHADOW_SOFTNESS * rcp(10); // soft shadows
+	#elif SHADOW_TYPE == 3
+	float penumbraWidth = ComputePenumbraWidth(shadowClipPos); // PCSS shadows
+	#endif
+
+	#if SHADOW_TYPE != 0
+	sunlight *= ComputeShadows(shadowClipPos, penumbraWidth);
 	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, biomeWetness);
+	#endif
 
 	return sunlight;
 }

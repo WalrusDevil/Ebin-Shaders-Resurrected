@@ -56,6 +56,7 @@ const bool shadowtex1Mipmap    = true;
 const bool shadowcolor0Mipmap  = true;
 const bool shadowcolor1Mipmap  = true;
 
+const bool shadowtex0Nearest   = true;
 const bool shadowtex1Nearest   = true;
 const bool shadowcolor0Nearest = true;
 const bool shadowcolor1Nearest = false;

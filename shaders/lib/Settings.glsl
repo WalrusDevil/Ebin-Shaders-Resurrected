@@ -66,15 +66,16 @@ const float zShrink = 4.0;
 #define SKY_BRIGHTNESS      1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 //#define DIRECTIONAL_LIGHTING
 
+#define MAX_PENUMBRA_WIDTH 0.5
+#define MIN_PENUMBRA_WIDTH SHADOW_SOFTNESS * rcp(10)
 #define SHADOW_MAP_BIAS 0.80 // [0.00 0.60 0.70 0.80 0.85 0.90 0.95]
-#define SHADOW_TYPE 2 // [0 1 2]
+#define SHADOW_TYPE 3 // [0 1 2 3]
 #define PLAYER_SHADOW
 #define TRANSPARENT_SHADOWS
 #define SHADOW_SOFTNESS 1 // [1 2 3 4 5 6 7 8]
 #define SHADOW_SAMPLES 4 // [4 8 16 32 64]
-#if SHADOW_TYPE == 3
-    #define VARIABLE_PENUMBRA_SHADOWS
-#endif
+#define BLOCKER_SEARCH_SAMPLES 4
+#define PENUMBRA_SUN_WIDTH 10
 
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
