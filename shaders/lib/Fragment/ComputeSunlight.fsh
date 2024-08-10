@@ -7,6 +7,15 @@ float GetLambertianShading(vec3 normal) {
 	return clamp01(dot(normal, worldLightVector));
 }
 
+vec2 VogelDiscSample(int stepIndex, int stepCount, float rotation) {
+    const float goldenAngle = 2.4;
+
+    float r = sqrt(stepIndex + 0.5) / sqrt(float(stepCount));
+    float theta = stepIndex * goldenAngle + rotation;
+
+    return r * vec2(cos(theta), sin(theta));
+}
+
 // https://github.com/riccardoscalco/glsl-pcg-prng/blob/main/index.glsl
 uint pcg(uint v) {
 	uint state = v * uint(747796405) + uint(2891336453);
@@ -23,25 +32,6 @@ float GetLambertianShading(vec3 normal, vec3 worldLightVector, Mask mask) {
 	      shading = mix(shading, 1.0, mask.translucent);
 	
 	return shading;
-}
-
-mat2 getRandomRotation(vec2 offset){
-	uint seed = uint(gl_FragCoord.x * viewHeight+ gl_FragCoord.y) * 720720u;
-	seed += floatBitsToInt(
-	gbufferModelViewInverse[2].x +
-	gbufferModelViewInverse[2].y +
-	gbufferModelViewInverse[2].z +
-	cameraPosition.x +
-	cameraPosition.y +
-	cameraPosition.z
-	);
-	#ifdef DYNAMIC_NOISE
-	seed += frameCounter;
-	#endif
-	float randomAngle = 2 * PI * prng(seed);
-	float cosTheta = cos(randomAngle);
-	float sinTheta = sin(randomAngle);
-	return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 }
 
 // ask tech, idk
@@ -84,37 +74,32 @@ vec3 SampleShadow(vec3 shadowClipPos){
 }
 
 float ComputePenumbraWidth(vec3 shadowClipPos){
-	cfloat shadowDepthRange = 255.0; // distance that a depth of 1 indicates
-	float range = float(MAX_PENUMBRA_WIDTH) / 2;
-	float interval = (range * 2) / BLOCKER_SEARCH_SAMPLES;
+	float range = float(BLOCKER_SEARCH_RADIUS) / (2 * shadowDistance);
 
 	float biasCoeff;
-	vec3 recieverShadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
-	float receiverDepth = recieverShadowScreenPos.z * shadowDepthRange;
+	vec3 receiverShadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
+	float receiverDepth = receiverShadowScreenPos.z;
 
-	float blockerDepthSum;
+	float blockerDistance = 0;
 
 	float blockerCount = 0;
 
-	for (float y = -range; y <= range; y += interval){
-		for (float x = -range; x <= range; x += interval){
-			vec3 offset = vec3(x, y, 0.0);
-			offset.xy = getRandomRotation(offset.xy) * offset.xy;
-			vec3 newShadowScreenPos = BiasShadowProjection(shadowClipPos + offset * shadowDistance, biasCoeff) * 0.5 + 0.5;
-			float newBlockerDepth = texture2D(shadowtex0, newShadowScreenPos.xy).r * shadowDepthRange;
-			if (newBlockerDepth < receiverDepth){
-				blockerDepthSum += newBlockerDepth;
-				blockerCount += 1;
-			}
+	for(int i = 0; i < BLOCKER_SEARCH_SAMPLES; i++){
+		vec2 offset = VogelDiscSample(i, BLOCKER_SEARCH_SAMPLES, ign(floor(gl_FragCoord.xy)));
+		vec3 newShadowScreenPos = BiasShadowProjection(shadowClipPos + vec3(offset * range, 0.0), biasCoeff) * 0.5 + 0.5;
+		float newBlockerDepth = texture2D(shadowtex0, newShadowScreenPos.xy).r;
+		if (newBlockerDepth < receiverDepth){
+			blockerDistance += (receiverDepth - newBlockerDepth);
+			blockerCount += 1;
 		}
 	}
 
 	if(blockerCount == 0){
 		return 0.0;
 	}
-	float blockerDepth = blockerDepthSum / blockerCount;
+	blockerDistance /= blockerCount;
 
-	float penumbraWidth = (receiverDepth - blockerDepth) * PENUMBRA_SUN_WIDTH / blockerDepth;
+	float penumbraWidth = mix(MIN_PENUMBRA_WIDTH, MAX_PENUMBRA_WIDTH, blockerDistance);
 	
 	return clamp(penumbraWidth, MIN_PENUMBRA_WIDTH, MAX_PENUMBRA_WIDTH);
 }
@@ -125,26 +110,15 @@ vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
 	}
 
 	float penumbraWidth = penumbraWidthBlocks / shadowDistance;
-	
-
 	float range = penumbraWidth / 2;
-	float interval = (range * 2) / float(SHADOW_SAMPLES);
 
 	vec3 shadowSum = vec3(0.0);
 
-	int samples = 0;
-
-	for (float y = -range; y <= range; y += interval){
-		for (float x = -range; x <= range; x += interval){
-			vec3 offset = vec3(x, y, 0.0);
-			offset.xy = getRandomRotation(offset.xy) * offset.xy;
-
-			shadowSum += SampleShadow(shadowClipPos + offset);
-			samples++;
-		}
+	for(int i = 0; i < SHADOW_SAMPLES; i++){
+		vec2 offset = VogelDiscSample(i, SHADOW_SAMPLES, ign(floor(gl_FragCoord.xy)));
+		shadowSum += SampleShadow(shadowClipPos + vec3(offset * range, 0.0));
 	}
-
-	shadowSum /= samples;
+	shadowSum /= float(SHADOW_SAMPLES);
 
 	return shadowSum;
 }

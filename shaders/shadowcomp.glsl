@@ -75,7 +75,7 @@
 
     color /= 6;
 
-    color *= 0.97; // ever so slight falloff to prevent positive feedback
+    color *= 0.99; // ever so slight falloff to prevent positive feedback
 
     if(length(color) < 0.001){
       color = vec3(0.0);
