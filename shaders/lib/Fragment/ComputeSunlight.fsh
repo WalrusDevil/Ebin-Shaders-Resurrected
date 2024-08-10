@@ -68,9 +68,10 @@ vec3 SampleShadow(vec3 shadowClipPos){
 
 	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
 	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
-	vec4 shadowColor = texture2D(shadowtex0, shadowScreenPos.xy);
+	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
+	vec3 shadowColor = shadowColorData.rgb * (1.0 - shadowColorData.a);
 
-	return mix(shadowColor.rgb * opaqueShadow, vec3(1.0), transparentShadow);
+	return mix(shadowColor * opaqueShadow, vec3(1.0), transparentShadow);
 }
 
 float GetBlockerDistance(vec3 shadowClipPos){
