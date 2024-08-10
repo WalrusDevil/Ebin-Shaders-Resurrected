@@ -72,7 +72,7 @@ const float zShrink = 4.0;
 #define SHADOW_TYPE 3 // [0 1 2 3]
 #define PLAYER_SHADOW
 #define TRANSPARENT_SHADOWS
-#define SHADOW_SOFTNESS 1 // [1 2 3 4 5 6 7 8]
+#define SHADOW_SOFTNESS 2 // [1 2 3 4 5 6 7 8]
 #define SHADOW_SAMPLES 16 // [4 8 16 32 64]
 #define BLOCKER_SEARCH_SAMPLES 4
 #define BLOCKER_SEARCH_RADIUS 2

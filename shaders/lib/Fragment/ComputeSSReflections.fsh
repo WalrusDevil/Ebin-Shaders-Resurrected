@@ -401,6 +401,7 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 
 	vec3 transmit = vec3(1.0);
 	vec3 sunspot = sunlightColor * specularHighlight * sunlight;
+	sunspot = normalize(sunspot) * min(length(sunspot), 1024);
 
 	if(roughness > ROUGH_REFLECTION_THRESHOLD){
 		reflectionSum = color;

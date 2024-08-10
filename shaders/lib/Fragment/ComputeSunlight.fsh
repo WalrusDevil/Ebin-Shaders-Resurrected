@@ -35,7 +35,7 @@ float GetLambertianShading(vec3 normal, vec3 worldLightVector, Mask mask) {
 }
 
 // ask tech, idk
-float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 normal){
+float ComputeSSS(float blockerDistance, float SSS, vec3 normal){
 	#ifndef SUBSURFACE_SCATTERING
 	return 0.0;
 	#endif
@@ -51,7 +51,7 @@ float calculateSSS(float blockerDepth, float receiverDepth, float SSS, vec3 norm
 	}
 
 	float s = 1.0 / (SSS * 0.12);
-	float z = receiverDepth - blockerDepth;
+	float z = blockerDistance * 255;
 
 	if(isnan(z)){
 		z = 0.0;
@@ -73,10 +73,16 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	return mix(shadowColor.rgb * opaqueShadow, vec3(1.0), transparentShadow);
 }
 
-float ComputePenumbraWidth(vec3 shadowClipPos){
+float GetBlockerDistance(vec3 shadowClipPos){
+	float biasCoeff;
+	#if SHADOW_TYPE != 3
+		vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
+		float blockerDepth = texture2D(shadowtex0, shadowScreenPos.xy).r;
+		return shadowScreenPos.z - blockerDepth;
+	#endif
+
 	float range = float(BLOCKER_SEARCH_RADIUS) / (2 * shadowDistance);
 
-	float biasCoeff;
 	vec3 receiverShadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 	float receiverDepth = receiverShadowScreenPos.z;
 
@@ -99,9 +105,7 @@ float ComputePenumbraWidth(vec3 shadowClipPos){
 	}
 	blockerDistance /= blockerCount;
 
-	float penumbraWidth = mix(MIN_PENUMBRA_WIDTH, MAX_PENUMBRA_WIDTH, blockerDistance);
-	
-	return clamp(penumbraWidth, MIN_PENUMBRA_WIDTH, MAX_PENUMBRA_WIDTH);
+	return blockerDistance;
 }
 
 vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
@@ -138,6 +142,8 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 
 	sunlight *= nDotL;
 
+	float blockerDistance = GetBlockerDistance(shadowClipPos);
+
 	#if SHADOW_TYPE == 0
 	sunlight *= skyLightmap;
 	#elif SHADOW_TYPE == 1
@@ -145,12 +151,16 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	#elif SHADOW_TYPE == 2
 	float penumbraWidth = SHADOW_SOFTNESS * rcp(10); // soft shadows
 	#elif SHADOW_TYPE == 3
-	float penumbraWidth = ComputePenumbraWidth(shadowClipPos); // PCSS shadows
+	float penumbraWidth = mix(MIN_PENUMBRA_WIDTH, MAX_PENUMBRA_WIDTH, blockerDistance); // PCSS shadows
 	#endif
 
 	#if SHADOW_TYPE != 0
 	sunlight *= ComputeShadows(shadowClipPos, penumbraWidth);
 	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
+	
+	float scatter = ComputeSSS(blockerDistance, SSS, geometryNormal);
+	sunlight = max(sunlight, vec3(scatter));
+	show(scatter);
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, biomeWetness);

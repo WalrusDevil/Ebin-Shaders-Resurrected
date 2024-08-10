@@ -208,7 +208,7 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     if(IPBR_IS_FOLIAGE(ID)){
       applyiPBR(data.SSS, 1.0);
       applyiPBR(data.baseReflectance, 0.03);
-      applyiPBR(data.perceptualSmoothness, 0.5 * smoothstep(0.16, 0.5, data.hsv.b));
+      applyiPBR(data.perceptualSmoothness, 0.25 * smoothstep(0.16, 0.5, data.hsv.b));
     }   
 
     if(IPBR_IS_FROGLIGHT(ID)){
