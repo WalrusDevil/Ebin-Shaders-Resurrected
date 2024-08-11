@@ -16,17 +16,6 @@ vec2 VogelDiscSample(int stepIndex, int stepCount, float rotation) {
     return r * vec2(cos(theta), sin(theta));
 }
 
-// https://github.com/riccardoscalco/glsl-pcg-prng/blob/main/index.glsl
-uint pcg(uint v) {
-	uint state = v * uint(747796405) + uint(2891336453);
-	uint word = ((state >> ((state >> uint(28)) + uint(4))) ^ state) * uint(277803737);
-	return (word >> uint(22)) ^ word;
-}
-
-float prng (uint seed) {
-	return float(pcg(seed)) / float(uint(0xffffffff));
-}
-
 float GetLambertianShading(vec3 normal, vec3 worldLightVector, Mask mask) {
 	float shading = clamp01(dot(normal, worldLightVector));
 	      shading = mix(shading, 1.0, mask.translucent);
@@ -81,6 +70,10 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	#else
 	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
 	#endif
+
+	if(transparentShadow == 0.0){
+		return vec3(0.0);
+	}
 
 	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
 	vec3 shadowColor = shadowColorData.rgb * (1.0 - shadowColorData.a);
