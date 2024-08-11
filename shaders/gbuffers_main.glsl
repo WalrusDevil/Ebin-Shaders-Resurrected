@@ -44,6 +44,7 @@ uniform float far;
 uniform int blockEntityId;
 
 uniform float biomeWetness;
+uniform float biomePrecipness;
 uniform float biomeCanRainSmooth;
 
 #include "/lib/iPBR/IDs.glsl"
@@ -212,6 +213,7 @@ uniform float viewHeight;
 uniform ivec2 atlasSize;
 
 uniform float biomeWetness;
+uniform float biomePrecipness;
 uniform float near;
 uniform float far;
 

@@ -61,7 +61,7 @@ vec3 Compute2DCloudPlane(vec3 wDir, vec3 wPos, vec3 transmit, float phase) {
 	
 	
 	float coverage = CLOUD2D_COVERAGE * 1.16;
-	coverage = mix(coverage, 1.0, biomeWetness);
+	coverage = mix(coverage, 1.0, biomePrecipness);
 	cvec3  weights  = vec3(0.5, 0.135, 0.075);
 	cfloat weight   = weights.x + weights.y + weights.z;
 	
@@ -72,7 +72,7 @@ vec3 Compute2DCloudPlane(vec3 wDir, vec3 wPos, vec3 transmit, float phase) {
 	
 	float cloudAlpha = CloudFBM(coord, coords, weights, weight);
 	cloudAlpha = GetCoverage(cloudAlpha, coverage);
-	//cloudAlpha = mix(cloudAlpha, 0.1, biomeWetness);
+	//cloudAlpha = mix(cloudAlpha, 0.1, biomePrecipness);
 	// cloudAlpha = GetCoverage(cloudAlpha, coverage) * sqrt(abs(wDir.y)) ;
 	
 	vec2 lightOffset = worldLightVector.xz * 0.2;
@@ -86,7 +86,7 @@ vec3 Compute2DCloudPlane(vec3 wDir, vec3 wPos, vec3 transmit, float phase) {
 	sunlight  = pow(1.3 - sunlight, 5.5);
 	sunlight *= phase ;
 	sunlight *= 1000.0;
-	sunlight = mix(sunlight, sunlight / 4, biomeWetness);
+	sunlight = mix(sunlight, sunlight / 4, biomePrecipness);
 	
 	float direct  = mix(1.0, 5.0, timeNight);
 	float ambient = 5.0;

@@ -174,7 +174,7 @@ void CloudFBM1(cfloat speed) {
 
 void CloudLighting1(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - biomeWetness * 0.8);
+	directColor *= 8.0 * (1.0 + pow4(sunglow) * 10.0) * (1.0 - biomePrecipness * 0.8);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.15);
 	ambientColor *= 2.0 * mix(vec3(1.0), vec3(0.6, 0.8, 1.0), timeNight);
@@ -184,7 +184,7 @@ void CloudLighting1(float sunglow) {
 
 void CloudLighting2(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, biomeWetness);
+	directColor *= 35.0 * (1.0 + pow2(sunglow) * 2.0) * mix(1.0, 0.2, biomePrecipness);
 	
 	ambientColor  = mix(sqrt(skylightColor), sunlightColor, 0.5);
 	ambientColor *= 0.5 + timeHorizon * 0.5;
@@ -276,7 +276,7 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	
 	vec4 cloudSum = vec4(0.0);
 	
-	coverage = CLOUD3D_COVERAGE + biomeWetness * 0.335;
+	coverage = CLOUD3D_COVERAGE + biomePrecipness * 0.335;
 	#ifdef BIOME_WEATHER
 	coverage += -0.2 + (0.15 * humiditySmooth);
 	#endif

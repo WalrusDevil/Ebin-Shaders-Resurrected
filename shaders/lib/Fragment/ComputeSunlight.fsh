@@ -176,7 +176,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	show(scatter);
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
-	sunlight *= mix(1.0, 0.0, biomeWetness);
+	sunlight *= mix(1.0, 0.0, biomePrecipness);
 	#endif
 
 	return sunlight;

@@ -22,6 +22,7 @@ uniform float sunAngle;
 uniform float far;
 
 uniform float biomeWetness;
+uniform float biomePrecipness;
 
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
@@ -66,6 +67,7 @@ uniform vec2 pixelSize;
 uniform float viewWidth;
 uniform float viewHeight;
 uniform float biomeWetness;
+uniform float biomePrecipness;
 
 uniform float far;
 uniform float near;

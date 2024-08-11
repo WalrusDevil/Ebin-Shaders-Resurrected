@@ -75,7 +75,7 @@ void BurgessTonemap(io vec3 color) {
 #endif
 
 	e *= smoothstep(0.1, -0.1, worldLightVector.y);
-	g *= 1.0 - biomeWetness * 0.2; // reduces saturation in the rain
+	g *= 1.0 - biomePrecipness * 0.2; // reduces saturation in the rain
 
 	color = Curve(color, a, b, c, d, e);
 
