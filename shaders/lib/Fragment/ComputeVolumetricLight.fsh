@@ -35,11 +35,17 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		vec3 samplePos = BiasShadowProjection(ray) * 0.5 + 0.5;
 		
 		#ifdef WATER_CAUSTICS
-		float fullShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+		float shadow;
 		float opaqueShadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
-		vec4 shadowData = texture2D(shadowcolor0, samplePos.xy);
-		vec3 shadowColor = shadowData.xyz * (1.0 - shadowData.a);
-		float shadow = length(mix(shadowColor * opaqueShadow, vec3(1.0), fullShadow));
+		if(opaqueShadow == 1.0){
+			shadow = 1.0;
+		} else {
+			float fullShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+			vec4 shadowData = texture2D(shadowcolor0, samplePos.xy);
+			vec3 shadowColor = shadowData.xyz * (1.0 - shadowData.a);
+			shadow = length(mix(shadowColor * opaqueShadow, vec3(1.0), fullShadow));
+		}
+		
 		#else
 		float shadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
 		#endif
