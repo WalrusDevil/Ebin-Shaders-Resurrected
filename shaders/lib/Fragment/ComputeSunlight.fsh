@@ -66,8 +66,13 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float biasCoeff;
 	vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 
-	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
+
 	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
+	if(opaqueShadow == 1.0){
+		return vec3(1.0);
+	}
+
+	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
 	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
 	vec3 shadowColor = shadowColorData.rgb * (1.0 - shadowColorData.a);
 
