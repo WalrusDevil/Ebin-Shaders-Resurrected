@@ -77,12 +77,6 @@ vec2 GetDefaultLightmap() {
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
 	
-#if  defined gbuffers_water || defined gbuffers_textured
-	position -= gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.00005 * float(abs(mc_Entity.x - 8.5) > 0.6));
-#elif defined gbuffers_spidereyes
-	position += gl_NormalMatrix * gl_Normal * (norm(gl_Normal) * 0.0002);
-#endif
-	
 	return mat3(gbufferModelViewInverse) * position;
 }
 
@@ -128,7 +122,7 @@ void main() {
 	
 	SetupProjection();
 	
-	color        = abs(mc_Entity.x - 10.5) > 0.6 ? gl_Color.rgb : vec3(1.0);
+	color        = gl_Color.rgb;
 	texcoord     = gl_MultiTexCoord0.st;
 	vertLightmap = GetDefaultLightmap();
 
@@ -241,8 +235,10 @@ float LOD;
 #endif
 	
 #ifdef gbuffers_water
+	#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
 	layout (r32ui) uniform uimage2D waterdepth;
 	layout (r32ui) uniform uimage2D waternormal;
+	#endif
 
 	#define GetTexture(x, y) texture2D(x, y)
 #endif

@@ -193,17 +193,20 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
 
 #define WATER_BEHIND_TRANSLUCENTS
+#define FLOODFILL_BLOCKLIGHT
+
+#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
+#define PREPARE_ENABLED
+#endif
+
+#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
+#define SHADOWCOMP_ENABLED
+#endif
 
 #define FXAA
 #define FXAA_SUBPIXEL 0.75 //[0.00 0.25 0.50 0.75 1.00]
 #define FXAA_EDGE_SENSITIVITY 1 //[0 1 2]
 
-#define FLOODFILL_BLOCKLIGHT
-#define HANDLIGHT
 
-// ifdef checks so they don't disappear from settings
-#ifdef FLOODFILL_BLOCKLIGHT
-#endif
-#ifdef WATER_BEHIND_TRANSLUCENTS
-#endif
+#define HANDLIGHT
 

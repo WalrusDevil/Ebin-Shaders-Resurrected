@@ -12,5 +12,9 @@
 #endif
 #ifdef STARS
 #endif
+#ifdef FLOODFILL_BLOCKLIGHT
+#endif
+#ifdef WATER_BEHIND_TRANSLUCENTS
+#endif
 
 */
