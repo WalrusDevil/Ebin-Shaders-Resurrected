@@ -71,7 +71,9 @@ Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and cre
 - [sp614x](https://twitter.com/sp614x), Ebin would not be possible without #include.
 - [IMS](https://github.com/IMS212), for maintaining Iris and Sodium, which are really cool mods.
 - [sixthsurge](https://github.com/sixthsurge) & [The Complementary Team](https://github.com/ComplementaryDevelopment), because when I don't know how to do something, the question is "how do photon or complementary do it?"
+- tzvisapp, for being my "rubber duck" when trying to fix problems
 - [chocapic13](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1293898) & [Sildur](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291396), various code references and help over the years [BRUCE]
+
 
 ## Evidence of written permission from BruceKnowsHow to distribute this shaderpack
 ![evidence](https://github.com/jbritain/Ebin-Shaders-Resurrected/assets/50422789/0cca45b6-dd21-4718-a271-80afe12f0546)
