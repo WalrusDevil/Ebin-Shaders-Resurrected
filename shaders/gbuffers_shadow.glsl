@@ -79,7 +79,7 @@ vec4 ProjectShadowMap(vec4 position) {
 	
 	position.xy /= biasCoeff;
 	
-	float acne  = 25.0 * pow(clamp01(1.0 - vertNormal.z), 4.0) * float(mc_Entity.x > 0.0);
+	float acne  = 25.0 * pow(clamp01(1.0 - vertNormal.z), 4.0);
 	      acne += 0.5 + pow2(biasCoeff) * 8.0;
 	
 	position.z += acne / shadowMapResolution;
