@@ -50,7 +50,7 @@ float ComputeSSS(float blockerDistance, float SSS, vec3 normal){
 		return 0.0;
 	}
 
-	float s = 1.0 / (SSS * 0.12);
+	float s = 1.0 / (SSS * 0.06);
 	float z = blockerDistance * 255;
 
 	if(isnan(z)){

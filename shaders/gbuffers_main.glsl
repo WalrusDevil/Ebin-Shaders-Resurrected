@@ -453,6 +453,10 @@ void main() {
 		
 		float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
 		
+		if(any(isnan(diffuse))){
+			discard;
+		}
+
 		gl_FragData[0] = vec4(diffuse.rgb, 1.0);
 		gl_FragData[1] = vec4(
 			Encode4x8F(vec4(
