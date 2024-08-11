@@ -72,7 +72,7 @@ vec3 ComputeGI(vec3 worldSpacePosition, vec3 normal, float skyLightmap, cfloat r
 		     lightCoeffs.x = mix(lightCoeffs.x, 1.0, translucent);
 		     lightCoeffs.y = sqrt(lightCoeffs.y);
 		
-		vec3 flux = texture2DLod(shadowcolor, mapPos, sampleLOD).rgb;
+		vec3 flux = texture2DLod(shadowcolor0, mapPos, sampleLOD).rgb;
 		
 		GI += flux * (lightCoeffs.x * lightCoeffs.y * rcp(lightCoeffs.z));
 	}

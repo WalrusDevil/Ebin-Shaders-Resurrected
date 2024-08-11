@@ -51,27 +51,21 @@ void main() {
 /***********************************************************************/
 #if defined fsh
 
-
-const bool shadowtex1Mipmap    = true;
-const bool shadowcolor0Mipmap  = true;
-const bool shadowcolor1Mipmap  = true;
-
-const bool shadowtex0Nearest   = true;
-const bool shadowtex1Nearest   = true;
-const bool shadowcolor0Nearest = true;
-const bool shadowcolor1Nearest = false;
-
 uniform sampler2D colortex0;
 uniform sampler2D colortex4;
 uniform sampler2D gdepthtex;
 uniform sampler2D depthtex1;
 uniform sampler2D noisetex;
-uniform sampler2D shadowcolor;
+uniform sampler2D shadowcolor0;
 uniform sampler2D shadowcolor1;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
-uniform sampler2DShadow shadow;
-uniform sampler2D shadowcolor0;
+
+#ifdef IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
+uniform sampler2DShadow shadowtex0HW;
+uniform sampler2DShadow shadowtex1HW;
+#endif
+
 uniform sampler2D colortex11;
 uniform sampler2D depthtex0;
 uniform usampler2D waterDepthTex;
@@ -135,7 +129,7 @@ float ExpToLinearDepth(float depth) {
 #include "/lib/Fragment/ComputeGI.fsh"
 #include "/lib/Fragment/ComputeSSAO.fsh"
 #include "/lib/Fragment/ComputeVolumetricLight.fsh"
-#include "/lib/Fragment/ComputeSunlight.fsh"
+
 
 /* RENDERTARGETS:5,6,12 */
 #include "/lib/Exit.glsl"

@@ -36,11 +36,25 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		
 		#ifdef WATER_CAUSTICS
 		float shadow;
-		float opaqueShadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
+
+		#ifdef IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
+		float opaqueShadow = shadow2D(shadowtex0HW, samplePos).r;
+		#else
+		float opaqueShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+		#endif
+
+
 		if(opaqueShadow == 1.0){
 			shadow = 1.0;
 		} else {
-			float fullShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+
+			#ifdef IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
+			float fullShadow = shadow2D(shadowtex1HW, samplePos).r;
+			#else
+			float fullShadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
+			#endif
+
+
 			vec4 shadowData = texture2D(shadowcolor0, samplePos.xy);
 			vec3 shadowColor = shadowData.xyz * (1.0 - shadowData.a);
 			shadow = length(mix(shadowColor * opaqueShadow, vec3(1.0), fullShadow));

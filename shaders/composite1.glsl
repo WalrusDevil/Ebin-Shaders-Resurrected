@@ -72,8 +72,13 @@ uniform sampler2D depthtex1;
 uniform sampler2D noisetex;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
-uniform sampler2DShadow shadow;
 uniform sampler2D shadowcolor0;
+
+#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
+uniform sampler2DShadow shadowtex0HW;
+uniform sampler2DShadow shadowtex1HW;
+#endif
+
 uniform sampler2D colortex11;
 
 uniform mat4 gbufferModelView;

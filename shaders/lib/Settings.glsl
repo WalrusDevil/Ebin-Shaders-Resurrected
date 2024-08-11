@@ -2,7 +2,32 @@ const int   shadowMapResolution      = 2048;  // [1024 2048 3072 4096 6144 8192 
 const float sunPathRotation          = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
 const float shadowDistance           = 192;   // [128 192 256 512]
 const float shadowIntervalSize       = 4.0;
-const bool  shadowHardwareFiltering0 = true;
+
+const bool  shadowHardwareFiltering = true;
+
+const bool shadowtex1Mipmap    = true;
+const bool shadowcolor0Mipmap  = true;
+const bool shadowcolor1Mipmap  = true;
+
+const bool shadowtex0Nearest   = false;
+const bool shadowtex1Nearest   = false;
+const bool shadowcolor0Nearest = true;
+const bool shadowcolor1Nearest = false;
+
+const float eyeBrightnessHalflife = 1.5;
+const float ambientOcclusionLevel = 0.65;
+
+const bool colortex0Clear = false;
+const bool colortex1Clear = false;
+const bool colortex2Clear = false;
+const bool colortex3Clear = true;
+const bool colortex4Clear = true;
+const bool colortex5Clear = true;
+const bool colortex6Clear = false;
+
+const vec4 colortex3ClearColor = vec4(0.0, 0.0, 0.0, 0.0);
+const vec4 colortex4ClearColor = vec4(0.0, 0.0, 0.0, 1.0);
+const vec4 colortex5ClearColor = vec4(0.1, 0.1, 0.1, 1.0);
 
 const float wetnessHalflife          = 40.0;
 const float drynessHalflife          = 40.0;
@@ -26,22 +51,6 @@ const int colortex5Format = RGBA16;
 const int colortex6Format = RG8;
 const int colortex11Format = RGB8;
 
-
-
-const float eyeBrightnessHalflife = 1.5;
-const float ambientOcclusionLevel = 0.65;
-
-const bool colortex0Clear = false;
-const bool colortex1Clear = false;
-const bool colortex2Clear = false;
-const bool colortex3Clear = true;
-const bool colortex4Clear = true;
-const bool colortex5Clear = true;
-const bool colortex6Clear = false;
-
-const vec4 colortex3ClearColor = vec4(0.0, 0.0, 0.0, 0.0);
-const vec4 colortex4ClearColor = vec4(0.0, 0.0, 0.0, 1.0);
-const vec4 colortex5ClearColor = vec4(0.1, 0.1, 0.1, 1.0);
 */
 
 const float voxelDistance = 256.0;

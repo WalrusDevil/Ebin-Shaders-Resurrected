@@ -66,13 +66,22 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float biasCoeff;
 	vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 
+		#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
+		float opaqueShadow = shadow2D(shadowtex1HW, shadowScreenPos).r;
+		#else
+		float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
+		#endif
 
-	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
 	if(opaqueShadow == 1.0){
 		return vec3(1.0);
 	}
 
+	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
+	float transparentShadow = shadow2D(shadowtex0HW, shadowScreenPos).r;
+	#else
 	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
+	#endif
+
 	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
 	vec3 shadowColor = shadowColorData.rgb * (1.0 - shadowColorData.a);
 
@@ -123,12 +132,17 @@ vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
 	float range = penumbraWidth / 2;
 
 	vec3 shadowSum = vec3(0.0);
+	int samples = SHADOW_SAMPLES;
 
-	for(int i = 0; i < SHADOW_SAMPLES; i++){
-		vec2 offset = VogelDiscSample(i, SHADOW_SAMPLES, ign(floor(gl_FragCoord.xy)));
+	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE == 2
+	samples /= 4; // with hardware PCF we can take less samples
+	#endif
+
+	for(int i = 0; i < samples; i++){
+		vec2 offset = VogelDiscSample(i, samples, ign(floor(gl_FragCoord.xy)));
 		shadowSum += SampleShadow(shadowClipPos + vec3(offset * range, 0.0));
 	}
-	shadowSum /= float(SHADOW_SAMPLES);
+	shadowSum /= float(samples);
 
 	return shadowSum;
 }

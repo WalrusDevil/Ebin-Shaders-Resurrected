@@ -20,7 +20,7 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	float fogAccum = exp(-3.0 * (waterdepth / far));
 	vec3 tint = sunlightColor * (EBS * 0.7 + 0.3);
 
-	#ifdef VL_ENABLED
+	#if defined VL_ENABLED && defined WATER_CAUSTICS
 	tint *= (sqrt(VL.x) * 0.7 + 0.3) * sunlightColor;
 	#endif
 

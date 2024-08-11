@@ -152,7 +152,6 @@ float skyLightmap;
 vec2 VL;
 
 #include "/lib/Fragment/WaterDepthFog.fsh"
-#include "/lib/Fragment/ComputeSunlight.fsh"
 #include "/lib/Fragment/Sky.fsh"
 #include "/lib/Fragment/ComputeSSReflections.fsh"
 #include "/lib/Fragment/ComputeWaveNormals.fsh"
