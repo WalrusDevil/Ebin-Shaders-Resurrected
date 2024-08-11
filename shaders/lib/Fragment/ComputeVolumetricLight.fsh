@@ -46,7 +46,7 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 
 			if(opaqueShadow == 1.0){ // opaque shadow is there, no need 
 				shadow = 1.0;
-			} else {
+			} else if(waterMask == 1.0) {
 
 				#ifdef IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 				float fullShadow = shadow2D(shadowtex1HW, samplePos).r;

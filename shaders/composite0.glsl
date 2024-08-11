@@ -171,7 +171,7 @@ void main() {
 	if (depth0 != depth1)
 		mask.water = Decode4x8F(texture2D(colortex0, texcoord).r).b;
 	
-	vec2 VL = ComputeVolumetricLight(backPos[1], frontPos[1], noise2D, mask.water);
+	vec2 VL = ComputeVolumetricLight(backPos[1], frontPos[1], noise2D, clamp01(mask.water + float(isEyeInWater == 1.0)));
 
 	gl_FragData[1] = vec4(VL, 0.0, 0.0);
 	
