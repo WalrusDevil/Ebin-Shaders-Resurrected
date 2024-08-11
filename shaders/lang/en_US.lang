@@ -35,7 +35,7 @@ profile.LOW=§2Low
 profile.LOW.comment=For your GTX 1050 that's been hanging on for dear life for the last 8 years.
 
 profile.MEDIUM=§aMedium
-profile.MEDIUM.comment=Runs at 60FPS on my RX 590.
+profile.MEDIUM.comment=Runs at ~120FPS on my RX 590.
 
 profile.HIGH=§bHigh
 profile.HIGH.comment=For any half decent PC.
