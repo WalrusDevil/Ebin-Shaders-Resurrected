@@ -140,9 +140,9 @@ float ExpToLinearDepth(float depth) {
 void main() {
 	float depth0 = GetDepth(texcoord);
 	
-#ifndef VL_ENABLED
-	if (depth0 >= 1.0) { discard; }
-#endif
+// #ifndef VL_ENABLED
+// 	if (depth0 >= 1.0) { discard; }
+// #endif
 	
 	
 #ifdef COMPOSITE0_NOISE

@@ -102,7 +102,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define AO_ENABLED
 #define VL_ENABLED
 
-#define VL_QUALITY 2 // [1 2 3 4 5 6 7 8]
+#define VL_QUALITY 3 // [1 2 3 4 5 6 7 8]
 
 //#define PLAYER_GI_BOUNCE
 #define GI_RADIUS        8   // [2 4 6 8 12 16 24 32]
