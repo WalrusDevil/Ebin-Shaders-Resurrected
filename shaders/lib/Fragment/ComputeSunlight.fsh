@@ -61,8 +61,10 @@ vec3 SampleShadow(vec3 shadowClipPos){
 		float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
 		#endif
 
-	if(opaqueShadow == 1.0){
-		return vec3(1.0);
+
+	show(opaqueShadow);
+	if(opaqueShadow == 0.0){ // full opaque shadow
+		return vec3(0.0);
 	}
 
 	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
@@ -71,8 +73,8 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
 	#endif
 
-	if(transparentShadow == 0.0){
-		return vec3(0.0);
+	if(transparentShadow == 1.0){ // no transparent shadow
+		return vec3(1.0);
 	}
 
 	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
@@ -173,7 +175,6 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	
 	float scatter = ComputeSSS(blockerDistance, SSS, geometryNormal);
 	sunlight = max(sunlight, vec3(scatter));
-	show(scatter);
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, biomePrecipness);

@@ -228,6 +228,7 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
 	
 	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
+	// show(sunlight);
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);
 
 	gl_FragData[4] = vec4(sunlight, 1.0);
