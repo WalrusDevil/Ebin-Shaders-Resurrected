@@ -1,4 +1,4 @@
-const int   shadowMapResolution      = 2048;  // [1024 2048 3072 4096 6144 8192 16384]
+const int   shadowMapResolution      = 3072;  // [1024 2048 3072 4096 6144 8192 16384]
 const float sunPathRotation          = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
 const float shadowDistance           = 192;   // [128 192 256 512]
 const float shadowIntervalSize       = 4.0;
@@ -75,15 +75,16 @@ const float zShrink = 4.0;
 #define SKY_BRIGHTNESS      1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 //#define DIRECTIONAL_LIGHTING
 
-#define MAX_PENUMBRA_WIDTH 16
-#define MIN_PENUMBRA_WIDTH SHADOW_SOFTNESS * rcp(10)
+
 #define SHADOW_MAP_BIAS 0.80 // [0.00 0.60 0.70 0.80 0.85 0.90 0.95]
 #define SHADOW_TYPE 3 // [0 1 2 3]
 #define PLAYER_SHADOW
 #define TRANSPARENT_SHADOWS
 #define SHADOW_SOFTNESS 2 // [1 2 3 4 5 6 7 8]
-#define SHADOW_SAMPLES 16 // [4 8 16 32 64]
-#define BLOCKER_SEARCH_SAMPLES 4
+#define SHADOW_SAMPLES 8 // [4 8 16 32 64]
+#define MAX_PENUMBRA_WIDTH 16
+#define MIN_PENUMBRA_WIDTH SHADOW_SOFTNESS * rcp(10)
+#define BLOCKER_SEARCH_SAMPLES 8
 #define BLOCKER_SEARCH_RADIUS 2
 
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;

@@ -177,8 +177,9 @@ uniform sampler2D noisetex;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowcolor0;
+uniform sampler2D bluenoisetex;
 
-#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
+#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 uniform sampler2DShadow shadowtex0HW;
 uniform sampler2DShadow shadowtex1HW;
 #endif

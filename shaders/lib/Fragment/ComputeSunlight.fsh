@@ -3,6 +3,8 @@
 
 #include "/lib/Misc/ShadowBias.glsl"
 
+vec4 noise;
+
 float GetLambertianShading(vec3 normal) {
 	return clamp01(dot(normal, worldLightVector));
 }
@@ -55,19 +57,18 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float biasCoeff;
 	vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 
-		#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
+		#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 		float opaqueShadow = shadow2D(shadowtex1HW, shadowScreenPos).r;
 		#else
 		float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
 		#endif
 
 
-	show(opaqueShadow);
 	if(opaqueShadow == 0.0){ // full opaque shadow
 		return vec3(0.0);
 	}
 
-	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE != 3
+	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 	float transparentShadow = shadow2D(shadowtex0HW, shadowScreenPos).r;
 	#else
 	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
@@ -101,7 +102,7 @@ float GetBlockerDistance(vec3 shadowClipPos){
 	float blockerCount = 0;
 
 	for(int i = 0; i < BLOCKER_SEARCH_SAMPLES; i++){
-		vec2 offset = VogelDiscSample(i, BLOCKER_SEARCH_SAMPLES, ign(floor(gl_FragCoord.xy)));
+		vec2 offset = VogelDiscSample(i, BLOCKER_SEARCH_SAMPLES, noise.r);
 		vec3 newShadowScreenPos = BiasShadowProjection(shadowClipPos + vec3(offset * range, 0.0), biasCoeff) * 0.5 + 0.5;
 		float newBlockerDepth = texture2D(shadowtex0, newShadowScreenPos.xy).r;
 		if (newBlockerDepth < receiverDepth){
@@ -115,7 +116,7 @@ float GetBlockerDistance(vec3 shadowClipPos){
 	}
 	blockerDistance /= blockerCount;
 
-	return blockerDistance;
+	return clamp01(blockerDistance);
 }
 
 vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
@@ -129,12 +130,9 @@ vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks){
 	vec3 shadowSum = vec3(0.0);
 	int samples = SHADOW_SAMPLES;
 
-	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS && SHADOW_TYPE == 2
-	samples /= 4; // with hardware PCF we can take less samples
-	#endif
 
 	for(int i = 0; i < samples; i++){
-		vec2 offset = VogelDiscSample(i, samples, ign(floor(gl_FragCoord.xy)));
+		vec2 offset = VogelDiscSample(i, samples, noise.g);
 		shadowSum += SampleShadow(shadowClipPos + vec3(offset * range, 0.0));
 	}
 	shadowSum /= float(samples);
@@ -157,7 +155,14 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 
 	sunlight *= nDotL;
 
+	#if SHADOW_TYPE > 1
+	// noise = texelFetch(noisetex, ivec2(mod(floor(texcoord * vec2(viewWidth, viewHeight)), 1024)), 0);
+	noise = vec4(ign(floor(gl_FragCoord.xy)));
+	#endif
+
 	float blockerDistance = GetBlockerDistance(shadowClipPos);
+
+
 
 	#if SHADOW_TYPE == 0
 	sunlight *= skyLightmap;
@@ -179,6 +184,8 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, biomePrecipness);
 	#endif
+
+
 
 	return sunlight;
 }

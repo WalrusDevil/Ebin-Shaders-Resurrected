@@ -61,6 +61,7 @@ uniform sampler2D shadowcolor0;
 uniform sampler2D shadowcolor1;
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
+uniform sampler2D bluenoisetex;
 
 #ifdef IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 uniform sampler2DShadow shadowtex0HW;
@@ -193,6 +194,7 @@ void main() {
 	
 	
 	vec3 GI = ComputeGI(backPos[1], wNormal, skyLightmap, GI_RADIUS * 2.0, noise2D, mask);
+	show(GI);
 	
 	gl_FragData[0] = vec4(sqrt(GI * 0.2), AO);
 	exit();
