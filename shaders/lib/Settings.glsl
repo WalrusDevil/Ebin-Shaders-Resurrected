@@ -81,11 +81,11 @@ const float zShrink = 4.0;
 #define PLAYER_SHADOW
 #define TRANSPARENT_SHADOWS
 #define SHADOW_SOFTNESS 2 // [1 2 3 4 5 6 7 8]
-#define SHADOW_SAMPLES 8 // [4 8 16 32 64]
+#define SHADOW_SAMPLES 16 // [4 8 16 32 64]
 #define MAX_PENUMBRA_WIDTH 16
 #define MIN_PENUMBRA_WIDTH SHADOW_SOFTNESS * rcp(10)
 #define BLOCKER_SEARCH_SAMPLES 8
-#define BLOCKER_SEARCH_RADIUS 2
+#define BLOCKER_SEARCH_RADIUS 0.5
 
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
@@ -100,7 +100,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 #define GI_ENABLED
 #define AO_ENABLED
-#define VL_ENABLED
+//#define VL_ENABLED
 
 #define VL_QUALITY 3 // [1 2 3 4 5 6 7 8]
 
