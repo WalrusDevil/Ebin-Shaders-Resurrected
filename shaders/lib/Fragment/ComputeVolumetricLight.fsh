@@ -30,35 +30,37 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	float frontLength = length(frontPos);
 	
 	for(int i = 0; i < samples; i++) {
+
 		float noise = ign(floor(gl_FragCoord.xy), i);
 
 		vec3 samplePos = BiasShadowProjection(ray + shadowStep * noise * maxDistance) * 0.5 + 0.5;
 		
 		#ifdef WATER_CAUSTICS
-			float shadow = 0.0;
-
+			float shadow;
 			#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
-			float opaqueShadow = shadow2D(shadowtex0HW, samplePos).r;
+			float transparentShadow = shadow2D(shadowtex0HW, samplePos).r;
 			#else
-			float opaqueShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+			float transparentShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
 			#endif
 
-
-			if(opaqueShadow == 1.0){ // opaque shadow is there, no need 
+			if(transparentShadow == 1.0){ // no shadow at all
 				shadow = 1.0;
-			} else if(waterMask == 1.0) {
-
+			} else {
 				#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
-				float fullShadow = shadow2D(shadowtex1HW, samplePos).r;
+				float opaqueShadow = shadow2D(shadowtex1HW, samplePos).r;
 				#else
-				float fullShadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
+				float opaqueShadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
 				#endif
 
-				if(fullShadow != 0.0){
-					vec4 shadowData = texture2D(shadowcolor0, samplePos.xy);
-					shadow = shadowData.a * fullShadow;
+				if(opaqueShadow == 0.0){ // only opaque shadow so don't sample opaque shadow map
+					shadow = 0.0;
+				} else {
+					vec4 shadowColorData = texture2D(shadowcolor0, samplePos.xy);
+					shadow = shadowColorData.a;
 				}
 			}
+
+			
 			
 		#else
 			float shadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);

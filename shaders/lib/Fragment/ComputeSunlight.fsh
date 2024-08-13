@@ -73,8 +73,7 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
 	#endif
 
-	if(opaqueShadow == 0.0){ // only opaque shadow so don't sample opaque shadow map
-		return vec3(0.0);
+	if(opaqueShadow == 0.0){ // paque shadow so don't sample transparent shadow colour
 	}
 
 	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
