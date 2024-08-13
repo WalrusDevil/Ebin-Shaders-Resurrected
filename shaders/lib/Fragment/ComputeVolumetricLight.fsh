@@ -10,29 +10,29 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	return vec2(0.0);
 #endif
 	
+	cfloat samples = VL_QUALITY	;
 	vec3 ray = normalize(position);
 	
 	vec3 shadowStep = diagonal3(shadowProjection) * (mat3(shadowViewMatrix) * ray);
 	
 	ray = projMAD(shadowProjection, transMAD(shadowViewMatrix, ray + gbufferModelViewInverse[3].xyz));
+
+	vec2 result = vec2(0.0);
 	
 #ifdef LIMIT_SHADOW_DISTANCE
-	cfloat maxSteps = min(200.0, shadowDistance);
+	float maxDistance = min(length(position), shadowDistance);
 #else
-	cfloat maxSteps = 200.0;
+	float maxDistance = length(position);
 #endif
-	
-	float end    = min(length(position), maxSteps);
-	float count  = 1.0;
-	vec2  result = vec2(0.0);
 
-	shadowStep *= rcp(VL_QUALITY);
-	end *= VL_QUALITY;
+	maxDistance = min(maxDistance, 128);
 	
 	float frontLength = length(frontPos);
 	
-	while (count < end) {
-		vec3 samplePos = BiasShadowProjection(ray) * 0.5 + 0.5;
+	for(int i = 0; i < samples; i++) {
+		float noise = ign(floor(gl_FragCoord.xy), i);
+
+		vec3 samplePos = BiasShadowProjection(ray + shadowStep * noise * maxDistance) * 0.5 + 0.5;
 		
 		#ifdef WATER_CAUSTICS
 			float shadow = 0.0;
@@ -65,13 +65,11 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		#endif
 		
 		result += shadow * vec2(1.0, 0.0);
-		count++;
-		ray += shadowStep;
 	}
 	
 	// result = isEyeInWater == 0 ? result.xy : result.yx;
 	
-	return result / end;
+	return result / samples;
 }
 
 #endif

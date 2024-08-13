@@ -1,6 +1,7 @@
 #if !defined BILATERALUPSAMPLE_FSH
 #define BILATERALUPSAMPLE_FSH
 
+
 void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 	GI = vec4(0.0, 0.0, 0.0, 1.0);
 	VL = vec2(1.0);
@@ -51,13 +52,15 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 			float sampleDepth = ExpToLinearDepth(texture2D(gdepthtex, texcoord + offset * 8.0).x);
 			float weight = clamp01(1.0 - abs(expDepth - sampleDepth)) + 0.001;
 			
-			samples.xy += texture2DLod(colortex6, scaledCoord + offset, 0).rg * weight;
+			samples.xy += texture2DLod(colortex6, scaledCoord + offset * 2.0, 1.5 + (sampleDepth * 2)).rg * weight;
 			
 			totalWeight += weight;
 		}
 	}
 	
 	VL = samples.xy / totalWeight;
+	VL = pow2(VL);
+	// VL = blur13(colortex6, texcoord)
 #endif
 }
 

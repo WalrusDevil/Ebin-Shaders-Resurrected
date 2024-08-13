@@ -57,25 +57,24 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float biasCoeff;
 	vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
 
-		#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
-		float opaqueShadow = shadow2D(shadowtex1HW, shadowScreenPos).r;
-		#else
-		float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
-		#endif
-
-
-	if(opaqueShadow == 0.0){ // full opaque shadow
-		return vec3(0.0);
-	}
-
 	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 	float transparentShadow = shadow2D(shadowtex0HW, shadowScreenPos).r;
 	#else
 	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
 	#endif
 
-	if(transparentShadow == 1.0){ // no transparent shadow
+	if(transparentShadow == 1.0){ // no shadow at all
 		return vec3(1.0);
+	}
+
+	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
+	float opaqueShadow = shadow2D(shadowtex1HW, shadowScreenPos).r;
+	#else
+	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
+	#endif
+
+	if(opaqueShadow == 0.0){ // only opaque shadow so don't sample opaque shadow map
+		return vec3(0.0);
 	}
 
 	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
@@ -151,21 +150,21 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	vec3 shadowClipPos = projMAD(shadowProjection, transMAD(shadowViewMatrix, worldSpacePosition + gbufferModelViewInverse[3].xyz));
 	vec3 sunlight = vec3(1.0);
 
-	float nDotL = clamp01(dot(mat3(gbufferModelViewInverse) * normal, worldLightVector));
 
-	sunlight *= nDotL;
 
 	#if SHADOW_TYPE > 1
 	// noise = texelFetch(noisetex, ivec2(mod(floor(texcoord * vec2(viewWidth, viewHeight)), 1024)), 0);
 	noise = vec4(ign(floor(gl_FragCoord.xy)));
 	#endif
 
+
+
 	float blockerDistance = GetBlockerDistance(shadowClipPos);
 
-
+	float nDotL = clamp01(dot(normal, lightVector));
 
 	#if SHADOW_TYPE == 0
-	sunlight *= skyLightmap;
+	sunlight = skyLightmap * nDotL;
 	#elif SHADOW_TYPE == 1
 	float penumbraWidth = 0.0; // hard shadows
 	#elif SHADOW_TYPE == 2
@@ -175,15 +174,16 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	#endif
 
 	#if SHADOW_TYPE != 0
-	sunlight *= ComputeShadows(shadowClipPos, penumbraWidth);
-	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
-	
+	vec3 shadow = ComputeShadows(shadowClipPos, penumbraWidth);
 	float scatter = ComputeSSS(blockerDistance, SSS, geometryNormal);
-	sunlight = max(sunlight, vec3(scatter));
+	sunlight = max(shadow * nDotL, scatter);
+	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
+	#endif
+
+
 
 	sunlight *= 1.0 * SUN_LIGHT_LEVEL;
 	sunlight *= mix(1.0, 0.0, biomePrecipness);
-	#endif
 
 
 
