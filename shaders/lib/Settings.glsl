@@ -131,7 +131,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define WAVING_LEAVES
 #define WAVING_WATER
 
-#define COMPOSITE0_SCALE 0.50 // [0.25 0.33 0.40 0.50 0.60 0.75 1.00]
+#define COMPOSITE0_SCALE 1.0 // [0.25 0.33 0.40 0.50 0.60 0.75 1.00]
 #define COMPOSITE0_NOISE
 #if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VL_ENABLED)
     #define COMPOSITE0_ENABLED
