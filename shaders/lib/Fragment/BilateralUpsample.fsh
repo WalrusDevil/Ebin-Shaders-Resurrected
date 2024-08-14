@@ -52,7 +52,7 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 			float sampleDepth = ExpToLinearDepth(texture2D(gdepthtex, texcoord + offset * 8.0).x);
 			float weight = clamp01(1.0 - abs(expDepth - sampleDepth)) + 0.001;
 			
-			samples.xy += texture2DLod(colortex6, scaledCoord + offset * 2.0, 1.5 + (sampleDepth * 2)).rg * weight;
+			samples.xy += texture2DLod(colortex6, scaledCoord + offset * 2.0, 3).rg * weight;
 			
 			totalWeight += weight;
 		}
