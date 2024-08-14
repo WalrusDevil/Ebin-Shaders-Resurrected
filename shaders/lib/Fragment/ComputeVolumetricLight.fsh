@@ -57,7 +57,7 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 				shadow = 0.0;
 			} else {
 				vec4 shadowColorData = texture2D(shadowcolor0, samplePos.xy);
-				shadow = shadowColorData.a;
+				shadow = mix(((1.0 - shadowColorData.a) * opaqueShadow), 1.0, transparentShadow);
 				waterShadow = shadow;
 				waterSamples++;
 			}
