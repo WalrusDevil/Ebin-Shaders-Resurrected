@@ -359,9 +359,18 @@ void ComputeSSReflections(io vec3 color, mat2x3 position, vec3 normal, float bas
 				if(clamp01(reflectedTexCoord) == reflectedTexCoord){
 					vec4 cloud = textureLod(colortex5, reflectedTexCoord, VolCloudLOD);
 					cloud.rgb = pow2(cloud.rgb) * 50.0;
+					
 					#ifndef WAVING_WATER
-						cloud.a = clamp01(mix(cloud.a, 0.0, pow4(length(abs(reflectedTexCoord - 0.5) * 2)))); // fade out sky towards edge of reflections, not noticeable on most surfaces apart from smooth water
+					bool fadeCloudsOnWater = true;
+					#else
+					bool fadeCloudsOnWater = false;
 					#endif
+
+
+					if(roughness == 0){
+						cloud.a = clamp01(mix(cloud.a, 0.0, pow4(length(abs(reflectedTexCoord - 0.5) * 2)))); // fade out sky towards edge of reflections, not noticeable on most surfaces apart from smooth water
+					}
+					
 					in_scatter = mix(in_scatter, cloud.rgb, cloud.a);
 				}
 			#endif
