@@ -234,6 +234,7 @@ void main() {
 			float height = GetWaves(position.xz + cameraPosition.xz);
 			height *= height * height * height;
 			diffuse.a = (1.0 - height);
+			diffuse.a = pow2(diffuse.a);
 		#endif
 	}
 	

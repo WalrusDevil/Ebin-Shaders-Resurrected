@@ -21,7 +21,7 @@ vec3 waterdepthFog(vec3 frontPos, vec3 backPos, vec3 color) {
 	vec3 tint = sunlightColor * (EBS * 0.7 + 0.3);
 
 	#if defined VL_ENABLED && defined WATER_CAUSTICS
-	tint *= (sqrt(VL.x) * 0.7 + 0.3) * sunlightColor;
+	tint *= (sqrt(VL.y) * 0.7 + 0.3) * sunlightColor;
 	#endif
 
 	tint = sqrt(tint * length(tint));
