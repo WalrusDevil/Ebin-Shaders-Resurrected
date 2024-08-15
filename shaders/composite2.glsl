@@ -149,7 +149,7 @@ vec2 VL;
 
 #include "/lib/Fragment/WaterDepthFog.fsh"
 #include "/lib/Fragment/Sky.fsh"
-#include "/lib/Fragment/ComputeSSReflections.fsh"
+#include "/lib/Fragment/ComputeSpecularLighting.fsh"
 #include "/lib/Fragment/ComputeWaveNormals.fsh"
 
 /* DRAWBUFFERS:32 */
@@ -256,7 +256,7 @@ void main() {
     }
 
     if (transparentColor.a == 0) { // check if there is something transparent in front of the reflective surface
-        ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
+        ComputeSpecularLighting(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
     }
 
     #ifdef WORLD_OVERWORLD
@@ -275,7 +275,7 @@ void main() {
     color = mix(color, transparentColor.rgb, transparentColor.a);
 
     if (transparentColor.a != 0) {
-        ComputeSSReflections(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
+        ComputeSpecularLighting(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
     }
 
     if (isEyeInWater == 1.0) { // stuff inside the water when the player is in the water

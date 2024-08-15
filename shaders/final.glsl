@@ -184,7 +184,6 @@ vec3 Vignette(vec3 color) {
 
 void main() {
 	float depth = GetDepth(texcoord);
-	float linearDepth = linearizeDepth(depth);
 	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
 	vec3  color = GetColor(texcoord);
 	//(color);

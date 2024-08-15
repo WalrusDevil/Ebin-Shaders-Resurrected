@@ -328,7 +328,7 @@ void main() {
     discard;
     #endif
 
-    float rainNoise = ign(floor(gl_FragCoord.xy), frameCounter);
+    float rainNoise = InterleavedGradientNoise(floor(gl_FragCoord.xy), frameCounter);
     diffuse = vec4(0.9, 0.9, 1.0, step(0.5, rainNoise) * 0.5 * diffuse.a);
 
     #endif

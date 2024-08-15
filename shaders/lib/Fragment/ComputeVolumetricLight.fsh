@@ -34,7 +34,7 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		float shadow;
 		float waterShadow;
 
-		float noise = ign(floor(gl_FragCoord.xy), i);
+		float noise = InterleavedGradientNoise(floor(gl_FragCoord.xy), i);
 
 		vec3 samplePos = BiasShadowProjection(ray + shadowStep * noise * maxDistance) * 0.5 + 0.5;
 		

@@ -153,7 +153,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 
 	#if SHADOW_TYPE > 1
 	// noise = texelFetch(noisetex, ivec2(mod(floor(texcoord * vec2(viewWidth, viewHeight)), 1024)), 0);
-	noise = vec4(ign(floor(gl_FragCoord.xy)));
+	noise = vec4(InterleavedGradientNoise(floor(gl_FragCoord.xy)));
 	#endif
 
 
