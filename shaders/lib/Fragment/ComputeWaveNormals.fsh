@@ -174,7 +174,7 @@ vec2 GetParallaxWave(vec2 worldPos, float angleCoeff) {
 
 #ifndef composite2
 vec3 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
-	return projMAD(projMatrix, viewSpacePosition) / -viewSpacePosition.z * 0.5 + 0.5;
+	return projMAD(gbufferProjection, viewSpacePosition) / -viewSpacePosition.z * 0.5 + 0.5;
 }
 #else
 vec3 worldDisplacement = vec3(0.0);

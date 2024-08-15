@@ -4,7 +4,7 @@
 #include "/lib/Fragment/Specular.fsh"
 
 int GetMaxSteps(vec3 pos, vec3 ray, float maxRayDepth, float rayGrowth) { // Returns the number of steps until the ray goes offscreen, or past maxRayDepth
-	vec4 c =  vec4(diagonal2(projMatrix) * pos.xy + projMatrix[3].xy, diagonal2(projMatrix) * ray.xy);
+	vec4 c =  vec4(diagonal2(gbufferProjection) * pos.xy + gbufferProjection[3].xy, diagonal2(gbufferProjection) * ray.xy);
 	     c = -vec4((c.xy - pos.z) / (c.zw - ray.z), (c.xy + pos.z) / (c.zw + ray.z)); // Solve for (M*(pos + ray*c) + A) / (pos.z + ray.z*c) = +-1.0
 	
 	c = mix(c, vec4(1000000.0), lessThan(c, vec4(0.0))); // Remove negative coefficients from consideration by making them B I G
@@ -32,7 +32,7 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 	
 	float refinements = 0.0;
 	
-	vec2 zMAD = -vec2(projInverseMatrix[2][3] * 2.0, projInverseMatrix[3][3] - projInverseMatrix[2][3]);
+	vec2 zMAD = -vec2(gbufferProjectionInverse[2][3] * 2.0, gbufferProjectionInverse[3][3] - gbufferProjectionInverse[2][3]);
 	
 	for (int i = 0; i < maxSteps; i++) {
 		screenPos.st = ViewSpaceToScreenSpace(ray);

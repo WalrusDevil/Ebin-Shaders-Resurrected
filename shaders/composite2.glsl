@@ -9,6 +9,7 @@ varying vec2 texcoord;
 
 uniform sampler3D colortex7;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
@@ -26,7 +27,7 @@ uniform float biomePrecipness;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
-#include "/UserProgram/centerDepthSmooth.glsl"
+
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
@@ -122,28 +123,15 @@ float GetTransparentDepth(vec2 coord) {
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
     screenPos = screenPos * 2.0 - 1.0;
 
-    return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
+    return projMAD(gbufferProjectionInverse, screenPos) / (screenPos.z * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 }
 
 vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
-    return (diagonal2(projMatrix) * viewSpacePosition.xy + projMatrix[3].xy) / -viewSpacePosition.z * 0.5 + 0.5;
+    return (diagonal2(gbufferProjection) * viewSpacePosition.xy + gbufferProjection[3].xy) / -viewSpacePosition.z * 0.5 + 0.5;
 }
 
-vec4 blueNoise(ivec2 texelcoord) {
-    texelcoord.x = texelcoord.x % 1024;
-    texelcoord.y = texelcoord.y % 1024;
-
-    return texelFetch(bluenoisetex, texelcoord, 0);
-}
-
-vec2 GetDitherred2DNoise(vec2 coord, float n) { // Returns a random noise pattern ranging {-1.0 to 1.0} that repeats every n pixels
-    coord *= vec2(viewWidth, viewHeight);
-    coord = mod(coord, vec2(n));
-    return texelFetch(noisetex, ivec2(coord), 0).xy;
-}
-
-float depth0;
-float depth2;
+float backDepth;
+float frontDepth;
 float skyLightmap;
 vec2 VL;
 
@@ -174,24 +162,25 @@ void main() {
 
     gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 
-    depth0 = GetDepth(texcoord);
+    backDepth = GetDepth(texcoord);
 
-    if (depth0 < 0.56) {
+    if (backDepth < 0.56) {
         mask.hand = 1.0;
-        depth0 = 0.55;
+        backDepth = 0.55;
     }
 
-    depth2 = (GetTransparentDepth(texcoord));
+    frontDepth = GetTransparentDepth(texcoord);
 
-    vec3 normal = DecodeNormal(texture4.g, 11) * mat3(gbufferModelViewInverse);
+    vec3 wNormal = DecodeNormal(texture4.g, 11);
+    vec3 normal = mat3(gbufferModelView) * wNormal;
 
     mat2x3 frontPos;
-    frontPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth0));
+    frontPos[0] = CalculateViewSpacePosition(vec3(texcoord, backDepth));
     frontPos[1] = mat3(gbufferModelViewInverse) * frontPos[0];
 
     mat2x3 backPos = frontPos;
     if (mask.transparent == 1.0) {
-        backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth2));
+        backPos[0] = CalculateViewSpacePosition(vec3(texcoord, frontDepth));
         backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
         baseReflectance = ScreenTex(colortex8).g;
         perceptualSmoothness = ScreenTex(colortex8).r;
@@ -199,7 +188,7 @@ void main() {
     }
 
     mat2x3 waterPos;
-    waterPos[0] = CalculateViewSpacePosition(vec3(texcoord, waterDepth > depth2 ? depth2 : waterDepth));
+    waterPos[0] = CalculateViewSpacePosition(vec3(texcoord, waterDepth > frontDepth ? frontDepth : waterDepth));
 
     waterPos[1] = mat3(gbufferModelViewInverse) * waterPos[0];
 
@@ -213,21 +202,21 @@ void main() {
         bool refractHit = ComputeSSRaytrace(frontPos[0], refracted, refractedPos);
 
         if (refractHit) {
-            depth2 = refractedPos.z;
+            frontDepth = refractedPos.z;
             backPos[0] = CalculateViewSpacePosition(refractedPos);
             backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
             color = texture(colortex1, refractedPos.xy).rgb;
         } else if (isEyeInWater == 1.0 && EBS == 1.0) {
             color = normalize(waterColor);
-            depth2 = 1.0;
-            backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth2));
+            frontDepth = 1.0;
+            backPos[0] = CalculateViewSpacePosition(vec3(texcoord, frontDepth));
             backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
         }
     }
     #endif
 
     // render sky
-    if (depth2 == 1.0) {
+    if (frontDepth == 1.0) {
         vec3 transmit = vec3(1.0);
 
         vec3 incident = normalize(frontPos[1]);
@@ -237,7 +226,7 @@ void main() {
         if (mask.water > 0.5) {
             #ifdef WATER_REFRACTION
             refracted = refract(incident, normalize(mat3(gbufferModelViewInverse) * normal), isEyeInWater == 1.0 ? 1.33 : 1.0 / 1.33);
-            refractedTexCoord = ViewSpaceToScreenSpace(refracted * mat3(gbufferModelViewInverse)).xy;
+            refractedTexCoord = ViewSpaceToScreenSpace(mat3(gbufferModelView) * refracted).xy;
             #endif
         }
 
@@ -262,7 +251,7 @@ void main() {
     #ifdef WORLD_OVERWORLD
 
     // apply atmospheric fog to solid things
-    if (((mask.water == 0.0 && isEyeInWater == 0.0) || (mask.water == 1.0 && isEyeInWater == 1.0)) && depth2 != 1.0) { // surface not behind water so apply atmospheric fog
+    if (((mask.water == 0.0 && isEyeInWater == 0.0) || (mask.water == 1.0 && isEyeInWater == 1.0)) && frontDepth != 1.0) { // surface not behind water so apply atmospheric fog
         vec3 fogTransmit = vec3(1.0);
         vec3 fog = SkyAtmosphereToPoint(vec3(0.0), backPos[1], fogTransmit, VL);
         color = mix(fog, color, fogTransmit);

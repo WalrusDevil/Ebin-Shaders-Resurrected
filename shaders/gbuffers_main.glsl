@@ -33,6 +33,7 @@ uniform float thunderStrength;
 
 uniform sampler2D lightmap;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 
 uniform vec3 cameraPosition;
@@ -59,7 +60,7 @@ uniform mat4 shadowModelViewInverse;
 
 uniform float sunAngle;
 
-#include "/UserProgram/centerDepthSmooth.glsl"
+
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
@@ -79,7 +80,7 @@ vec3 GetWorldSpacePosition() {
 
 vec4 ProjectViewSpace(vec3 viewSpacePosition) {
     #if !defined gbuffers_hand
-    return vec4(projMAD(projMatrix, viewSpacePosition), viewSpacePosition.z * projMatrix[2].w);
+    return vec4(projMAD(gbufferProjection, viewSpacePosition), viewSpacePosition.z * gbufferProjection[2].w);
     #else
     return vec4(projMAD(gl_ProjectionMatrix, viewSpacePosition), viewSpacePosition.z * gl_ProjectionMatrix[2].w);
     #endif
@@ -132,7 +133,7 @@ void main() {
     worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
 
     position[1] = worldSpacePosition + worldDisplacement;
-    position[0] = position[1] * mat3(gbufferModelViewInverse);
+    position[0] = mat3(gbufferModelView) * position[1];
     blockCentre = position[1] + gbufferModelViewInverse[3].xyz;
     blockCentre += at_midBlock.xyz / 64;
 
@@ -388,8 +389,8 @@ void main() {
     }
     #endif
 
-    vec3 sunlight = vec3(ComputeSunlight(position[1], normal * mat3(gbufferModelViewInverse), tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
-    vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), normal * mat3(gbufferModelViewInverse), PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
+    vec3 sunlight = vec3(ComputeSunlight(position[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
+    vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), mat3(gbufferModelView) * normal, PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
 
     gl_FragData[3] = vec4(sunlight, 1.0);
 

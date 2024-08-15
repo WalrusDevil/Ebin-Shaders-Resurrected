@@ -11,6 +11,7 @@ varying vec2 texcoord;
 
 uniform sampler3D colortex7;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
@@ -28,7 +29,7 @@ uniform float biomePrecipness;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
-#include "/UserProgram/centerDepthSmooth.glsl"
+
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
@@ -125,8 +126,6 @@ uniform int heldBlockLightValue2;
 #include "/lib/Fragment/Masks.fsh"
 #include "/lib/Fragment/3D_Clouds.fsh"
 
-//#include "/UserProgram/centerDepthSmooth.glsl" // Doesn't seem to be enabled unless it's initialized in a fragment.
-
 vec3 GetDiffuse(vec2 coord) {
 	return texture2D(colortex1, coord).rgb;
 }
@@ -147,7 +146,7 @@ float ExpToLinearDepth(float depth) {
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
 	screenPos = screenPos * 2.0 - 1.0;
 	
-	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
+	return projMAD(gbufferProjectionInverse, screenPos) / (screenPos.z * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 }
 
 
@@ -177,16 +176,16 @@ void main() {
 	float SSS				= clamp01(decode4b.g);
 
 	
-	float depth0 = (GetDepth(texcoord));
+	float backDepth = (GetDepth(texcoord));
 	
 	vec3 wNormal = DecodeNormal(texture4.g, 11);
-	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
+	vec3 normal  = mat3(gbufferModelView) * wNormal;
 	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
-	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
+	vec3 geometryNormal = mat3(gbufferModelView) * wGeometryNormal;
 	
-	float depth1 = mask.hand > 0.5 ? depth0 : GetTransparentDepth(texcoord);
+	float frontDepth = mask.hand > 0.5 ? backDepth : GetTransparentDepth(texcoord);
 	
-	mask.transparent = clamp01(float(texture2D(colortex3, texcoord).a != 0.0) + float(depth1 != depth0) + mask.transparent);
+	mask.transparent = clamp01(float(texture2D(colortex3, texcoord).a != 0.0) + float(frontDepth != backDepth) + mask.transparent);
 
 
 	if (mask.transparent == 1.0) {
@@ -202,7 +201,7 @@ void main() {
 	}
 	
 	vec4 GI; vec2 VL;
-	BilateralUpsample(wNormal, depth1, GI, VL);
+	BilateralUpsample(wNormal, frontDepth, GI, VL);
 	show(VL);
 
 	
@@ -211,19 +210,19 @@ void main() {
 	
 	
 	mat2x3 backPos;
-	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
+	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, frontDepth));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 
 	
 
 	#ifdef WORLD_OVERWORLD
-	vec4 cloud = CalculateClouds3(backPos[1], depth1);
+	vec4 cloud = CalculateClouds3(backPos[1], frontDepth);
 	gl_FragData[3] = vec4(sqrt(cloud.rgb / 50.0), cloud.a);
 	#endif
 
 
 
-	if (depth1 - mask.hand >= 1.0) {
+	if (frontDepth - mask.hand >= 1.0) {
 		 exit(); 
 		 return; 
 	}
@@ -231,7 +230,7 @@ void main() {
 	
 	vec3 diffuse = GetDiffuse(texcoord);
 
-	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, depth0));
+	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, backDepth));
 	
 	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);

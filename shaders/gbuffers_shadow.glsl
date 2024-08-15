@@ -29,6 +29,7 @@ attribute vec2 mc_midTexCoord;
 attribute vec4 at_tangent;
 attribute vec3 at_midBlock;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
 uniform mat4 shadowProjectionInverse;
@@ -51,7 +52,7 @@ uniform float thunderStrength;
 #include "/lib/Voxel/VoxelPosition.glsl"
 #include "/lib/iPBR/lightColors.glsl"
 
-#include "/UserProgram/centerDepthSmooth.glsl"
+
 #include "/lib/Uniform/Projection_Matrices.vsh"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 
@@ -90,11 +91,11 @@ vec4 ProjectShadowMap(vec4 position) {
 }
 
 vec2 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
-	return (diagonal2(projMatrix) * viewSpacePosition.xy + projMatrix[3].xy) / -viewSpacePosition.z;
+	return (diagonal2(gbufferProjection) * viewSpacePosition.xy + gbufferProjection[3].xy) / -viewSpacePosition.z;
 }
 
 vec3 ViewSpaceToScreenSpace3(vec3 viewSpacePosition) {
-	return (diagonal3(projMatrix) * viewSpacePosition.xyz + projMatrix[3].xyz) / -viewSpacePosition.z;
+	return (diagonal3(gbufferProjection) * viewSpacePosition.xyz + gbufferProjection[3].xyz) / -viewSpacePosition.z;
 }
 
 bool CullVertex(vec3 wPos) {
@@ -102,16 +103,16 @@ bool CullVertex(vec3 wPos) {
 	return false;
 #endif
 	
-	vec3 vRay = transpose(mat3(shadowViewMatrix))[2] * mat3(gbufferModelViewInverse); // view space light vector
+	vec3 vRay = mat3(gbufferModelView) * transpose(mat3(shadowViewMatrix))[2]; // view space light vector
 	
-	vec3 vPos = wPos * mat3(gbufferModelViewInverse);
+	vec3 vPos = mat3(gbufferModelView) * wPos;
 	
 	vPos.z -= 4.0;
 	
 	bool onscreen = all(lessThan(abs(ViewSpaceToScreenSpace(vPos)), vec2(1.0))) && vPos.z < 0.0;
 	
 	// c = distances to intersection with 4 frustum sides, vec4(xy = -1.0, xy = 1.0)
-	vec4 c =  vec4(diagonal2(projMatrix) * vPos.xy + projMatrix[3].xy, diagonal2(projMatrix) * vRay.xy);
+	vec4 c =  vec4(diagonal2(gbufferProjection) * vPos.xy + gbufferProjection[3].xy, diagonal2(gbufferProjection) * vRay.xy);
 	     c = -vec4((c.xy - vPos.z) / (c.zw - vRay.z), (c.xy + vPos.z) / (c.zw + vRay.z)); // Solve for (M*(vPos + ray*c) + A) / (vPos.z + ray.z*c) = +-1.0
 	
 	vec3 b1 = vPos + vRay * c.x;
@@ -120,10 +121,10 @@ bool CullVertex(vec3 wPos) {
 	vec3 b4 = vPos + vRay * c.w;
 	
 	vec4 otherCoord = vec4( // vec4(y coord of x = -1.0 intersection,   x coord of y = -1.0,   y coord of x = 1.0,   x coord of y = 1.0)
-		(projMatrix[1].y * b1.y + projMatrix[3].y) / -b1.z,
-		(projMatrix[0].x * b2.x + projMatrix[3].x) / -b2.z,
-		(projMatrix[1].y * b3.y + projMatrix[3].y) / -b3.z,
-		(projMatrix[0].x * b4.x + projMatrix[3].x) / -b4.z);
+		(gbufferProjection[1].y * b1.y + gbufferProjection[3].y) / -b1.z,
+		(gbufferProjection[0].x * b2.x + gbufferProjection[3].x) / -b2.z,
+		(gbufferProjection[1].y * b3.y + gbufferProjection[3].y) / -b3.z,
+		(gbufferProjection[0].x * b4.x + gbufferProjection[3].x) / -b4.z);
 	
 	vec3 yDot = transpose(mat3(gbufferModelViewInverse))[1];
 	

@@ -46,7 +46,7 @@ void GetDaylightVariables(out float isNight, out vec3 worldLightVector) {
 #ifdef TELEFOCAL_SHADOWS
 	#ifdef SHADOWS_FOCUS_CENTER
 		vec3 position = vec3(0.0, 0.0, centerDepthSmooth * 2.0 - 1.0);
-		     position = projMAD(projInverseMatrix, position) / (position.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
+		     position = projMAD(gbufferProjectionInverse, position) / (position.z * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 		     position = mat3(gbufferModelViewInverse) * position;
 	#else
 		#include "/UserProgram/ShadowFocus.vsh"

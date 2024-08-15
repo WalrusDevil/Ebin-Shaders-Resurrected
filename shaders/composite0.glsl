@@ -11,6 +11,7 @@ varying vec2 texcoord;
 
 uniform sampler3D colortex7;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
@@ -28,7 +29,7 @@ uniform float biomePrecipness;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
-#include "/UserProgram/centerDepthSmooth.glsl"
+
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
@@ -111,7 +112,7 @@ float GetDepthLinear(vec2 coord) {
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
 	screenPos = screenPos * 2.0 - 1.0;
 	
-	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
+	return projMAD(gbufferProjectionInverse, screenPos) / (screenPos.z * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 }
 
 vec3 GetNormal(vec2 coord) {
@@ -138,10 +139,10 @@ float ExpToLinearDepth(float depth) {
 #include "/lib/Exit.glsl"
 
 void main() {
-	float depth0 = GetDepth(texcoord);
+	float backDepth = GetDepth(texcoord);
 	
 // #ifndef VL_ENABLED
-// 	if (depth0 >= 1.0) { discard; }
+// 	if (backDepth >= 1.0) { discard; }
 // #endif
 	
 	
@@ -161,17 +162,17 @@ void main() {
 	float skyLightmap   = decode4.a;
 	float SSS				= clamp01(decode4b.g);
 	
-	float depth1 = (mask.hand > 0.5 ? depth0 : textureRaw(depthtex1, texcoord).x);
+	float frontDepth = (mask.hand > 0.5 ? backDepth : textureRaw(depthtex1, texcoord).x);
 	
 	mat2x3 backPos;
-	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth1));
+	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, frontDepth));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];
 	
 	mat2x3 frontPos;
-	frontPos[0] = CalculateViewSpacePosition(vec3(texcoord, depth0));
+	frontPos[0] = CalculateViewSpacePosition(vec3(texcoord, backDepth));
 	frontPos[1] = mat3(gbufferModelViewInverse) * frontPos[0];
 	
-	if (depth0 != depth1)
+	if (backDepth != frontDepth)
 		mask.water = Decode4x8F(texture2D(colortex0, texcoord).r).b;
 	
 	vec2 VL = ComputeVolumetricLight(backPos[1], frontPos[1], noise2D, clamp01(mask.water + float(isEyeInWater == 1.0)));
@@ -179,16 +180,16 @@ void main() {
 
 	gl_FragData[1] = vec4(VL, 0.0, 0.0);
 	
-	if (depth1 >= 1.0) // Back surface is sky
+	if (frontDepth >= 1.0) // Back surface is sky
 		{ gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0); exit(); return; }
 	
 	
 	vec3 wNormal = DecodeNormal(texture4.g, 11);
-	vec3 normal  = wNormal * mat3(gbufferModelViewInverse);
+	vec3 normal  = mat3(gbufferModelView) * wNormal;
 	vec3 wGeometryNormal = DecodeNormal(texture4.a, 16);
-	vec3 geometryNormal = wGeometryNormal * mat3(gbufferModelViewInverse);
+	vec3 geometryNormal = mat3(gbufferModelView) * wGeometryNormal;
 	
-	float AO = ComputeSSAO(backPos[0], wNormal * mat3(gbufferModelViewInverse));
+	float AO = ComputeSSAO(backPos[0], mat3(gbufferModelView) * wNormal);
 	
 	if (isEyeInWater != mask.water) // If surface is in water
 		{ gl_FragData[0] = vec4(0.0, 0.0, 0.0, AO); exit(); return; }

@@ -2,7 +2,7 @@ void SetupShading() {
 	float isNight;
 	GetDaylightVariables(isNight, worldLightVector);
 	
-	lightVector = worldLightVector * mat3(gbufferModelViewInverse);
+	lightVector = mat3(gbufferModelView) * worldLightVector;
 	sunVector   = worldLightVector * (1.0 - isNight * 2.0);
 	
 	float LdotUp = sunVector.y;

@@ -32,13 +32,13 @@ flat varying float FOV;
 			0.0, 0.0, -1.0, projection[2].z * i.z);
 	}
 	
-	#define projMatrix projection
-	#define projInverseMatrix projectionInverse
+	#define gbufferProjection projection
+	#define gbufferProjectionInverse projectionInverse
 #else
 	void SetupProjection() {
 		FOV = degrees(atan(1.0 / gbufferProjection[1].y) * 2.0);
 	}
 	
-	#define projMatrix gbufferProjection
-	#define projInverseMatrix gbufferProjectionInverse
+	#define gbufferProjection gbufferProjection
+	#define gbufferProjectionInverse gbufferProjectionInverse
 #endif

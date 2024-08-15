@@ -11,6 +11,7 @@ varying vec2 texcoord;
 
 uniform sampler3D colortex7;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
@@ -28,7 +29,7 @@ uniform float biomePrecipness;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 #include "/lib/Uniform/Projection_Matrices.vsh"
-#include "/UserProgram/centerDepthSmooth.glsl"
+
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
@@ -90,11 +91,11 @@ float GetDepth(vec2 coord) {
 }
 
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
-	return projMAD(projInverseMatrix, screenPos) / (screenPos.z * projInverseMatrix[2].w + projInverseMatrix[3].w);
+	return projMAD(gbufferProjectionInverse, screenPos) / (screenPos.z * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 }
 
 vec3 ViewSpaceToScreenSpace(vec3 viewSpacePosition) {
-	return projMAD(projMatrix, viewSpacePosition) / -viewSpacePosition.z;
+	return projMAD(gbufferProjection, viewSpacePosition) / -viewSpacePosition.z;
 }
 
 vec3 MotionBlur(vec3 color, float depth) {
@@ -110,7 +111,7 @@ vec3 MotionBlur(vec3 color, float depth) {
 	     previousPos    = transMAD(gbufferModelViewInverse, previousPos);
 	     previousPos   += cameraPosition - previousCameraPosition;
 	     previousPos    = transMAD(gbufferPreviousModelView, previousPos);
-	     previousPos.xy = projMAD(projMatrix, previousPos).xy / -previousPos.z;
+	     previousPos.xy = projMAD(gbufferProjection, previousPos).xy / -previousPos.z;
 	
 	cfloat intensity = MOTION_BLUR_INTENSITY * 0.5;
 	cfloat maxVelocity = MAX_MOTION_BLUR_AMOUNT * 0.1;
