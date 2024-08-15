@@ -14,19 +14,20 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 ## Features
 - Multicoloured Blocklight
 - Sunlight Shadows / Shading
-- PCSS 'Variable Penumbra' Shadows with transparency.
+- PCSS 'Variable Penumbra' Shadows with transparency
 - Bloom / Glow
 - Procedural 2D/3D Clouds
 - Procedural Water Waves
 - Deferred Shading Pipeline - Everything is correctly shaded, even behind semi-transparent blocks
 - Terrain Deformation - "Animal Crossing", "Planetoid" and "Acid" deformations
+- Optional 'smooth ice' similar to that found in the IterationT shader
 ### LabPBR Compliant
-  - Rough Screen Space Reflections - accurate specular reflections on all blocks.
-  - Normal Mapped Lighting.
-  - Parallax Object Mapping.
-  - Material Ambient Occlusion.
-  - Hardcoded Metal Support.
-  - Porosity - materials look 'wet' in the rain.
+  - Rough Screen Space Reflections - accurate specular reflections on all blocks
+  - Normal Mapped Lighting
+  - Parallax Object Mapping
+  - Material Ambient Occlusion
+  - Hardcoded Metal Support
+  - Porosity - materials look 'wet' in the rain
 
 ## Planned Features
 - Distant Horizons support

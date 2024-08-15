@@ -202,7 +202,6 @@ void main() {
 	
 	vec4 GI; vec2 VL;
 	BilateralUpsample(wNormal, frontDepth, GI, VL);
-	show(VL);
 
 	
 	gl_FragData[1] = vec4(texture4.rg, 0.0, 1.0);

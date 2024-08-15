@@ -123,23 +123,23 @@ vec4 CloudColor(vec3 worldPosition, cfloat cloudLowerHeight, cfloat cloudDepth, 
 	float anisoBackFactor = mix(clamp01(pow(cloud.a, 1.6) * 2.5), 1.0, sunglow);
 	float sunlight;
 	
-	/*
-	vec3 lightOffset = 0.25 * worldLightVector;
+	// /*
+	// vec3 lightOffset = 0.25 * worldLightVector;
 	
-	cloudAltitudeWeight = clamp01(distance(worldPosition.y + lightOffset.y * cloudDepth, cloudCenter) / (cloudDepth / 2.0));
-	cloudAltitudeWeight = pow(1.0 - cloudAltitudeWeight, 0.3);
+	// cloudAltitudeWeight = clamp01(distance(worldPosition.y + lightOffset.y * cloudDepth, cloudCenter) / (cloudDepth / 2.0));
+	// cloudAltitudeWeight = pow(1.0 - cloudAltitudeWeight, 0.3);
 	
-	sunlight  = CloudNoise(p[0] + lightOffset) * weights[0];
-	sunlight += CloudNoise(p[1] + lightOffset) * weights[1];
-	if (1.0 - GetCoverage(coverage, denseFactor, (sunlight - weights[1]) * cloudAltitudeWeight) < 1.0)
-	{
-	sunlight += CloudNoise(p[2] + lightOffset) * weights[2];
-	sunlight += CloudNoise(p[3] + lightOffset) * weights[3];
-	sunlight += -(weights[1] + weights[2] + weights[3]); }
-	sunlight /= 2.15;
-	sunlight  = 1.0 - pow(GetCoverage(coverage, denseFactor, sunlight * cloudAltitudeWeight), 1.5);
-	sunlight  = (pow4(heightGradient) + sunlight * 0.9 + 0.1) * (1.0 - timeHorizon);
-	*/
+	// sunlight  = CloudNoise(p[0] + lightOffset) * weights[0];
+	// sunlight += CloudNoise(p[1] + lightOffset) * weights[1];
+	// if (1.0 - GetCoverage(coverage, denseFactor, (sunlight - weights[1]) * cloudAltitudeWeight) < 1.0)
+	// {
+	// sunlight += CloudNoise(p[2] + lightOffset) * weights[2];
+	// sunlight += CloudNoise(p[3] + lightOffset) * weights[3];
+	// sunlight += -(weights[1] + weights[2] + weights[3]); }
+	// sunlight /= 2.15;
+	// sunlight  = 1.0 - pow(GetCoverage(coverage, denseFactor, sunlight * cloudAltitudeWeight), 1.5);
+	// sunlight  = (pow4(heightGradient) + sunlight * 0.9 + 0.1) * (1.0 - timeHorizon);
+	// */
 	
 	sunlight  = pow5((worldPosition.y - cloudLowerHeight) / (cloudDepth - 25.0)) + sunglow * 0.005;
 	sunlight *= 1.0 + sunglow * 5.0 + pow(sunglow, 0.25);
@@ -196,7 +196,7 @@ void CloudLighting2(float sunglow) {
 
 void CloudLighting3(float sunglow) {
 	directColor  = sunlightColor;
-	directColor *= 140.0 * mix(1.0, 0.5, timeNight);
+	directColor *= 140.0 * mix(1.0, 0.5, timeNight) * (1.0 - biomePrecipness * 0.8);
 	
 	ambientColor = mix(skylightColor, sunlightColor, 0.15) * 7.0;
 	
@@ -212,48 +212,65 @@ void CloudLighting3(float sunglow) {
 #endif
 
 
-void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat noise, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
+void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
 	if (cloud.a >= 1.0) return;
-	
+
 	float cloudUpperHeight = cloudLowerHeight + cloudDepth;
 	
-	vec3 a, b, rayPosition, rayIncrement;
+	vec3 a, b, rayPosition, rayIncrement; // we trace from a to b
 	
-	a = position * ((cloudUpperHeight - cameraPosition.y) / position.y);
-	b = position * ((cloudLowerHeight - cameraPosition.y) / position.y);
-	
-	if (cameraPosition.y < cloudLowerHeight) {
-		if (position.y <= 0.0) return;
-		
-		swap(a, b);
-	} else if (cloudLowerHeight <= cameraPosition.y && cameraPosition.y <= cloudUpperHeight) {
-		if (position.y < 0.0) swap(a, b);
-		
-		samples *= abs(a.y) / cloudDepth;
-		b = vec3(0.0);
-		
-		swap(a, b);
-	} else {
-		if (position.y >= 0.0) return;
+	float upperScale = ((cloudUpperHeight - cameraPosition.y) / position.y);
+	float lowerScale = ((cloudLowerHeight - cameraPosition.y) / position.y);
+
+		// we min with 1 to prevent positions inside the cloud volume from being scaled to be outside it (stops clouds rendering on top of stuff)
+	if(length(position) < far){
+		upperScale = min(upperScale, 1.0);
+		lowerScale = min(lowerScale, 1.0);
 	}
+
+	a = position * upperScale; // where ray intersects with top of cloud layer
+	b = position * lowerScale; // where ray intersects with bottom of cloud layer
+	
+	if (cameraPosition.y < cloudLowerHeight) { // camera is below the cloud volume
+		if (position.y <= 0.0) return; // if the ray is moving downwards it will never hit the volume
+		
+		swap(a, b); // ray enters at bottom of cloud layer so make the bottom the entry point
+	} else if (cloudLowerHeight <= cameraPosition.y && cameraPosition.y <= cloudUpperHeight) { // camera is within the cloud layer
+		if (position.y < 0.0) swap(a, b); // if the ray is moving downwards, swap before to cancel the later swap
+		
+		//samples *= abs(a.y) / cloudDepth; // reduce samples within clouds
+		b = vec3(0.0); // we are about to swap, so we trace from the camera's position which is 0,0,0
+		
+		swap(a, b);
+	} else { // camera is above the cloud volume
+		if (position.y >= 0.0) return; // ray is moving upwards so it will never hit the volume
+	}
+
+	float dither = InterleavedGradientNoise(floor(gl_FragCoord.xy));
 
 	
 	rayIncrement = (b - a) / (samples + 1.0);
-	rayPosition = a + cameraPosition + rayIncrement * (1.0 + CalculateDitherPattern1() * noise);
+
+	rayPosition = a + cameraPosition + rayIncrement * (1.0 + dither);
+
+
 	
 	coverage *= clamp01(1.0 - length2((rayPosition.xz - cameraPosition.xz) / 10000.0));
 	if (coverage <= 0.1) return;
 	
 	float denseFactor = 1.0 / (1.0 - density);
-	
-	for (float i = 0.0; i < samples && cloud.a < 1.0; i++, rayPosition += rayIncrement) {
-		vec4 cloudSample = CloudColor(rayPosition, cloudLowerHeight, cloudDepth, denseFactor, coverage, sunglow);
 
+	for (float i = 0.0; i < samples && cloud.a < 1.0; i++,rayPosition += rayIncrement) {
+		vec4 cloudSample = CloudColor(rayPosition, cloudLowerHeight, cloudDepth, denseFactor, coverage, sunglow);
+		
+		if(cameraPosition.y < cloudLowerHeight || cameraPosition.y > cloudUpperHeight){
+			cloudSample.a = mix(cloudSample.a, 0.0, sqrt(clamp01(length(rayPosition.xz - cameraPosition.xz) / 8000))); // fade clouds with distance
+		}
 		
 		cloud.rgb += cloudSample.rgb * (1.0 - cloud.a) * cloudSample.a;
 		cloud.a += cloudSample.a;
 	}
-	
+
 	cloud.a = clamp01(cloud.a);
 }
 
@@ -264,14 +281,16 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	return vec4(0.0);
 #endif
 	
-	if (depth < 1.0) return vec4(0.0);
+	// if (depth < 1.0) return vec4(0.0);
 	const ivec2[4] offsets = ivec2[4](ivec2(2), ivec2(-2, 2), ivec2(2, -2), ivec2(-2));
 
 	
 	// I think this just checks if the pixel is surrounded by pixels where clouds should not be computed
-	if (all(lessThan(textureGatherOffsets(depthtex1, texcoord, offsets, 0), vec4(1.0)))) return vec4(0.0);
+	// if (all(lessThan(textureGatherOffsets(depthtex1, texcoord, offsets, 0), vec4(1.0)))) return vec4(0.0);
 	
 	float sunglow  = pow8(clamp01(dotNorm(wPos, worldLightVector) - 0.01)) * pow4(max(timeDay, timeNight));
+	// sunglow = mix(sunglow, 0.0, biomePrecipness);
+
 	float coverage = 0.0;
 	
 	vec4 cloudSum = vec4(0.0);
@@ -283,13 +302,11 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 
 	CloudFBM1(CLOUD3D_SPEED);
 	CloudLighting(sunglow);
-	RaymarchClouds(cloudSum, wPos, sunglow, CLOUD3D_SAMPLES, CLOUD3D_NOISE, CLOUD3D_DENSITY, coverage, CLOUD3D_START_HEIGHT, CLOUD3D_DEPTH);
+	RaymarchClouds(cloudSum, wPos, sunglow, CLOUD3D_SAMPLES, CLOUD3D_DENSITY, coverage, CLOUD3D_START_HEIGHT, CLOUD3D_DEPTH);
 	
 	cloudSum.rgb *= 0.1;
 
 	cloudSum.a *= 0.5;
-
-	cloudSum.a *= clamp01((facos(dot(normalize(wPos), normalize(vec3(wPos.x, 0.0, wPos.z))))));
 	
 	return cloudSum;
 }
