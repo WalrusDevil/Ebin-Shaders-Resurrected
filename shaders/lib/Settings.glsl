@@ -1,16 +1,16 @@
-const int   shadowMapResolution      = 3072;  // [1024 2048 3072 4096 6144 8192 16384]
-const float sunPathRotation          = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
-const float shadowDistance           = 192;   // [128 192 256 512]
-const float shadowIntervalSize       = 4.0;
+const int shadowMapResolution = 3072; // [1024 2048 3072 4096 6144 8192 16384]
+const float sunPathRotation = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
+const float shadowDistance = 192; // [128 192 256 512]
+const float shadowIntervalSize = 4.0;
 
-const bool  shadowHardwareFiltering = true;
+const bool shadowHardwareFiltering = true;
 
-const bool shadowtex1Mipmap    = true;
-const bool shadowcolor0Mipmap  = true;
-const bool shadowcolor1Mipmap  = true;
+const bool shadowtex1Mipmap = true;
+const bool shadowcolor0Mipmap = true;
+const bool shadowcolor1Mipmap = true;
 
-const bool shadowtex0Nearest   = false;
-const bool shadowtex1Nearest   = false;
+const bool shadowtex0Nearest = false;
+const bool shadowtex1Nearest = false;
 const bool shadowcolor0Nearest = true;
 const bool shadowcolor1Nearest = false;
 
@@ -29,8 +29,8 @@ const vec4 colortex3ClearColor = vec4(0.0, 0.0, 0.0, 0.0);
 const vec4 colortex4ClearColor = vec4(0.0, 0.0, 0.0, 1.0);
 const vec4 colortex5ClearColor = vec4(0.1, 0.1, 0.1, 1.0);
 
-const float wetnessHalflife          = 40.0;
-const float drynessHalflife          = 40.0;
+const float wetnessHalflife = 40.0;
+const float drynessHalflife = 40.0;
 
 const float centerDepthHalflife = 0.5;
 
@@ -62,9 +62,7 @@ cfloat noiseScale = 64.0 / noiseRes;
 
 const float zShrink = 4.0;
 
-
 //#define DEFAULT_TEXTURE_PACK
-
 
 #define EXPOSURE            1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define SATURATION          1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
@@ -74,7 +72,6 @@ const float zShrink = 4.0;
 #define TORCH_LIGHT_LEVEL   1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define SKY_BRIGHTNESS      1.0 // [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 //#define DIRECTIONAL_LIGHTING
-
 
 #define SHADOW_MAP_BIAS 0.80 // [0.00 0.60 0.70 0.80 0.85 0.90 0.95]
 #define SHADOW_TYPE 3 // [0 1 2 3]
@@ -91,10 +88,10 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 
 #define SUBSURFACE_SCATTERING
 
-//#define RAIN 
+//#define RAIN
 
 #if SHADOW_TYPE != 0
-    #define SHADOWS
+#define SHADOWS
 #endif
 //#define LIMIT_SHADOW_DISTANCE
 
@@ -134,7 +131,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define COMPOSITE0_SCALE 1.0 // [0.25 0.33 0.40 0.50 0.60 0.75 1.00]
 #define COMPOSITE0_NOISE
 #if (defined GI_ENABLED) || (defined AO_ENABLED) || (defined VL_ENABLED)
-    #define COMPOSITE0_ENABLED
+#define COMPOSITE0_ENABLED
 #endif
 
 //#define CLOUD2D
@@ -181,7 +178,6 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 //#define TELEFOCAL_SHADOWS
 #define SHADOWS_FOCUS_CENTER
 
-
 #define TEXTURE_PACK_RESOLUTION 0 // [0 16 32 64 128 256 512 1024 2048 4096]
 #define MULTIPLY_METAL_ALBEDO
 #define NORMAL_MAPS
@@ -194,20 +190,13 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define ROUGH_REFLECTION_THRESHOLD 0.3 // [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define GLOWING_ORES
 
-
 #define REFLECTION_SAMPLES 4 // [1 2 4 8 16 32 64]
-
 
 #define FOG_ENABLED
 
 #define LABPBR_VERSION 1.3 // [1.3 1.3]
 
-#define WATER_BEHIND_TRANSLUCENTS
 #define FLOODFILL_BLOCKLIGHT
-
-#if defined WATER_BEHIND_TRANSLUCENTS && defined IRIS_FEATURE_CUSTOM_IMAGES
-#define PREPARE_ENABLED
-#endif
 
 #if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
 #define SHADOWCOMP_ENABLED
@@ -217,6 +206,4 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define FXAA_SUBPIXEL 0.75 //[0.00 0.25 0.50 0.75 1.00]
 #define FXAA_EDGE_SENSITIVITY 1 //[0 1 2]
 
-
 #define HANDLIGHT
-
