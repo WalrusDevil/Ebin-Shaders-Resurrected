@@ -232,6 +232,13 @@ void main() {
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, backDepth));
 	
 	vec3 sunlight = ComputeSunlight(backPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
+
+	if(mask.water == 1.0){
+		float distCoeff = GetDistanceCoeff(backPos[1]);
+		sunlight = mix(sunlight, WATER_COLOR.rgb * (1.0 - WATER_COLOR.a), distCoeff);
+	}
+	
+
 	vec3 composite = ComputeShadedFragment(powf(diffuse, 2.2), mask, torchLightmap, skyLightmap, GI, normal, emission, backPos, materialAO, SSS, geometryNormal, sunlight);
 
 	gl_FragData[4] = vec4(sunlight, 1.0);
