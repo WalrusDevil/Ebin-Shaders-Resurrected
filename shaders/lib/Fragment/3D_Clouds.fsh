@@ -1,3 +1,5 @@
+#include "/lib/Fragment/PrecomputedSky.glsl"
+
 float CalculateDitherPattern1() {
 	const int[16] ditherPattern = int[16] (
 		 0,  8,  2, 10,
@@ -306,7 +308,11 @@ vec4 CalculateClouds3(vec3 wPos, float depth) {
 	
 	cloudSum.rgb *= 0.1;
 
-	cloudSum.a *= 0.5;
+	// the clouds look like ass if I leave them as default but mixing them with the sky makes them look decent
+	// however, since the sky has the sun in it, it always shines through the clouds, so we precalculate the sky without the sun and blend with that instead
+	// TODO: good clouds
+	vec3 transmit = vec3(1.0);
+	cloudSum.rgb = mix(cloudSum.rgb, SkyAtmosphere(normalize(wPos), transmit), 0.5);
 	
 	return cloudSum;
 }
