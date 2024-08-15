@@ -229,7 +229,7 @@ void main() {
 	vec4 diffuse = color * texture2D(gtexture, texcoord);
 
 	if (materialIDs == IPBR_WATER) {
-		diffuse = vec4(0.015, 0.04, 0.098, 0.5);
+		diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
 		#ifdef WATER_CAUSTICS
 			SetupWaveFBM();
 			float height = GetWaves(position.xz + cameraPosition.xz);

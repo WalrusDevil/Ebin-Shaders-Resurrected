@@ -235,21 +235,25 @@ float LOD;
 vec4 GetDiffuse(vec2 coord, float materialIDs) {
     vec4 diffuse;
     if (materialIDs == 1) { // water
-        #ifdef BIOME_WATER
-        diffuse = vec4(mix(color.rgb, vec3(0.015, 0.04, 0.098), 0.65), 0.75);
-        #else
-        diffuse = vec4(0.015, 0.04, 0.098, 0.75);
-        #endif
+        diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
         #ifdef CLEAR_WATER
         diffuse.a = 0.25;
         #endif
         return diffuse;
     }
 
+
+
     diffuse = vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
 
     #ifdef gbuffers_entities
     diffuse.rgb = mix(diffuse.rgb, entityColor.rgb, entityColor.a);
+    #endif
+
+    #ifdef SMOOTH_ICE
+    if(materialIDs == 2) { // ice
+        diffuse.rgb = WATER_COLOR.rgb;
+    }
     #endif
 
     return diffuse;
@@ -380,10 +384,6 @@ void main() {
     #ifdef gbuffers_water
 
     if (materialIDs == IPBR_WATER) {
-        if (!gl_FrontFacing) {
-            discard;
-        }
-
         normal = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
         mask.water = 1.0;
     }

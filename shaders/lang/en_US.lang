@@ -322,8 +322,11 @@ option.LIGHT_DESATURATION.comment=Reduces saturation on light sources.
 option.CLEAR_WATER=Clear Water
 option.CLEAR_WATER.comment=Makes water much easier to see through.
 
-option.BIOME_WATER=Biome Water Tint
-option.BIOME_WATER.comment=Tints water colour based on biome.
+option.BIOME_WATER_TINT=Biome Water Tint
+option.BIOME_WATER_TINT.comment=Tints water colour based on biome.
+
+option.SMOOTH_ICE=Smooth Ice
+option.SMOOTH_ICE.comment=Disables texturing on ice, making it look very smooth.
 
 option.TELEFOCAL_SHADOWS=Telefocal Shadows
 option.TELEFOCAL_SHADOWS.comment=Focus the shadow quality-center to a coordinate, or the center of your screen
