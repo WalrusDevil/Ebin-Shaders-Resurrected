@@ -307,9 +307,10 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 void main() {
     vec2 vertLightmap = vertLightmap;
+    vec2 coord = ComputeParallaxCoordinate(texcoord, position[1]);
 
     PBRData PBR;
-    PBR = getRawPBRData(texcoord);
+    PBR = getRawPBRData(coord);
     injectIPBR(PBR, materialIDs);
 
     #ifdef gbuffers_hand
@@ -325,7 +326,7 @@ void main() {
     }
     #endif
 
-    vec2 coord = ComputeParallaxCoordinate(texcoord, position[1]);
+    
     vec4 diffuse = GetDiffuse(coord, materialIDs);
 
     #ifdef gbuffers_weather

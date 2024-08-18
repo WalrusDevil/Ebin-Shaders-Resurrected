@@ -2,7 +2,7 @@
 #define TERRAINPARALLAX_FSH
 
 vec2 ComputeParallaxCoordinate(vec2 coord, vec3 position) {
-#if !defined TERRAIN_PARALLAX || !defined gbuffers_terrain
+#if !defined TERRAIN_PARALLAX
 	return coord;
 #endif
 	
