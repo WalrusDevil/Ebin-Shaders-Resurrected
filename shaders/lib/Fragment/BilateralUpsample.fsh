@@ -23,8 +23,8 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 			for (float x = -range; x <= range; x++) {
 				vec2 offset = vec2(x, y) * pixelSize;
 				
-				float sampleDepth  = ExpToLinearDepth(texture2D(gdepthtex, texcoord + offset * 8.0).x);
-				vec3  sampleNormal =     DecodeNormal(texture2D(colortex4, texcoord + offset * 8.0).g, 11);
+				float sampleDepth  = ExpToLinearDepth(texture(depthtex0, texcoord + offset * 8.0).x);
+				vec3  sampleNormal =     DecodeNormal(texture(colortex4, texcoord + offset * 8.0).g, 11);
 				
 				float weight  = clamp01(1.0 - abs(expDepth - sampleDepth));
 					  weight *= abs(dot(normal, sampleNormal)) * 0.5 + 0.5;
@@ -49,7 +49,7 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 		for (float x = -range; x <= range; x++) {
 			vec2 offset = vec2(x, y) * pixelSize;
 			
-			float sampleDepth = ExpToLinearDepth(texture2D(gdepthtex, texcoord + offset * 8.0).x);
+			float sampleDepth = ExpToLinearDepth(texture(depthtex0, texcoord + offset * 8.0).x);
 			float weight = clamp01(1.0 - abs(expDepth - sampleDepth)) + 0.001;
 			
 			samples.xy += texture2DLod(colortex6, scaledCoord + offset * 2.0, 3).rg * weight;

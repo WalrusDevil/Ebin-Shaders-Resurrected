@@ -23,7 +23,7 @@ float CalculateSunglow2(vec3 vPos) {
 }
 
 float Get2DNoise(vec3 pos) { // 2D slices
-	return texture2D(noisetex, pos.xz * noiseResInverse).x;
+	return texture(noisetex, pos.xz * noiseResInverse).x;
 }
 
 float Get2DStretchNoise(vec3 pos) {
@@ -31,7 +31,7 @@ float Get2DStretchNoise(vec3 pos) {
 	
 	vec2 coord = pos.xz * noiseResInverse + (floor(pos.y) * zStretch);
 	
-	return texture2D(noisetex, coord).x;
+	return texture(noisetex, coord).x;
 }
 
 float Get2_5DNoise(vec3 pos) { // 2.5D
@@ -42,7 +42,7 @@ float Get2_5DNoise(vec3 pos) { // 2.5D
 	
 	vec2 coord = pos.xz * noiseResInverse + (p * zStretch);
 	
-	vec2 noise = texture2D(noisetex, coord).xy;
+	vec2 noise = texture(noisetex, coord).xy;
 	
 	return mix(noise.x, noise.y, f);
 }
@@ -55,8 +55,8 @@ float Get3DNoise(vec3 pos) { // True 3D
 	
 	vec2 coord = pos.xy * noiseResInverse + (p * zStretch);
 	
-	float xy1 = texture2D(noisetex, coord).x;
-	float xy2 = texture2D(noisetex, coord + zStretch).x;
+	float xy1 = texture(noisetex, coord).x;
+	float xy2 = texture(noisetex, coord + zStretch).x;
 	
 	return mix(xy1, xy2, f);
 }
@@ -69,8 +69,8 @@ vec3 Get3DNoise3D(vec3 pos) {
 	
 	vec2 coord = pos.xy * noiseResInverse + (p * zStretch);
 	
-	vec3 xy1 = texture2D(noisetex, coord).xyz;
-	vec3 xy2 = texture2D(noisetex, coord + zStretch).xyz;
+	vec3 xy1 = texture(noisetex, coord).xyz;
+	vec3 xy2 = texture(noisetex, coord + zStretch).xyz;
 	
 	return mix(xy1, xy2, f);
 }

@@ -60,7 +60,7 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 	float transparentShadow = shadow2D(shadowtex0HW, shadowScreenPos).r;
 	#else
-	float transparentShadow = step(shadowScreenPos.z, texture2D(shadowtex0, shadowScreenPos.xy).r);
+	float transparentShadow = step(shadowScreenPos.z, texture(shadowtex0, shadowScreenPos.xy).r);
 	#endif
 
 	if(transparentShadow == 1.0){ // no shadow at all
@@ -70,13 +70,13 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 	float opaqueShadow = shadow2D(shadowtex1HW, shadowScreenPos).r;
 	#else
-	float opaqueShadow = step(shadowScreenPos.z, texture2D(shadowtex1, shadowScreenPos.xy).r);
+	float opaqueShadow = step(shadowScreenPos.z, texture(shadowtex1, shadowScreenPos.xy).r);
 	#endif
 
 	if(opaqueShadow == 0.0){ // paque shadow so don't sample transparent shadow colour
 	}
 
-	vec4 shadowColorData = texture2D(shadowcolor0, shadowScreenPos.xy);
+	vec4 shadowColorData = texture(shadowcolor0, shadowScreenPos.xy);
 	vec3 shadowColor = shadowColorData.rgb * (1.0 - shadowColorData.a);
 
 	return mix(shadowColor * opaqueShadow, vec3(1.0), transparentShadow);
@@ -86,7 +86,7 @@ float GetBlockerDistance(vec3 shadowClipPos){
 	float biasCoeff;
 	#if SHADOW_TYPE != 3
 		vec3 shadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
-		float blockerDepth = texture2D(shadowtex0, shadowScreenPos.xy).r;
+		float blockerDepth = texture(shadowtex0, shadowScreenPos.xy).r;
 		return shadowScreenPos.z - blockerDepth;
 	#endif
 
@@ -102,7 +102,7 @@ float GetBlockerDistance(vec3 shadowClipPos){
 	for(int i = 0; i < BLOCKER_SEARCH_SAMPLES; i++){
 		vec2 offset = VogelDiscSample(i, BLOCKER_SEARCH_SAMPLES, noise.r);
 		vec3 newShadowScreenPos = BiasShadowProjection(shadowClipPos + vec3(offset * range, 0.0), biasCoeff) * 0.5 + 0.5;
-		float newBlockerDepth = texture2D(shadowtex0, newShadowScreenPos.xy).r;
+		float newBlockerDepth = texture(shadowtex0, newShadowScreenPos.xy).r;
 		if (newBlockerDepth < receiverDepth){
 			blockerDistance += (receiverDepth - newBlockerDepth);
 			blockerCount += 1;
@@ -163,7 +163,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	float nDotL = clamp01(dot(normal, lightVector));
 
 	#if SHADOW_TYPE == 0
-	sunlight = skyLightmap * nDotL;
+	sunlight = skyLightmap * vec3(nDotL);
 	#elif SHADOW_TYPE == 1
 	float penumbraWidth = 0.0; // hard shadows
 	#elif SHADOW_TYPE == 2

@@ -15,6 +15,8 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
@@ -28,7 +30,6 @@ uniform float biomePrecipness;
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
-#include "/lib/Uniform/Projection_Matrices.vsh"
 
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
@@ -38,7 +39,7 @@ void main() {
 	texcoord    = gl_MultiTexCoord0.st;
 	gl_Position = ftransform();
 	
-	SetupProjection();
+	
 	SetupShading();
 }
 
@@ -53,8 +54,11 @@ void main() {
 uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform sampler2D colortex3;
-uniform sampler2D gdepthtex;
+
+uniform sampler2D depthtex0;
+
 uniform sampler2D noisetex;
+
 uniform int isEyeInWater;
 uniform vec3 fogColor;
 
@@ -83,11 +87,11 @@ uniform float near;
 #include "/lib/Fragment/FXAA.glsl"
 
 vec3 GetColor(vec2 coord) {
-	return DecodeColor(texture2D(colortex3, coord).rgb);
+	return DecodeColor(texture(colortex3, coord).rgb);
 }
 
 float GetDepth(vec2 coord) {
-	return texture2D(gdepthtex, coord).x;
+	return texture(depthtex0, coord).x;
 }
 
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
@@ -133,7 +137,7 @@ vec3 MotionBlur(vec3 color, float depth) {
 	for(float i = 1.0; i <= sampleCount; i++) {
 		vec2 coord = texcoord - sampleStep * i;
 		
-		color += pow2(texture2D(colortex3, clampScreen(coord, pixelSize)).rgb);
+		color += pow2(texture(colortex3, clampScreen(coord, pixelSize)).rgb);
 	}
 	
 	return color * 1000.0 / max(sampleCount + 1.0, 1.0);
@@ -144,7 +148,7 @@ vec3 GetBloomTile(cint scale, vec2 offset) {
 	     coord /= scale;
 	     coord += offset + pixelSize;
 	
-	return DecodeColor(texture2D(colortex1, coord).rgb);
+	return DecodeColor(texture(colortex1, coord).rgb);
 }
 
 vec3 GetBloom(vec3 color) {
@@ -188,7 +192,7 @@ void main() {
 	vec3 viewPos = CalculateViewSpacePosition(vec3(texcoord, depth));
 	vec3  color = GetColor(texcoord);
 	//(color);
-	Mask  mask  = CalculateMasks(texture2D(colortex2, texcoord).r);
+	Mask  mask  = CalculateMasks(texture(colortex2, texcoord).r);
 	
 	
 	color = FXAA311(color);

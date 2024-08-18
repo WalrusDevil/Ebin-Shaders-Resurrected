@@ -3,7 +3,7 @@ float GetNoise(vec2 coord) {
 	vec2 whole = floor(coord);
 	coord = whole + cubesmooth(coord - whole);
 	
-	return texture2D(noisetex, coord * noiseResInverse + madd).x;
+	return texture(noisetex, coord * noiseResInverse + madd).x;
 }
 
 vec2 GetNoise2D(vec2 coord) {
@@ -11,7 +11,7 @@ vec2 GetNoise2D(vec2 coord) {
 	vec2 whole = floor(coord);
 	coord = whole + cubesmooth(coord - whole);
 	
-	return texture2D(noisetex, coord * noiseResInverse + madd).xy;
+	return texture(noisetex, coord * noiseResInverse + madd).xy;
 }
 
 float GetCoverage(float clouds, float coverage) {

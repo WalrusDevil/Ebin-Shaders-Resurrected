@@ -16,5 +16,7 @@
 #endif
 #ifdef WATER_BEHIND_TRANSLUCENTS
 #endif
+#ifdef COMPOSITE0_ENABLED
+#endif
 
 */

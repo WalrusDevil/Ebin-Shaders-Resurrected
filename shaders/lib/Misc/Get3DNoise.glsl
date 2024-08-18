@@ -7,8 +7,8 @@ float Get3DNoise(vec3 position) {
 	vec4 coord  = (whole.xyxy + part.xyxy) + (whole.z * zscale.x) + zscale.yyzz;
 	     coord /= noiseTextureResolution;
 	
-	float Noise1 = texture2D(noisetex, coord.xy).x;
-	float Noise2 = texture2D(noisetex, coord.zw).x;
+	float Noise1 = texture(noisetex, coord.xy).x;
+	float Noise2 = texture(noisetex, coord.zw).x;
 	
 	return mix(Noise1, Noise2, part.z);
 }

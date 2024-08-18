@@ -154,7 +154,7 @@ vec3 kPoint(vec3 wPos) {
 #if ShaderStage > 0
 	#define atmosphereSampler colortex7
 #else
-	#define atmosphereSampler gaux1
+	#define atmosphereSampler colortex4
 #endif
 
 /*

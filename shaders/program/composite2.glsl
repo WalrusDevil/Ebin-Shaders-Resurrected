@@ -13,6 +13,8 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
@@ -26,7 +28,6 @@ uniform float biomePrecipness;
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
-#include "/lib/Uniform/Projection_Matrices.vsh"
 
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
@@ -36,7 +37,7 @@ void main() {
     texcoord = gl_MultiTexCoord0.st;
     gl_Position = ftransform();
 
-    SetupProjection();
+    
     SetupShading();
 }
 
@@ -51,28 +52,28 @@ uniform sampler2D colortex8;
 uniform sampler2D colortex9;
 
 uniform sampler2D colortex1;
-uniform sampler2D colortex2;
 uniform sampler2D colortex3;
 uniform sampler2D colortex4;
+uniform sampler2D colortex5;
 uniform sampler2D colortex6;
 uniform sampler2D colortex10;
-uniform sampler2D gdepthtex;
+uniform sampler2D colortex13;
+
+uniform sampler2D depthtex0;
 uniform sampler2D depthtex1;
 uniform sampler2D depthtex2;
+
 uniform sampler2D noisetex;
 uniform sampler2D bluenoisetex;
+
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
-uniform sampler2DShadow shadow;
+
 uniform sampler2D shadowcolor0;
-uniform mat4 gbufferModelView;
-uniform sampler2D colortex13;
-uniform usampler2D waterDepthTex;
-uniform usampler2D waterNormalTex;
-uniform sampler2D colortex5;
 
 uniform vec3 shadowLightPosition;
 
+uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
 
@@ -109,15 +110,15 @@ const bool colortex5MipmapEnabled = true;
 #endif
 
 vec3 GetColor(vec2 coord) {
-    return texture2D(colortex1, coord).rgb;
+    return texture(colortex1, coord).rgb;
 }
 
 float GetDepth(vec2 coord) {
-    return texture2D(gdepthtex, coord).x;
+    return texture(depthtex0, coord).x;
 }
 
 float GetTransparentDepth(vec2 coord) {
-    return texture2D(depthtex2, coord).x;
+    return texture(depthtex2, coord).x;
 }
 
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
@@ -157,9 +158,6 @@ void main() {
     mask.transparent *= (1.0 - mask.hand);
     VL = ScreenTex(colortex6).xy;
     vec3 sunlight = ScreenTex(colortex10).rgb;
-
-    float waterDepth = uintBitsToFloat(texture(waterDepthTex, texcoord).r);
-
     gl_FragData[1] = vec4(decode4.r, 0.0, 0.0, 1.0);
 
     backDepth = GetDepth(texcoord);
@@ -186,11 +184,6 @@ void main() {
         perceptualSmoothness = ScreenTex(colortex8).r;
         sunlight = ScreenTex(colortex13).rgb;
     }
-
-    mat2x3 waterPos;
-    waterPos[0] = CalculateViewSpacePosition(vec3(texcoord, waterDepth > frontDepth ? frontDepth : waterDepth));
-
-    waterPos[1] = mat3(gbufferModelViewInverse) * waterPos[0];
 
     vec3 color = texture(colortex1, texcoord).rgb;
 

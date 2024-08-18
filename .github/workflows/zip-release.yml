@@ -37,5 +37,5 @@ jobs:
           modrinth-id: VP9picRm
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           files: "Ebin-Resurrected-${{ github.event.release.tag_name }}.zip"
-          loaders: iris
+          loaders: iris optifine
           game-versions: ">=1.20"

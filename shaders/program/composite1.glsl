@@ -15,6 +15,8 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
@@ -28,7 +30,6 @@ uniform float biomePrecipness;
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
-#include "/lib/Uniform/Projection_Matrices.vsh"
 
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
@@ -38,7 +39,7 @@ void main() {
 	texcoord    = gl_MultiTexCoord0.st;
 	gl_Position = ftransform();
 	
-	SetupProjection();
+	
 	SetupShading();
 }
 
@@ -59,9 +60,12 @@ uniform sampler2D colortex4;
 uniform sampler3D colortex7;
 uniform sampler2D colortex9;
 uniform sampler2D colortex10;
+uniform sampler2D colortex11;
 
+#ifdef FLOODFILL_BLOCKLIGHT
 uniform sampler3D lightVoxelTex;
 uniform sampler3D lightVoxelFlipTex;
+#endif
 
 #if (defined GI_ENABLED) || (defined AO_ENABLED)
 const bool colortex5MipmapEnabled = true;
@@ -73,20 +77,20 @@ const bool colortex6MipmapEnabled = true;
 uniform sampler2D colortex6;
 #endif
 
-uniform sampler2D gdepthtex;
+uniform sampler2D depthtex0;
 uniform sampler2D depthtex1;
 uniform sampler2D noisetex;
+
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowcolor0;
+
 uniform sampler2D bluenoisetex;
 
 #if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 uniform sampler2DShadow shadowtex0HW;
 uniform sampler2DShadow shadowtex1HW;
 #endif
-
-uniform sampler2D colortex11;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -127,15 +131,15 @@ uniform int heldBlockLightValue2;
 #include "/lib/Fragment/3D_Clouds.fsh"
 
 vec3 GetDiffuse(vec2 coord) {
-	return texture2D(colortex1, coord).rgb;
+	return texture(colortex1, coord).rgb;
 }
 
 float GetDepth(vec2 coord) {
-	return texture2D(gdepthtex, coord).x;
+	return texture(depthtex0, coord).x;
 }
 
 float GetTransparentDepth(vec2 coord) {
-	return texture2D(depthtex1, coord).x;
+	return texture(depthtex1, coord).x;
 }
 
 
@@ -185,11 +189,11 @@ void main() {
 	
 	float frontDepth = mask.hand > 0.5 ? backDepth : GetTransparentDepth(texcoord);
 	
-	mask.transparent = clamp01(float(texture2D(colortex3, texcoord).a != 0.0) + float(frontDepth != backDepth) + mask.transparent);
+	mask.transparent = clamp01(float(texture(colortex3, texcoord).a != 0.0) + float(frontDepth != backDepth) + mask.transparent);
 
 
 	if (mask.transparent == 1.0) {
-		vec2 texture0 = texture2D(colortex0, texcoord).rg;
+		vec2 texture0 = texture(colortex0, texcoord).rg;
 		
 		vec4 decode0 = Decode4x8F(texture0.r);
 		

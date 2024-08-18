@@ -39,7 +39,7 @@ bool ComputeSSRaytrace(vec3 vPos, vec3 dir, out vec3 screenPos) {
 		
 	//	if (any(greaterThan(abs(screenPos.st - 0.5), vec2(0.5))) || -ray.z > maxRayDepth) return false;
 		
-		screenPos.z = texture2D(depthtex1, screenPos.st).x;
+		screenPos.z = texture(depthtex1, screenPos.st).x;
 		if(screenPos.z < 0.56){
 			return false;
 		}

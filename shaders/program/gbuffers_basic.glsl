@@ -11,15 +11,16 @@ varying vec3 color;
 
 attribute vec4 mc_Entity;
 
-uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferModelView;
+uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 
 uniform vec3 previousCameraPosition;
 uniform vec3  cameraPosition;
 
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
-#include "/lib/Uniform/Projection_Matrices.vsh"
 
 vec3 GetWorldSpacePosition() {
 	vec3 position = transMAD(gl_ModelViewMatrix, gl_Vertex.xyz);
@@ -31,11 +32,11 @@ vec4 ProjectViewSpace(vec3 viewSpacePosition) {
 	return vec4(projMAD(gbufferProjection, viewSpacePosition), viewSpacePosition.z * gbufferProjection[2].w);
 }
 
-#include "/UserProgram/Terrain_Deformation.vsh"
+#include "/userProgram/Terrain_Deformation.vsh"
 #include "/lib/Vertex/Vertex_Displacements.vsh"
 
 void main() {
-	SetupProjection();
+	
 	
 	color = gl_Color.rgb;
 	

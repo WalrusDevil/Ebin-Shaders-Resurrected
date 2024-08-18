@@ -31,6 +31,8 @@ attribute vec3 at_midBlock;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 uniform mat4 shadowProjection;
 uniform mat4 shadowProjectionInverse;
 uniform mat4 shadowModelView;
@@ -53,7 +55,6 @@ uniform float thunderStrength;
 #include "/lib/iPBR/lightColors.glsl"
 
 
-#include "/lib/Uniform/Projection_Matrices.vsh"
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 
 bool EVEN_FRAME = frameCounter % 2 == 0;
@@ -152,7 +153,7 @@ void main() {
 #endif
 	
 	CalculateShadowView();
-	SetupProjection();
+	
 	
 	color        = gl_Color;
 	texcoord     = gl_MultiTexCoord0.st;
@@ -226,7 +227,7 @@ void main() {
 	discard;
 	#endif
 
-	vec4 diffuse = color * texture2D(gtexture, texcoord);
+	vec4 diffuse = color * texture(gtexture, texcoord);
 
 	if (materialIDs == IPBR_WATER) {
 		diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);

@@ -41,7 +41,7 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 		float transparentShadow = shadow2D(shadowtex0HW, samplePos).r;
 		#else
-		float transparentShadow = step(samplePos.z, texture2D(shadowtex0, samplePos.xy).r);
+		float transparentShadow = step(samplePos.z, texture(shadowtex0, samplePos.xy).r);
 		#endif
 
 		if(transparentShadow == 1.0){ // no shadow at all
@@ -50,13 +50,13 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 			#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 			float opaqueShadow = shadow2D(shadowtex1HW, samplePos).r;
 			#else
-			float opaqueShadow = step(samplePos.z, texture2D(shadowtex1, samplePos.xy).r);
+			float opaqueShadow = step(samplePos.z, texture(shadowtex1, samplePos.xy).r);
 			#endif
 
 			if(opaqueShadow == 0.0){ // only opaque shadow so don't sample opaque shadow map
 				shadow = 0.0;
 			} else {
-				vec4 shadowColorData = texture2D(shadowcolor0, samplePos.xy);
+				vec4 shadowColorData = texture(shadowcolor0, samplePos.xy);
 				shadow = mix(((1.0 - shadowColorData.a) * opaqueShadow), 1.0, transparentShadow);
 				waterShadow = shadow;
 				waterSamples++;

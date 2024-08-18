@@ -15,6 +15,8 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
@@ -28,7 +30,6 @@ uniform float biomePrecipness;
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
-#include "/lib/Uniform/Projection_Matrices.vsh"
 
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
@@ -41,7 +42,7 @@ void main() {
 	gl_Position.xy = ((gl_Position.xy * 0.5 + 0.5) * COMPOSITE0_SCALE) * 2.0 - 1.0;
 	
 	
-	SetupProjection();
+	
 	SetupShading();
 }
 
@@ -55,13 +56,19 @@ void main() {
 
 uniform sampler2D colortex0;
 uniform sampler2D colortex4;
-uniform sampler2D gdepthtex;
+uniform sampler2D colortex11;
+
+uniform sampler2D depthtex0;
 uniform sampler2D depthtex1;
+
 uniform sampler2D noisetex;
+
+uniform sampler2D shadowtex0;
+uniform sampler2D shadowtex1;
+
 uniform sampler2D shadowcolor0;
 uniform sampler2D shadowcolor1;
-uniform sampler2D shadowtex1;
-uniform sampler2D shadowtex0;
+
 uniform sampler2D bluenoisetex;
 
 #ifdef IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
@@ -69,9 +76,6 @@ uniform sampler2DShadow shadowtex0HW;
 uniform sampler2DShadow shadowtex1HW;
 #endif
 
-uniform sampler2D colortex11;
-uniform sampler2D depthtex0;
-uniform usampler2D waterDepthTex;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -102,11 +106,11 @@ uniform int isEyeInWater;
 #include "/lib/Fragment/Masks.fsh"
 
 float GetDepth(vec2 coord) {
-	return textureRaw(gdepthtex, coord).x;
+	return textureRaw(depthtex0, coord).x;
 }
 
 float GetDepthLinear(vec2 coord) {
-	return (near * far) / (textureRaw(gdepthtex, coord).x * (near - far) + far);
+	return (near * far) / (textureRaw(depthtex0, coord).x * (near - far) + far);
 }
 
 vec3 CalculateViewSpacePosition(vec3 screenPos) {
@@ -173,7 +177,7 @@ void main() {
 	frontPos[1] = mat3(gbufferModelViewInverse) * frontPos[0];
 	
 	if (backDepth != frontDepth)
-		mask.water = Decode4x8F(texture2D(colortex0, texcoord).r).b;
+		mask.water = Decode4x8F(texture(colortex0, texcoord).r).b;
 	
 	vec2 VL = ComputeVolumetricLight(backPos[1], frontPos[1], noise2D, clamp01(mask.water + float(isEyeInWater == 1.0)));
 	gl_FragData[1] = vec4(VL, 0.0, 0.0);

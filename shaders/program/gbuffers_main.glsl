@@ -35,6 +35,8 @@ uniform sampler2D lightmap;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
@@ -50,10 +52,9 @@ uniform float biomeCanRainSmooth;
 #include "/lib/Settings.glsl"
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
-#include "/lib/Uniform/Projection_Matrices.vsh"
 
 #if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
-uniform sampler3D gaux1;
+uniform sampler3D colortex4;
 
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
@@ -116,7 +117,7 @@ void main() {
     materialIDs = max(materialIDs, blockEntityId);
     #endif
 
-    SetupProjection();
+    
 
     color = gl_Color.rgb;
     texcoord = gl_MultiTexCoord0.st;
@@ -213,7 +214,7 @@ uniform float far;
 #include "/lib/Misc/CalculateFogfactor.glsl"
 #include "/lib/Fragment/Masks.fsh"
 
-uniform sampler3D gaux1;
+uniform sampler3D colortex4;
 
 #include "/lib/Uniform/Shadow_View_Matrix.fsh"
 #include "/lib/Voxel/VoxelPosition.glsl"
@@ -225,11 +226,11 @@ float LOD;
 #ifdef TERRAIN_PARALLAX
 #define GetTexture(x, y) texture2DLod(x, y, LOD)
 #else
-#define GetTexture(x, y) texture2D(x, y)
+#define GetTexture(x, y) texture(x, y)
 #endif
 
 #ifdef gbuffers_water
-#define GetTexture(x, y) texture2D(x, y)
+#define GetTexture(x, y) texture(x, y)
 #endif
 
 vec4 GetDiffuse(vec2 coord, float materialIDs) {

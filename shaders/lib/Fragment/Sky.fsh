@@ -57,8 +57,8 @@ vec3 CalculateStars(vec3 wDir, vec3 transmit, cbool reflection) {
 		coord = wDir.xz * (2.5 * STAR_SCALE * (2.0 - wDir.y) * noiseScale);
 	#endif
 	
-	float noise  = texture2D(noisetex, coord * 0.5).r;
-	      noise += texture2D(noisetex, coord).r * 0.5;
+	float noise  = texture(noisetex, coord * 0.5).r;
+	      noise += texture(noisetex, coord).r * 0.5;
 	
 	float star = clamp01(noise - 1.3 / STAR_COVERAGE) * STAR_BRIGHTNESS * 2000.0 * pow2(clamp01(wDir.y)) * timeNight;
 	
