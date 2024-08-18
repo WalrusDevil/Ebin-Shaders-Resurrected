@@ -4,4 +4,4 @@
 #define WORLD_THE_END
 #define ShaderStage -2
 
-#include "/gbuffers_discard.glsl"
+#include "/program/gbuffers_discard.glsl"

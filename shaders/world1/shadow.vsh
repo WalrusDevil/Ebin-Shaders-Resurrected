@@ -4,4 +4,4 @@
 #define WORLD_THE_NETHER
 #define ShaderStage -2
 
-#include "/gbuffers_shadow.glsl"
+#include "/program/gbuffers_shadow.glsl"

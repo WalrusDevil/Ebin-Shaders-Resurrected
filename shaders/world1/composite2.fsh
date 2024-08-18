@@ -4,4 +4,4 @@
 #define WORLD_THE_END
 #define ShaderStage 2
 
-#include "/composite2.glsl"
+#include "/program/composite2.glsl"

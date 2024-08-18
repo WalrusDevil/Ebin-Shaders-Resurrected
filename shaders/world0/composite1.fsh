@@ -4,4 +4,4 @@
 #define WORLD_OVERWORLD
 #define ShaderStage 1
 
-#include "/composite1.glsl"
+#include "/program/composite1.glsl"

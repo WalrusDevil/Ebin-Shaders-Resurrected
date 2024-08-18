@@ -4,4 +4,4 @@
 #define WORLD_THE_NETHER
 #define ShaderStage 3
 
-#include "/composite3.glsl"
+#include "/program/composite3.glsl"

@@ -4,4 +4,4 @@
 #define WORLD_THE_NETHER
 #define ShaderStage 7
 
-#include "/final.glsl"
+#include "/program/final.glsl"

@@ -4,4 +4,4 @@
 #define WORLD_OVERWORLD
 #define ShaderStage -1
 
-#include "/gbuffers_discard.glsl"
+#include "/program/gbuffers_discard.glsl"

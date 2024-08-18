@@ -4,4 +4,4 @@
 #define WORLD_OVERWORLD
 #define ShaderStage -1
 
-#include "/gbuffers_shadow.glsl"
+#include "/program/gbuffers_shadow.glsl"

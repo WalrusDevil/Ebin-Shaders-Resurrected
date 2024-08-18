@@ -5,4 +5,4 @@
 #define WORLD_THE_END
 #define ShaderStage 10
 
-#include "/composite1.glsl"
+#include "/program/composite1.glsl"
