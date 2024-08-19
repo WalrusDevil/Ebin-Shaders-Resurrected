@@ -34,9 +34,16 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 		float shadow;
 		float waterShadow;
 
+		// for a sample count n, distribute each sample in the ith nth of the ray
+		// i.e for a sample count of 8, the first sample will be somewhere in the first 8th
+		// the second in the second 8th
+		// and so on and so forth
 		float noise = InterleavedGradientNoise(floor(gl_FragCoord.xy), i);
+		vec3 segmentStart = ray + shadowStep * maxDistance * (i/samples);
+		vec3 segmentEnd = ray + shadowStep * maxDistance * (i+1)/samples;
 
-		vec3 samplePos = BiasShadowProjection(ray + shadowStep * noise * maxDistance) * 0.5 + 0.5;
+		vec3 samplePos = BiasShadowProjection(mix(segmentStart, segmentEnd, noise)) * 0.5 + 0.5;
+		// vec3 samplePos = BiasShadowProjection(ray + shadowStep * noise * maxDistance) * 0.5 + 0.5;
 		
 		#if defined IRIS_FEATURE_SEPARATE_HARDWARE_SAMPLERS
 		float transparentShadow = shadow2D(shadowtex0HW, samplePos).r;
@@ -72,6 +79,7 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	if(waterSamples != 0){
 		result.y /= waterSamples;
 	}
+	show(result);
 
 	return result;
 }
