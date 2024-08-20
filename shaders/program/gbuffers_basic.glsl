@@ -32,7 +32,7 @@ vec4 ProjectViewSpace(vec3 viewSpacePosition) {
 	return vec4(projMAD(gbufferProjection, viewSpacePosition), viewSpacePosition.z * gbufferProjection[2].w);
 }
 
-#include "/userProgram/Terrain_Deformation.vsh"
+#include "/UserProgram/Terrain_Deformation.vsh"
 #include "/lib/Vertex/Vertex_Displacements.vsh"
 
 void main() {
