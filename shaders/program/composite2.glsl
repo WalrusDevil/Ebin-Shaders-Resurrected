@@ -244,7 +244,21 @@ void main() {
     #endif
 
     #if defined WORLD_OVERWORLD && defined CLOUD3D
-        vec4 cloud = textureLod(colortex5, refractedTexCoord, VolCloudLOD);
+        vec4 cloud;
+        
+        const ivec2 offsets[4] = ivec2[](
+        ivec2(2, 0),
+        ivec2(0, 2),
+        ivec2(-2, 0),
+        ivec2(0, -2)
+        );
+
+        if(frontDepth == 1.0 && all(equal(textureGatherOffsets(depthtex0, texcoord, offsets), vec4(1.0)))){
+            cloud = textureLod(colortex5, refractedTexCoord, VolCloudLOD);
+        } else {
+            cloud = texture(colortex5, refractedTexCoord);
+        }
+
         cloud.rgb = pow2(cloud.rgb) * 50.0;
         if (isEyeInWater == 1.0) {
             cloud.a = clamp01(mix(cloud.a, 0.0, pow4(length(abs(refractedTexCoord - 0.5) * 2))));

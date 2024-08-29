@@ -10,7 +10,11 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	return vec2(0.0);
 #endif
 	
-	cfloat samples = VL_QUALITY;
+	float samples = VL_QUALITY;
+	float sampleOffsetNoise = InterleavedGradientNoise(floor(gl_FragCoord.xy), int(samples + 1));
+	samples = floor(mix(samples, samples + 2, sampleOffsetNoise));
+	
+
 	float waterSamples = 0;
 	vec3 ray = normalize(position);
 	
