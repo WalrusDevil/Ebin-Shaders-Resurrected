@@ -1,6 +1,6 @@
 const int shadowMapResolution = 8192; // [1024 2048 3072 4096 6144 8192 16384]
 const float sunPathRotation = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
-const float shadowDistance = 256; // [128 192 256 512]
+const float shadowDistance = 512; // [128 192 256 512]
 const float shadowIntervalSize = 4.0;
 
 const bool shadowHardwareFiltering = true;
@@ -49,7 +49,7 @@ const int colortex4Format = RGBA32F;
 ** composite0 Buffers **
 const int colortex5Format = RGBA16;
 const int colortex6Format = RG8;
-const int colortex11Format = RGB16F;
+const int colortex11Format = RGB32F;
 
 
 

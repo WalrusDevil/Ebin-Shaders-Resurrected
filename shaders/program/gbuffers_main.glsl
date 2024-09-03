@@ -11,14 +11,15 @@ varying mat3 tbnMatrix;
 
 varying mat2x3 position;
 varying mat2x3 preAcidPosition;
+varying mat2x3 prePortalPosition;
+
+varying vec3 midblock;
 
 varying vec3 worldDisplacement;
 
 flat varying float materialIDs;
 
 varying float blocklight;
-
-varying vec3 blockCentre;
 
 #include "/lib/Uniform/Shading_Variables.glsl"
 
@@ -67,6 +68,8 @@ uniform float sunAngle;
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
 #endif
+
+#include "/lib/Acid/portals.glsl"
 
 vec2 GetDefaultLightmap() {
     vec2 lightmapCoord = mat2(gl_TextureMatrix[1]) * gl_MultiTexCoord1.st;
@@ -118,7 +121,7 @@ void main() {
     materialIDs = max(materialIDs, blockEntityId);
     #endif
 
-    
+    midblock = at_midBlock.xyz;
 
     color = gl_Color.rgb;
     texcoord = gl_MultiTexCoord0.st;
@@ -132,15 +135,20 @@ void main() {
 
     vec3 worldSpacePosition = GetWorldSpacePosition();
 
-    worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
+    prePortalPosition[1] = worldSpacePosition;
+    // prePortalPosition[0] = mat3(gbufferModelView) * prePortalPosition[1];
+
+    worldSpacePosition += cameraPosition;
+    doPortals(worldSpacePosition, at_midBlock.xyz);
+    worldSpacePosition -= cameraPosition;
     
     preAcidPosition[1] = worldSpacePosition;
-    preAcidPosition[0] = mat3(gbufferModelView) * preAcidPosition[1];
+    // preAcidPosition[0] = mat3(gbufferModelView) * preAcidPosition[1];
+
+    worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
 
     position[1] = worldSpacePosition + worldDisplacement;
     position[0] = mat3(gbufferModelView) * position[1];
-    blockCentre = position[1] + gbufferModelViewInverse[3].xyz;
-    blockCentre += at_midBlock.xyz / 64;
 
     gl_Position = ProjectViewSpace(position[0]);
 
@@ -312,7 +320,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 #include "/lib/iPBR/iPBR.glsl"
 #include "/lib/Fragment/EndPortal.fsh"
-#include "/lib/Misc/Euclid.glsl"
+#include "/lib/Acid/portals.glsl"
 
 #if defined gbuffers_water
 /* RENDERTARGETS: 0,3,8,13 */
@@ -325,6 +333,8 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 #include "/lib/Exit.glsl"
 
 void main() {
+    doPortals(prePortalPosition[1] + cameraPosition, midblock);
+
     vec2 vertLightmap = vertLightmap;
     vec2 coord = texcoord;
 
@@ -413,7 +423,7 @@ void main() {
     }
     #endif
 
-    vec3 sunlight = vec3(ComputeSunlight(preAcidPosition[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
+    vec3 sunlight = vec3(ComputeSunlight(prePortalPosition[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
     vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), mat3(gbufferModelView) * normal, PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
 
     gl_FragData[3] = vec4(sunlight, 1.0);
@@ -482,7 +492,7 @@ void main() {
         blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
     }
 
-    gl_FragData[4] = vec4(preAcidPosition[1], 1.0);
+    gl_FragData[4] = vec4(prePortalPosition[1], 1.0);
     #endif
 
     exit();

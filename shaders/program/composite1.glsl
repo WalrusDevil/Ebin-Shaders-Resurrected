@@ -216,10 +216,10 @@ void main() {
 	backPos[0] = CalculateViewSpacePosition(vec3(texcoord, frontDepth));
 	backPos[1] = mat3(gbufferModelViewInverse) * backPos[0];	
 
-	mat2x3 preAcidPos;
+	mat2x3 prePortalPosition;
 	show(texture(colortex11, texcoord).rgb);
-	preAcidPos[1] = texture(colortex11, texcoord).rgb;
-	preAcidPos[0] = mat3(gbufferModelView) * preAcidPos[1];
+	prePortalPosition[1] = texture(colortex11, texcoord).rgb;
+	prePortalPosition[0] = mat3(gbufferModelView) * prePortalPosition[1];
 
 	#ifdef WORLD_OVERWORLD
 	vec4 cloud = CalculateClouds3(backPos[1], frontDepth);
@@ -238,7 +238,7 @@ void main() {
 
 	vec3 viewSpacePosition0 = CalculateViewSpacePosition(vec3(texcoord, backDepth));
 	
-	vec3 sunlight = ComputeSunlight(preAcidPos[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
+	vec3 sunlight = ComputeSunlight(prePortalPosition[1], normal, geometryNormal, 1.0, SSS, skyLightmap);
 
 	if(mask.water == 1.0){
 		float distCoeff = GetDistanceCoeff(backPos[1]);

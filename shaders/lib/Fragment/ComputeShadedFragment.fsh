@@ -126,7 +126,8 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	shading.torchlight = max(shading.torchlight, GetHeldLight(position[0], normal, mask.hand));
 	#endif
 
-	shading.torchlight = clamp01(pow(shading.torchlight, 10.0) + shading.torchlight * 0.7 * 1.5);
+	shading.torchlight  = clamp01(shading.torchlight * (33.05 / 32.0) - (1.05 / 32.0));
+	shading.torchlight = 20.0 * pow(shading.torchlight, 5.06);
 
 	shading.torchlight *= GI.a;
 
@@ -156,32 +157,8 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	lightmap.ambient = vec3(shading.ambient) * vec3(1.0, 1.2, 1.4);
 	
 	
-	#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
-		vec3 torchlightColor;
 
-		vec3 voxelPosInterp = mapVoxelPosInterp(position[1]);
-
-		if(isWithinVoxelBoundsInterp(voxelPosInterp)){
-			if(frameCounter % 2 == 0){
-				torchlightColor = normalize(texture(lightVoxelTex, mapVoxelPosInterp(position[1])).rgb);
-			} else {
-				torchlightColor = normalize(texture(lightVoxelFlipTex, mapVoxelPosInterp(position[1])).rgb);
-			}
-		} else {
-			torchlightColor = torchColor;
-		}
-
-		torchlightColor = clamp01(torchlightColor);
-		
-
-		if(torchlightColor == vec3(0.0)){
-			torchlightColor = torchColor;
-		}
-		
-		lightmap.torchlight = shading.torchlight * torchlightColor;
-	#else
-		lightmap.torchlight = shading.torchlight * torchColor;
-	#endif
+	lightmap.torchlight = shading.torchlight * torchColor;
 	
 	lightmap.skylight *= clamp01(1.0 - dot(lightmap.GI, vec3(1.0)) / 6.0);
 	
