@@ -143,7 +143,6 @@ void main() {
     worldSpacePosition -= cameraPosition;
     
     preAcidPosition[1] = worldSpacePosition;
-    // preAcidPosition[0] = mat3(gbufferModelView) * preAcidPosition[1];
 
     worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
 
@@ -177,6 +176,7 @@ uniform sampler2D specular;
 uniform sampler2D noisetex;
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
+uniform sampler2D portalshadowtex;
 uniform sampler2D shadowcolor0;
 uniform sampler2D bluenoisetex;
 
@@ -334,6 +334,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 void main() {
     doPortals(prePortalPosition[1] + cameraPosition, midblock);
+    bool rightOfPortal = prePortalPosition[1].z + cameraPosition.z + midblock.z / 64 > 0;
 
     vec2 vertLightmap = vertLightmap;
     vec2 coord = texcoord;
@@ -423,7 +424,7 @@ void main() {
     }
     #endif
 
-    vec3 sunlight = vec3(ComputeSunlight(prePortalPosition[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
+    vec3 sunlight = vec3(ComputeSunlight(preAcidPosition[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g, rightOfPortal));
     vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), mat3(gbufferModelView) * normal, PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
 
     gl_FragData[3] = vec4(sunlight, 1.0);
@@ -492,7 +493,7 @@ void main() {
         blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
     }
 
-    gl_FragData[4] = vec4(prePortalPosition[1], 1.0);
+    gl_FragData[4] = vec4(preAcidPosition[1], float(rightOfPortal));
     #endif
 
     exit();

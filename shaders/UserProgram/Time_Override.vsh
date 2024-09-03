@@ -14,12 +14,15 @@
  * All outputs are floating point degree units.
 */
 
+#include "/lib/Acid/time.glsl"
+
 #define time frameTimeCounter
 #define dayCycle sunAngle
 #define position cameraPosition
 
 void UserRotation() {
-	timeAngle = position.x * 25.0;
+	timeAngle = getTimeAngle(getTime(position.x));
+	//timeAngle = position.x * 25.0;
 }
 
 void TimeOverride() {

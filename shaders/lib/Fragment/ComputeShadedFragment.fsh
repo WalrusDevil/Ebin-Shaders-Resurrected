@@ -95,11 +95,7 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	#ifdef WORLD_OVERWORLD
 		shading.skylight = pow2(skyLightmap);
 		
-		if(preCalculatedSunlight.r >= 0.0){
-			shading.sunlight = preCalculatedSunlight;
-		} else {
-			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS, skyLightmap));
-		}
+		shading.sunlight = preCalculatedSunlight;
 		
 		shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
 		shading.skylight *= GI.a;

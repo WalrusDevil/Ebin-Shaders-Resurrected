@@ -1,6 +1,7 @@
 #if !defined CALCULATEFOGFACTOR_GLSL
 #define CALCULATEFOGFACTOR_GLSL
 
+#include "/lib/Acid/portals.glsl"
 
 #define FOG_POWER 3.0 // [1.0 1.5 2.0 3.0 4.0 6.0 8.0]
 #define FOG_START 0.2 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8]
@@ -20,6 +21,11 @@ float CalculateFogFactor(vec3 position) {
 #endif
 	
 	float fogfactor  = length(position) / far;
+	float nearestPortalDistance;
+	float nearestPortalX = getNearestPortalX(cameraPosition.x, nearestPortalDistance);
+
+	float portalFogFactor = 1.0 - smoothstep(PORTAL_RENDER_DISTANCE / 2, PORTAL_RENDER_DISTANCE, nearestPortalDistance / 16);
+	fogfactor *= 1.0 + portalFogFactor;
 
 		  fogfactor  = clamp01(fogfactor - FOG_START) / (1.0 - FOG_START);
 		  fogfactor  = pow(fogfactor, FOG_POWER);

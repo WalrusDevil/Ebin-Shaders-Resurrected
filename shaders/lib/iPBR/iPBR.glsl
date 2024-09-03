@@ -88,40 +88,16 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     // =================================================================================
 
     switch(int(ID + 0.5)){
-      case IPBR_ICE:
-        applyiPBR(data.perceptualSmoothness, 1.0);
-        applyiPBR(data.baseReflectance, 0.04);
-        break;
-
       case IPBR_NETHER_PORTAL:
         applyiPBR(data.perceptualSmoothness, 1.0);
         applyiPBR(data.baseReflectance, 0.02);
         applyiPBR(data.emission, 0.7);
         break;
 
-      case IPBR_IRON:
-        applyiPBR(data.baseReflectance, 230.0/255.0);
-        applyiPBR(data.perceptualSmoothness, data.hsv.b);
-        break;
-
-      case IPBR_GOLD:
-        applyiPBR(data.baseReflectance, 231.0/255.0);
-        applyiPBR(data.perceptualSmoothness, data.hsv.b);
-        break;
-
-      case IPBR_GLASS:
-        applyiPBR(data.baseReflectance, 0.04);
-        applyiPBR(data.perceptualSmoothness, 0.8);
-
       case IPBR_LAVA:
         applyiPBR(data.emission, 1.0);
         break;
 
-      case IPBR_GEM:
-        applyiPBR(data.SSS, 0.5);
-        applyiPBR(data.baseReflectance, 0.03);
-        applyiPBR(data.perceptualSmoothness, 1.0);
-        break;
 
       case IPBR_SEA_LANTERN:
         applyiPBR(data.emission, pow2(1.0 - data.hsv.g) * 0.7);
@@ -148,13 +124,6 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.emission, data.hsv.b * max(0.01, step(0.9, data.hsv.b)));
         break;
 
-      case IPBR_POWERED_RAIL:
-        if(data.hsv.r < 72.0/255.0 && data.hsv.r > 25.0/255.0 && data.hsv.g > 0.6){ // gold
-          applyiPBR(data.baseReflectance, 231.0/255.0);
-          applyiPBR(data.perceptualSmoothness, 0.9);
-        }
-        break;
-
       case IPBR_REDSTONE_WIRE:
         applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6), 0.001));
         break;
@@ -166,30 +135,16 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       case IPBR_NO_LIGHT_REDSTONE:
         applyiPBR(data.emission, max((data.hsv.b - 0.4) * rcp(0.6) * step(0.8, data.hsv.g), 0.001));
         break;
-
-      case IPBR_END_PORTAL_FRAME:
-        if(data.hsv.r > 70.0 / 360.0 && data.hsv.r < 160.0/360.0 && data.hsv.b > 0.3){
-          applyiPBR(data.emission, 1.0);
-        } else {
-          applyiPBR(data.emission, 0.01);
-        }
-
-      case IPBR_ENCHANTING_TABLE:
-        if(data.albedo.b > data.albedo.r && data.hsv.g > 0.1 && data.hsv.b > 0.5){
-          applyiPBR(data.emission, 1.0);
-        } else {
-          applyiPBR(data.emission, 0.01);
-        }
     }
 
-    if(IPBR_IS_RAIL(ID)){
-      applyiPBR(data.baseReflectance, data.hsv.g < 0.2 ? 230.0/255.0 : 0.0);
-      applyiPBR(data.perceptualSmoothness, data.hsv.g < 0.2 ? 0.9 : 0.0);
+    // if(IPBR_IS_RAIL(ID)){
+    //   applyiPBR(data.baseReflectance, data.hsv.g < 0.2 ? 230.0/255.0 : 0.0);
+    //   applyiPBR(data.perceptualSmoothness, data.hsv.g < 0.2 ? 0.9 : 0.0);
 
-      if((data.hsv.r > 357.0/360.0 || data.hsv.r < 5.0/255.0) && data.hsv.b > 0.5 && data.hsv.g > 0.5){
-        applyiPBR(data.emission, 0.4);
-      }
-    }
+    //   if((data.hsv.r > 357.0/360.0 || data.hsv.r < 5.0/255.0) && data.hsv.b > 0.5 && data.hsv.g > 0.5){
+    //     applyiPBR(data.emission, 0.4);
+    //   }
+    // }
 
     if(IPBR_IS_FOLIAGE(ID)){
       applyiPBR(data.SSS, 1.0);
@@ -200,21 +155,6 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
     if(IPBR_IS_FROGLIGHT(ID)){
       applyiPBR(data.emission, pow2(1.0 - data.hsv.g) * 0.5);
     }
-
-    if(IPBR_IS_COPPER(ID)){
-      applyiPBR(data.baseReflectance, data.emission > 0.1 ? 0.0 : 234.0/255.0);
-      applyiPBR(data.perceptualSmoothness, max(data.albedo.r, 0.3));
-    }
-
-    #ifdef GLOWING_ORES
-      if(IPBR_IS_OVERWORLD_ORE(ID)){
-        applyiPBR(data.emission, clamp01(step(0.3, data.hsv.g) + step(0.8, data.hsv.b)));
-      }
-
-      if(IPBR_IS_NETHER_ORE(ID)){
-        applyiPBR(data.emission, step(0.6, data.hsv.b));
-      }
-    #endif
 
     // =================================================================================
 

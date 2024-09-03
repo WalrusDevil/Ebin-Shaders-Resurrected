@@ -14,15 +14,13 @@ flat varying vec3 vertNormal;
 varying float materialIDs;
 
 varying vec3 position;
+varying vec3 prePortalPosition;
+varying vec3 shadowPosition;
+varying vec3 midblock;
 
 
 /***********************************************************************/
 #if defined vsh
-
-#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
-layout (rgba16f) uniform image3D lightvoxel;
-layout (rgba16f) uniform image3D lightvoxelf;
-#endif
 
 attribute vec4 mc_Entity;
 attribute vec2 mc_midTexCoord;
@@ -70,10 +68,13 @@ vec3 GetWorldSpacePositionShadow() {
 	return transMAD(shadowModelViewInverse, transMAD(gl_ModelViewMatrix, gl_Vertex.xyz));
 }
 
+
+
 #include "/lib/Vertex/Waving.vsh"
 #include "/lib/Vertex/Vertex_Displacements.vsh"
 
 #include "/lib/Misc/ShadowBias.glsl"
+#include "/lib/Acid/portals.glsl"
 
 vec4 ProjectShadowMap(vec4 position) {
 	position = vec4(projMAD(shadowProjection, transMAD(shadowViewMatrix, position.xyz)), position.z * shadowProjection[2].w + shadowProjection[3].w);
@@ -147,6 +148,8 @@ void main() {
 		gl_Position = ftransform();
 		return;
 	#endif
+
+	midblock = at_midBlock.xyz;
 	
 	materialIDs  = mc_Entity.x;
 	
@@ -165,7 +168,10 @@ void main() {
 	
 	
 	position  = GetWorldSpacePositionShadow();
-	vec3 previousPosition = position + (previousCameraPosition - cameraPosition);
+	prePortalPosition = position;
+	position += cameraPosition;
+	doPortals(position, at_midBlock.xyz);
+	position -= cameraPosition;
 	    //  position += CalculateVertexDisplacements(position);
 
 
@@ -179,6 +185,8 @@ void main() {
 	if(renderStage == MC_RENDER_STAGE_ENTITIES){
 		gl_Position = vec4(-1.0);
 	}
+
+	shadowPosition = gl_Position.xyz;
 }
 
 #endif
@@ -199,8 +207,21 @@ uniform vec3 cameraPosition;
 
 #include "/lib/Utility.glsl"
 #include "/lib/Fragment/ComputeWaveNormals.fsh"
+#include "/lib/Acid/portals.glsl"
+
+layout(r32ui) uniform uimage2D portalShadowMap;
 
 #define pow2(x) x*x
+
+void writeToImageShadowMap(){
+    float depth = gl_FragCoord.z;
+    uint depthInt = floatBitsToUint(depth);
+    uint oldDepth = imageAtomicMin(portalShadowMap, ivec2(floor(shadowPosition.xy * PORTAL_SHADOW_RESOLUTION / 2) + PORTAL_SHADOW_RESOLUTION / 2), depthInt);
+
+    if (oldDepth == 0){ // this is not how atomics work but in this case it is fine but not really but it works
+      imageStore(portalShadowMap, ivec2(floor(shadowPosition.xy * PORTAL_SHADOW_RESOLUTION / 2) + PORTAL_SHADOW_RESOLUTION / 2), uvec4(depthInt, uvec3(0)));
+    }
+}
 
 void main() {
 	#ifndef SHADOWS
@@ -209,16 +230,35 @@ void main() {
 
 	vec4 diffuse = color * texture(gtexture, texcoord);
 
-	if (materialIDs == IPBR_WATER) {
-		diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
-		#ifdef WATER_CAUSTICS
-			SetupWaveFBM();
-			float height = GetWaves(position.xz + cameraPosition.xz);
-			height *= height * height * height;
-			diffuse.a = (1.0 - height);
-			diffuse.a = pow2(diffuse.a);
-		#endif
+	// what we need is for the stuff on the *other side of the portal* to write to the portal shadow map
+	// if we are before the portal, this is the stuff on our right
+	// otherwise this is the stuff on our left
+	// of course, this only applies if the position is within a portal transition zone
+
+	float nearestPortalX = getNearestPortalX(cameraPosition.x);
+
+	vec3 blockCentre = prePortalPosition + cameraPosition + midblock / 64;
+
+	if(
+		((cameraPosition.x < nearestPortalX && blockCentre.z > 2) ||
+		(cameraPosition.x > nearestPortalX && blockCentre.z < -1)) &&
+		abs(blockCentre.x - nearestPortalX + 0.5) < PORTAL_RENDER_DISTANCE * 16 / 2
+	){
+		writeToImageShadowMap();
+		discard;
 	}
+	
+
+	// if (materialIDs == IPBR_WATER) {
+	// 	diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
+	// 	#ifdef WATER_CAUSTICS
+	// 		SetupWaveFBM();
+	// 		float height = GetWaves(position.xz + cameraPosition.xz);
+	// 		height *= height * height * height;
+	// 		diffuse.a = (1.0 - height);
+	// 		diffuse.a = pow2(diffuse.a);
+	// 	#endif
+	// }
 	
 	gl_FragData[0] = diffuse;
 	gl_FragData[1] = vec4(vertNormal.xy * 0.5 + 0.5, 0.0, 1.0);

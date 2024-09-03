@@ -65,6 +65,7 @@ uniform sampler2D noisetex;
 
 uniform sampler2D shadowtex0;
 uniform sampler2D shadowtex1;
+uniform sampler2D portalshadowtex;
 
 uniform sampler2D shadowcolor0;
 uniform sampler2D shadowcolor1;

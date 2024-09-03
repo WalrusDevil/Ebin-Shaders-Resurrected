@@ -1,4 +1,5 @@
 const int shadowMapResolution = 8192; // [1024 2048 3072 4096 6144 8192 16384]
+#define PORTAL_SHADOW_RESOLUTION 8192
 const float sunPathRotation = -40.0; // [-60.0 -50.0 -40.0 -30.0 -20.0 -10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0]
 const float shadowDistance = 512; // [128 192 256 512]
 const float shadowIntervalSize = 4.0;
@@ -49,7 +50,7 @@ const int colortex4Format = RGBA32F;
 ** composite0 Buffers **
 const int colortex5Format = RGBA16;
 const int colortex6Format = RG8;
-const int colortex11Format = RGB32F;
+const int colortex11Format = RGBA16F;
 
 
 
@@ -87,7 +88,7 @@ const float zShrink = 4.0;
 #define BLOCKER_SEARCH_RADIUS 0.5
 
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
-#define WATER_COLOR vec4(0.015, 0.04, 0.098, 1.0)
+#define WATER_COLOR vec4(0.001, 0.068, 0.098, 1.0)
 
 #define SUBSURFACE_SCATTERING
 
@@ -164,17 +165,17 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define WAVE_MULT  1.0 // [0.0 0.5 1.0 1.5 2.0]
 #define WAVE_SPEED 1.0 // [0.0 0.5 1.0 2.0]
 
-//#define DEFORM
-#define DEFORMATION 1 // [1 2 3 4]
+#define DEFORM
+#define DEFORMATION 4 // [1 2 3 4]
 
 //#define HIDE_ENTITIES
 //#define CLEAR_WATER
 
-//#define TIME_OVERRIDE
-#define TIME_OVERRIDE_MODE 1 // [1 2 3]
+#define TIME_OVERRIDE
+#define TIME_OVERRIDE_MODE 3 // [1 2 3]
 #define CONSTANT_TIME_HOUR 3 // [0 3 6 9 12 15 18 21]
 #define CUSTOM_DAY_NIGHT   1 // [1 2]
-#define CUSTOM_TIME_MISC   1 // [1 2]
+#define CUSTOM_TIME_MISC   2 // [1 2]
 
 #define SUN_ANGULAR_PERCENTAGE 0.0006
 
