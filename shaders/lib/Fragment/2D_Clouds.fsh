@@ -65,7 +65,7 @@ vec3 Compute2DCloudPlane(vec3 wDir, vec3 wPos, vec3 transmit, float phase) {
 	cvec3  weights  = vec3(0.5, 0.135, 0.075);
 	cfloat weight   = weights.x + weights.y + weights.z;
 	
-	vec2 coord = wDir.xz * ((cloudHeight - wPos.y) / wDir.y) + wPos.xz;
+	vec2 coord = wDir.zx * ((cloudHeight - wPos.y) / wDir.y) + wPos.zx;
 	vec3 RAY = wDir * ((cloudHeight - wPos.y) / wDir.y);
 	
 	mat4x2 coords;

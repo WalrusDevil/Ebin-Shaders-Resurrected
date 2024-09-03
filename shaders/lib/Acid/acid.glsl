@@ -48,5 +48,4 @@ void incrementIntensityAfterX(in float startX, in float playerX, in float increm
 
 
 void doAcid(inout vec3 position, in vec3 playerPos){
-  doRotationEffect(position, 1, 1, 0, 14000, playerPos.x);
 }

@@ -81,7 +81,7 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 	bool useImageShadowMap = (
 		((cameraPosition.x < nearestPortalX && rightOfPortal) ||
 		(cameraPosition.x > nearestPortalX && !rightOfPortal)) &&
-		abs((worldSpacePosition.x + cameraPosition.x) - nearestPortalX) < PORTAL_RENDER_DISTANCE * 16 / 2
+		abs((worldSpacePosition.x + cameraPosition.x) - nearestPortalX + 0.5) < PORTAL_RENDER_DISTANCE * 16 / 2
 	);
 
 	noise = vec4(InterleavedGradientNoise(floor(gl_FragCoord.xy)));
