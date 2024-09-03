@@ -45,7 +45,7 @@ float CloudFBM(vec2 coord, out mat4x2 c, vec3 weights, float weight) {
 	cloud += GetNoise(c[3] * 3.0 + time) * 0.022;
 	cloud += GetNoise(c[3] * 9.0 + time * 3.0) * 0.014;
 	
-	return cloud * 0.63;
+	return cloud * 0.7;
 }
 
 vec3 Compute2DCloudPlane(vec3 wDir, vec3 wPos, vec3 transmit, float phase) {

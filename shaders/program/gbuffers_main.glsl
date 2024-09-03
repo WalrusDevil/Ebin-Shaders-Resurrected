@@ -10,6 +10,7 @@ flat varying ivec2 textureResolution;
 varying mat3 tbnMatrix;
 
 varying mat2x3 position;
+varying mat2x3 preAcidPosition;
 
 varying vec3 worldDisplacement;
 
@@ -132,6 +133,9 @@ void main() {
     vec3 worldSpacePosition = GetWorldSpacePosition();
 
     worldDisplacement = CalculateVertexDisplacements(worldSpacePosition);
+    
+    preAcidPosition[1] = worldSpacePosition;
+    preAcidPosition[0] = mat3(gbufferModelView) * preAcidPosition[1];
 
     position[1] = worldSpacePosition + worldDisplacement;
     position[0] = mat3(gbufferModelView) * position[1];
@@ -234,6 +238,8 @@ float LOD;
 #endif
 
 vec4 GetDiffuse(vec2 coord, float materialIDs) {
+    vec3 color = color;
+
     vec4 diffuse;
     if (materialIDs == 1) { // water
         diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
@@ -243,7 +249,20 @@ vec4 GetDiffuse(vec2 coord, float materialIDs) {
         return diffuse;
     }
 
+    if(materialIDs == 3){ // grass
+        vec3 color2 = hsv(color);
+        if(color2.g > 0.0){
+            color2.r = 104/360.0;
+            color2.g = 0.55;
+            color2.b = 0.85;
+        }
+        color = rgb(color2);
+    }
 
+    if(materialIDs == 2001){ // leaves
+        color = vec3(51.0/255.0, 153.0/255.0, 51.0/255.0);
+
+    }
 
     diffuse = vec4(color.rgb, 1.0) * GetTexture(gtexture, coord);
 
@@ -293,11 +312,10 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 #include "/lib/iPBR/iPBR.glsl"
 #include "/lib/Fragment/EndPortal.fsh"
-#include "/lib/Fragment/TerrainParallax.fsh"
 #include "/lib/Misc/Euclid.glsl"
 
 #if defined gbuffers_water
-/* RENDERTARGETS: 0,3,8,13,11 */
+/* RENDERTARGETS: 0,3,8,13 */
 #elif defined gbuffers_textured || defined gbuffers_hand
 /* RENDERTARGETS: 0,3,8,13 */
 #else
@@ -308,7 +326,7 @@ vec2 getdirectionalLightingFactor(vec3 faceNormal, vec3 mappedNormal, vec3 world
 
 void main() {
     vec2 vertLightmap = vertLightmap;
-    vec2 coord = ComputeParallaxCoordinate(texcoord, position[1]);
+    vec2 coord = texcoord;
 
     PBRData PBR;
     PBR = getRawPBRData(coord);
@@ -378,6 +396,10 @@ void main() {
         PBR.baseReflectance = 0.0;
         PBR.perceptualSmoothness = 0.0;
     }
+
+
+
+    gl_FragData[5] = vec4(1.0);
     #endif
 
     #if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
@@ -391,7 +413,7 @@ void main() {
     }
     #endif
 
-    vec3 sunlight = vec3(ComputeSunlight(position[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
+    vec3 sunlight = vec3(ComputeSunlight(preAcidPosition[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
     vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), mat3(gbufferModelView) * normal, PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
 
     gl_FragData[3] = vec4(sunlight, 1.0);
@@ -460,11 +482,7 @@ void main() {
         blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
     }
 
-    if (PBR.emission == 0.0) {
-        gl_FragData[4] = vec4(0.0);
-    } else {
-        gl_FragData[4] = vec4(blockLightColor, 0.0);
-    }
+    gl_FragData[4] = vec4(preAcidPosition[1], 1.0);
     #endif
 
     exit();

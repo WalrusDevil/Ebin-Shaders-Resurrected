@@ -1,3 +1,6 @@
+#if !defined UTILITY_GLSL
+#define UTILITY_GLSL
+
 cfloat PI  = radians(180.0);
 cfloat HPI = radians( 90.0);
 cfloat TAU = radians(360.0);
@@ -10,7 +13,7 @@ uniform float frameTimeCounter;
 #define EBS eyeBrightnessSmooth.g / 240.0
 
 //#define FREEZE_TIME
-//#define FRAMERATE_BOUND_TIME
+#define FRAMERATE_BOUND_TIME
 #define ANIMATION_FRAMERATE 60.0 // [24.0 30.0 60.0 120.0 90.0 144.0 240.0]
 
 #ifdef FREEZE_TIME
@@ -112,3 +115,5 @@ float InterleavedGradientNoise(vec2 coord){
 float InterleavedGradientNoise(vec2 coord, int frame){
 	return InterleavedGradientNoise(coord + 5.588238 * (frame & 63));
 }
+
+#endif

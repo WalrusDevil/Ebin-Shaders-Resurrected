@@ -39,6 +39,7 @@ uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
 
 uniform int entityId;
+uniform int renderStage;
 
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
@@ -81,10 +82,11 @@ vec4 ProjectShadowMap(vec4 position) {
 	
 	position.xy /= biasCoeff;
 	
-	float acne  = 25.0 * pow4(clamp01(1.0 - vertNormal.z));
-	      acne += 0.5 + pow2(biasCoeff) * 8.0;
+	// float acne  = 25.0 * pow4(clamp01(1.0 - vertNormal.z));
+	//       acne += 0.5 + pow2(biasCoeff) * 8.0;
 	
-	position.z += acne / shadowMapResolution;
+	// position.z += acne / shadowMapResolution;
+	position.z += biasCoeff * 16.0 / shadowMapResolution;
 	
 	position.z /= zShrink; // Shrink the domain of the z-buffer. This counteracts the noticable issue where far terrain would not have shadows cast, especially when the sun was near the horizon
 	
@@ -164,25 +166,7 @@ void main() {
 	
 	position  = GetWorldSpacePositionShadow();
 	vec3 previousPosition = position + (previousCameraPosition - cameraPosition);
-	     position += CalculateVertexDisplacements(position);
-
-	
-
-	#if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES
-	if(IPBR_EMITS_LIGHT(materialIDs)){
-		ivec3 voxelPos = mapPreviousVoxelPos(previousPosition + at_midBlock * rcp(64.0));
-
-		if(isWithinVoxelBounds(voxelPos)) {
-			vec3 lightColor = getLightColor(int(materialIDs));
-
-			if(EVEN_FRAME){
-				imageStore(lightvoxelf, voxelPos, vec4(lightColor, 1.0));
-			} else {
-				imageStore(lightvoxel, voxelPos, vec4(lightColor, 1.0));
-			}
-		}
-	}
-	#endif
+	    //  position += CalculateVertexDisplacements(position);
 
 
 	gl_Position = ProjectShadowMap(position.xyzz);
@@ -192,12 +176,8 @@ void main() {
 	
 	color.rgb *= clamp01(vertNormal.z);
 	
-	if (entityId == 1) {
-	#ifndef PLAYER_SHADOW
-		color.a = 0.0;
-	#elif !defined PLAYER_GI_BOUNCE
-		color.rgb = vec3(0.0);
-	#endif
+	if(renderStage == MC_RENDER_STAGE_ENTITIES){
+		gl_Position = vec4(-1.0);
 	}
 }
 

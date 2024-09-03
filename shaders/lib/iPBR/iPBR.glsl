@@ -113,20 +113,6 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
         applyiPBR(data.baseReflectance, 0.04);
         applyiPBR(data.perceptualSmoothness, 0.8);
 
-      case IPBR_GRASS_BLOCK:
-        float isGrass = float(
-          data.albedo.g - data.albedo.r > 0.05 || // green grass
-          (data.hsv.y < 0.1 && data.hsv.z > 0.5) // snow
-        );
-        applyiPBR(data.SSS, 0.2 * isGrass);
-        applyiPBR(data.baseReflectance, 0.03 * isGrass);
-        applyiPBR(data.perceptualSmoothness, 0.3 * isGrass * smoothstep(0.16, 0.5, data.hsv.b));
-        break;
-
-      case IPBR_SAND:
-        applyiPBR(data.SSS, 0.35);
-        break;
-
       case IPBR_LAVA:
         applyiPBR(data.emission, 1.0);
         break;

@@ -79,7 +79,6 @@ vec2 ComputeVolumetricLight(vec3 position, vec3 frontPos, vec2 noise, float wate
 	if(waterSamples != 0){
 		result.y /= waterSamples;
 	}
-	show(result);
 
 	return result;
 }

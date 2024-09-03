@@ -5,4 +5,4 @@
 #define ShaderStage -1
 
 
-#include "/program/gbuffers_main.glsl"
+#include "/program/gbuffers_discard.glsl"

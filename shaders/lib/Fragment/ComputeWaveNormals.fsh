@@ -128,48 +128,7 @@ vec2 GetWaveDifferentials(vec2 coord, cfloat scale) { // Get finite wave differe
 
 #if defined gbuffers_water || defined composite2
 vec2 GetParallaxWave(vec2 worldPos, float angleCoeff) {
-#ifndef WATER_PARALLAX
 	return worldPos;
-#endif
-
-#ifdef composite2
-	return worldPos;
-#else
-	
-	cfloat parallaxDist = TERRAIN_PARALLAX_DISTANCE * 5.0;
-	cfloat distFade     = parallaxDist / 3.0;
-	cfloat MinQuality   = 0.5;
-	cfloat maxQuality   = 1.5;
-	
-	float intensity = clamp01((parallaxDist - length(position[1]) * FOV / 90.0) / distFade) * 0.85 * TERRAIN_PARALLAX_INTENSITY;
-	
-//	if (intensity < 0.01) return worldPos;
-	
-	float quality = clamp(radians(180.0 - FOV) / max1(pow(length(position[1]), 0.25)), MinQuality, maxQuality) * TERRAIN_PARALLAX_QUALITY;
-	
-	vec3  tangentRay = normalize(position[1]) * tbnMatrix;
-	vec3  stepSize = 0.1 * vec3(1.0, 1.0, 1.0);
-	float stepCoeff = -tangentRay.z * 5.0 / stepSize.z;
-	
-	angleCoeff = clamp01(angleCoeff * 2.0) * stepCoeff;
-	
-	vec3 step   = tangentRay   * stepSize;
-	     step.z = tangentRay.z * -tangentRay.z * 5.0;
-	
-	float rayHeight = angleCoeff;
-	float sampleHeight = GetWaves(worldPos) * angleCoeff;
-	
-	float count = 0.0;
-	
-	while(sampleHeight < rayHeight && count++ < 150.0) {
-		worldPos  += step.xy * clamp01(rayHeight - sampleHeight);
-		rayHeight += step.z;
-		
-		sampleHeight = GetWaves(worldPos) * angleCoeff;
-	}
-	
-	return worldPos;
-	#endif
 }
 
 #ifndef composite2
