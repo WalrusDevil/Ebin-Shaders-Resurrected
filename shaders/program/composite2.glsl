@@ -289,7 +289,7 @@ void main() {
     #endif
 
     if (isEyeInWater > 1.0) {
-        color = mix(color, fogColor, vec3(CalculateFogFactor(frontPos[1] * 64)));
+        color = mix(color, fogColor, frontDepth); // this is not a good way of doing fog but it's only for lava and powder snow
     }
 
     gl_FragData[0] = vec4(clamp01(EncodeColor(color)), 1.0);
