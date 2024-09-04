@@ -14,8 +14,8 @@ uniform vec2 pixelSize;
 
 
 void main() {
-#ifdef BLOOM_ENABLED
 	texcoord    = gl_MultiTexCoord0.st;
+#ifdef BLOOM_ENABLED
 	gl_Position = ftransform();
 	
 	vec2 vertexScale = vec2(0.25 + pixelSize.x * 2.0, 0.375 + pixelSize.y * 4.0);

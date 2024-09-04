@@ -55,7 +55,6 @@ uniform float biomeCanRainSmooth;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 
-#if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
 uniform sampler3D colortex4;
 
 uniform mat4 shadowModelView;
@@ -63,11 +62,9 @@ uniform mat4 shadowModelViewInverse;
 
 uniform float sunAngle;
 
-
 #include "/lib/Uniform/Shadow_View_Matrix.vsh"
 #include "/lib/Fragment/PrecomputedSky.glsl"
 #include "/lib/Vertex/Shading_Setup.vsh"
-#endif
 
 #include "/lib/Acid/portals.glsl"
 
@@ -153,9 +150,7 @@ void main() {
 
     tbnMatrix = CalculateTBN(worldSpacePosition);
 
-    #if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
     SetupShading();
-    #endif
 
     // thanks to NinjaMike and Null
     vec2 halfSize = abs(texcoord - mc_midTexCoord.xy);
@@ -247,13 +242,19 @@ float LOD;
 
 vec4 GetDiffuse(vec2 coord, float materialIDs) {
     vec3 color = color;
+    vec3 waterColor = normalize(vec3(63.0/255.0, 118.0/255.0, 228.0/255.0));
 
     vec4 diffuse;
     if (materialIDs == 1) { // water
-        diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
-        #ifdef CLEAR_WATER
-        diffuse.a = 0.25;
-        #endif
+        diffuse = GetTexture(gtexture, coord) * vec4(color, 1.0);
+        float lum = diffuse.r + diffuse.g + diffuse.b;
+        lum /= 3.0;
+        lum = pow(lum, 1.0) * 1.0;
+        lum += 0.0;
+
+        diffuse = vec4(0.1, 0.7, 1.0, 210.0/255.0);
+        diffuse.rgb *= 0.8 * waterColor.rgb;
+        diffuse.rgb *= vec3(lum);
         return diffuse;
     }
 
