@@ -85,7 +85,7 @@ const float zShrink = 4.0;
 #define BLOCKER_SEARCH_RADIUS 0.5
 
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
-#define WATER_COLOR vec4(0.015, 0.04, 0.098, 0.75)
+#define WATER_COLOR vec4(0.015, 0.04, 0.098, 0.82)
 
 #define SUBSURFACE_SCATTERING
 
