@@ -10,8 +10,8 @@ void BilateralUpsample(vec3 normal, float depth, out vec4 GI, out vec2 VL) {
 	
 	float expDepth = ExpToLinearDepth(depth);
 	
-	cfloat kernal = 2.0;
-	cfloat range = kernal * 0.5 - 0.5;
+	cfloat kernel = 2.0;
+	cfloat range = kernel * 0.5 - 0.5;
 	
 	float totalWeight = 0.0;
 	

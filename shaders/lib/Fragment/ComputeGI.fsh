@@ -7,7 +7,7 @@
 #ifndef GI_ENABLED
 	#define ComputeGI(a, b, c, d, e, f) vec3(0.0)
 #else
-vec3 ComputeGI(vec3 worldSpacePosition, vec3 normal, float skyLightmap, cfloat radius, vec2 noise, Mask mask) {
+vec3 ComputeGI(vec3 worldSpacePosition, vec3 normal, float skyLightmap, float radius, vec2 noise, Mask mask) {
 	float distCoeff = GetDistanceCoeff(worldSpacePosition);
 	
 	float lightMult = skyLightmap * (1.0 - distCoeff);

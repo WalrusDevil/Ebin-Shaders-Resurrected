@@ -11,7 +11,7 @@ vec3 UserDeformation(vec3 position) {
 	return position;
 }
 
-vec3 Globe(vec3 position, cfloat radius) {
+vec3 Globe(vec3 position, float radius) {
 	position.y -= length2(position.xz) / radius;
 	
 	return position;

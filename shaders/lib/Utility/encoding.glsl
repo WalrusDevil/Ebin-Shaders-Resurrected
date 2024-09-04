@@ -66,7 +66,7 @@ vec3 DecodeNormal(vec2 encodedNormal) {
 	return vec3(encodedNormal * g, 1.0 - f * 0.5);
 }
 
-float EncodeNormal(vec3 normal, cfloat bits) {
+float EncodeNormal(vec3 normal, float bits) {
 	normal    = clamp(normal, -1.0, 1.0);
 	normal.xy = vec2(atan(normal.x, normal.z), acos(normal.y)) / PI;
 	normal.x += 1.0;
@@ -75,7 +75,7 @@ float EncodeNormal(vec3 normal, cfloat bits) {
 	return normal.x + normal.y * exp2(bits + 2.0);
 }
 
-vec3 DecodeNormal(float enc, cfloat bits) {
+vec3 DecodeNormal(float enc, float bits) {
 	vec4 normal;
 	
 	normal.y    = exp2(bits + 2.0) * floor(enc / exp2(bits + 2.0));
@@ -117,7 +117,7 @@ float EncodeNormalU(vec3 normal, float water) {
 	return uintBitsToFloat(enc.x + enc.y + (1<<23) + enc.z);
 }
 
-float ReEncodeNormal(float enc, cfloat bits) {
+float ReEncodeNormal(float enc, float bits) {
 	uvec2 e = uvec2(floatBitsToUint(enc));
 	e.y = e.y >> 12;
 	e.xy = e.xy & uvec2(4095, 2047);

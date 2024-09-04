@@ -13,11 +13,11 @@ vec2 ComputeParallaxCoordinate(vec2 coord, vec3 position) {
 	cfloat MinQuality   = 0.5;
 	cfloat maxQuality   = 1.5;
 	
-	float intensity = clamp01((parallaxDist - length(position) * FOV / 90.0) / distFade) * 0.85 * TERRAIN_PARALLAX_INTENSITY;
+	float intensity = clamp01((parallaxDist - length(position)) / distFade) * 0.85 * TERRAIN_PARALLAX_INTENSITY;
 	
 	if (intensity < 0.01) { return coord; }
 	
-	float quality = clamp(radians(180.0 - FOV) / max1(pow(length(position), 0.25)), MinQuality, maxQuality) * TERRAIN_PARALLAX_QUALITY;
+	float quality = clamp(radians(180.0) / max1(pow(length(position), 0.25)), MinQuality, maxQuality) * TERRAIN_PARALLAX_QUALITY;
 	
 	vec3 tangentRay = normalize(position) * tbnMatrix;
 

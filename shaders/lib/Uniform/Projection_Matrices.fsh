@@ -1,5 +1,3 @@
-flat varying float FOV;
-
 #ifdef FOV_OVERRIDE
 	flat varying mat4 projection;
 	flat varying mat4 projectionInverse;

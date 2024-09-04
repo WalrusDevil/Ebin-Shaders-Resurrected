@@ -63,6 +63,10 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float transparentShadow = step(shadowScreenPos.z, texture(shadowtex0, shadowScreenPos.xy).r);
 	#endif
 
+	#ifndef TRANSPARENT_SHADOWS
+	return transparentShadow
+	#endif
+
 	if(transparentShadow == 1.0){ // no shadow at all
 		return vec3(1.0);
 	}
@@ -73,7 +77,8 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	float opaqueShadow = step(shadowScreenPos.z, texture(shadowtex1, shadowScreenPos.xy).r);
 	#endif
 
-	if(opaqueShadow == 0.0){ // paque shadow so don't sample transparent shadow colour
+	if(opaqueShadow == 0.0){ // opaque shadow so don't sample transparent shadow colour
+		return vec3(0.0);
 	}
 
 	vec4 shadowColorData = texture(shadowcolor0, shadowScreenPos.xy);

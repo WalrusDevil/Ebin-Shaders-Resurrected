@@ -19,7 +19,9 @@ varying float blocklight;
 
 varying vec3 blockCentre;
 
+#if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
 #include "/lib/Uniform/Shading_Variables.glsl"
+#endif
 
 /***********************************************************************/
 #if defined vsh
@@ -218,8 +220,10 @@ uniform sampler3D colortex4;
 
 #include "/lib/Uniform/Shadow_View_Matrix.fsh"
 #include "/lib/Voxel/VoxelPosition.glsl"
+#if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
 #include "/lib/Fragment/ComputeShadedFragment.fsh"
 #include "/lib/Fragment/ComputeWaveNormals.fsh"
+#endif
 
 float LOD;
 

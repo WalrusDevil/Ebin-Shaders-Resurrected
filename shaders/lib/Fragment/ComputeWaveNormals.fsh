@@ -116,7 +116,7 @@ float GetWaves(mat4x2 c, float offset) {
 	return waves;
 }
 
-vec2 GetWaveDifferentials(vec2 coord, cfloat scale) { // Get finite wave differentials for the world-space X and Z coordinates
+vec2 GetWaveDifferentials(vec2 coord, float scale) { // Get finite wave differentials for the world-space X and Z coordinates
 	mat4x2 c;
 	
 	float a  = GetWaves(coord, c);
@@ -141,11 +141,11 @@ vec2 GetParallaxWave(vec2 worldPos, float angleCoeff) {
 	cfloat MinQuality   = 0.5;
 	cfloat maxQuality   = 1.5;
 	
-	float intensity = clamp01((parallaxDist - length(position[1]) * FOV / 90.0) / distFade) * 0.85 * TERRAIN_PARALLAX_INTENSITY;
+	float intensity = clamp01((parallaxDist - length(position[1])) / distFade) * 0.85 * TERRAIN_PARALLAX_INTENSITY;
 	
 //	if (intensity < 0.01) return worldPos;
 	
-	float quality = clamp(radians(180.0 - FOV) / max1(pow(length(position[1]), 0.25)), MinQuality, maxQuality) * TERRAIN_PARALLAX_QUALITY;
+	float quality = clamp(radians(180.0) / max1(pow(length(position[1]), 0.25)), MinQuality, maxQuality) * TERRAIN_PARALLAX_QUALITY;
 	
 	vec3  tangentRay = normalize(position[1]) * tbnMatrix;
 	vec3  stepSize = 0.1 * vec3(1.0, 1.0, 1.0);

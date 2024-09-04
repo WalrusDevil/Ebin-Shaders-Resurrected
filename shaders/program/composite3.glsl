@@ -51,7 +51,7 @@ uniform vec2 pixelSize;
 #include "/lib/Utility.glsl"
 #include "/lib/Debug.glsl"
 
-vec3 ComputeBloomTile(cfloat scale, vec2 offset) { // Computes a single bloom tile, the tile's blur level is inversely proportional to its size
+vec3 ComputeBloomTile(float scale, vec2 offset) { // Computes a single bloom tile, the tile's blur level is inversely proportional to its size
 	// Each bloom tile uses (1.0 / scale + pixelSize * 2.0) texcoord-units of the screen
 	
 	vec2 coord  = texcoord;

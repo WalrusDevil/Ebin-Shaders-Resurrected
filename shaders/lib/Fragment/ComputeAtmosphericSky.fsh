@@ -1,4 +1,4 @@
-vec2 AtmosphereDistances(vec3 worldPosition, vec3 worldDirection, cfloat atmosphereRadius, cvec2 radiiSquared) {
+vec2 AtmosphereDistances(vec3 worldPosition, vec3 worldDirection, float atmosphereRadius, vec2 radiiSquared) {
 	// Considers the planet's center as the coordinate origin, as per convention
 	
 	float b  = -dot(worldPosition, worldDirection);

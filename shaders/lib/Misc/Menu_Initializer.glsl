@@ -18,5 +18,7 @@
 #endif
 #ifdef COMPOSITE0_ENABLED
 #endif
+#ifdef SHADOWCOMP_ENABLED
+#endif
 
 */

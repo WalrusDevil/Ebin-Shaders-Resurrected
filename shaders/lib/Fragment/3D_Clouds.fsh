@@ -77,7 +77,7 @@ vec3 Get3DNoise3D(vec3 pos) {
 
 #define CloudNoise Get3DNoise // [Get2DNoise Get2DStretchNoise Get2_5DNoise Get3DNoise]
 
-float GetCoverage(float coverage, cfloat denseFactor, float clouds) {
+float GetCoverage(float coverage, float denseFactor, float clouds) {
 	return clamp01((clouds + coverage - 1.0) * denseFactor);
 }
 
@@ -86,7 +86,7 @@ mat4x3 cloudAdd;
 
 vec3 directColor, ambientColor, bouncedColor;
 
-vec4 CloudColor(vec3 worldPosition, cfloat cloudLowerHeight, cfloat cloudDepth, cfloat denseFactor, float coverage, float sunglow) {
+vec4 CloudColor(vec3 worldPosition, float cloudLowerHeight, float cloudDepth, float denseFactor, float coverage, float sunglow) {
 	float cloudCenter = cloudLowerHeight + cloudDepth * 0.5;
 	
 	float cloudAltitudeWeight = clamp01(distance(worldPosition.y, cloudCenter) / (cloudDepth / 2.0));
@@ -158,7 +158,7 @@ void swap(io vec3 a, io vec3 b) {
 	b = swap;
 }
 
-void CloudFBM1(cfloat speed) {
+void CloudFBM1(float speed) {
 	float t = TIME * 0.07 * speed;
 	
 	cloudMul[0] = vec3(0.5, 0.5, 0.1);
@@ -214,7 +214,7 @@ void CloudLighting3(float sunglow) {
 #endif
 
 
-void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, cfloat density, float coverage, cfloat cloudLowerHeight, cfloat cloudDepth) {
+void RaymarchClouds(io vec4 cloud, vec3 position, float sunglow, float samples, float density, float coverage, float cloudLowerHeight, float cloudDepth) {
 	if (cloud.a >= 1.0) return;
 
 	float cloudUpperHeight = cloudLowerHeight + cloudDepth;

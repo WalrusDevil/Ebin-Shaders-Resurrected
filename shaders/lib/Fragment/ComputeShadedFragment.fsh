@@ -75,7 +75,7 @@ vec3 LightDesaturation(vec3 color, float torchlight, float skylight, float emiss
 	return mix(color, desatColor, coeff);
 }
 
-vec3 nightDesat(vec3 color, vec3 lightmap, cfloat mult, cfloat curve) {
+vec3 nightDesat(vec3 color, vec3 lightmap, float mult, float curve) {
 	float desatAmount = clamp01(pow(length(lightmap) * mult, curve));
 	vec3 desatColor = vec3(color.r + color.g + color.b);
 	
@@ -84,7 +84,7 @@ vec3 nightDesat(vec3 color, vec3 lightmap, cfloat mult, cfloat curve) {
 	return mix(desatColor, color, desatAmount);
 }
 
-vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position, float materialAO, float SSS, vec3 geometryNormal, vec3 preCalculatedSunlight) {
+vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float skyLightmap, vec4 GI, vec3 normal, float emission, mat2x3 position, float materialAO, float SSS, vec3 geometryNormal, vec3 sunlight) {
 	Shading shading;
 	
 #ifndef VARIABLE_WATER_HEIGHT
@@ -94,12 +94,6 @@ vec3 ComputeShadedFragment(vec3 diffuse, Mask mask, float torchLightmap, float s
 	
 	#ifdef WORLD_OVERWORLD
 		shading.skylight = pow2(skyLightmap);
-		
-		if(preCalculatedSunlight.r >= 0.0){
-			shading.sunlight = preCalculatedSunlight;
-		} else {
-			shading.sunlight  = vec3(ComputeSunlight(position[1], normal, geometryNormal, 1.0, SSS, skyLightmap));
-		}
 		
 		shading.skylight *= mix(shading.caustics * 0.65 + 0.35, 1.0, pow8(1.0 - abs(worldLightVector.y)));
 		shading.skylight *= GI.a;
