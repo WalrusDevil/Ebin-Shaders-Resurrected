@@ -20,7 +20,7 @@ float CalculateFogFactor(vec3 position) {
 	return 0.0;
 #endif
 	
-	float fogfactor  = length(position) / far;
+	float fogfactor  = smoothstep(0, PORTAL_RENDER_DISTANCE * 16, length(position));
 	float nearestPortalDistance;
 	float nearestPortalX = getNearestPortalX(cameraPosition.x, nearestPortalDistance);
 
