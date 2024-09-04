@@ -22,6 +22,8 @@ vec3 CalculateSkyGradient(vec3 wDir, float sunglow, vec3 sunspot) {
 vec3 ComputeSunspot(vec3 wDir, inout vec3 transmit) {
 	float sunspot = float(dot(wDir, sunVector) > 1.0 - SUN_ANGULAR_PERCENTAGE + 0*0.9999567766);
 	vec3 color = vec3(float(sunspot) * sunbright) * transmit;
+
+	//color += pow(smoothstep(0.8, 1.0, dot(wDir, sunVector)), 100);
 	
 	transmit *= 1.0 - sunspot;
 	
@@ -86,6 +88,13 @@ vec3 ComputeBackSky(vec3 wDir, vec3 wPos, io vec3 transmit, float sunlight, cboo
 	
 	color += CalculateNightSky(wDir, transmit);
 	color += ComputeSunspot(wDir, transmit) * 16.0 * sunFactor;
+
+	float sunglow = CalculateSunglow(dot(wDir, sunVector));
+	float gradientCoeff = pow4(1.0 - abs(wDir.y) * 0.5);
+	vec3 sunglowColor = mix(skylightColor, sunlightColor * 0.5, gradientCoeff * sunglow) * sunglow;
+
+	color += sunglowColor * 5;
+
 	color += ComputeSunspot(-wDir, transmit) * 4.0 * vec3(0.3, 0.7, 8.0) * sunFactor;
 	color += CalculateStars(wDir, transmit, reflection);
 	

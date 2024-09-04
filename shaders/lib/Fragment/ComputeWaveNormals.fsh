@@ -45,7 +45,7 @@ void SetupWaveFBM() {
 	cvec2 disp3 = vec2(0.0555 ,  0.03405  ) * noiseRes * noiseScale;
 	cvec2 disp4 = vec2(0.00825, -0.0491625) * noiseRes * noiseScale;
 	
-	float w = TIME * WAVE_SPEED * 0.6;
+	float w = 1.0 * WAVE_SPEED * 0.6;
 	
 	waveTime[0] = w * disp1;
 	waveTime[1] = w * disp2;

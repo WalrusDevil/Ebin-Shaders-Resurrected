@@ -582,6 +582,15 @@ vec3 SkyAtmosphere(vec3 wDir, io vec3 transmit) {
 #endif
 }
 
+float CalculateSunglow(float lightCoeff) {
+	float sunglow = clamp01(lightCoeff - 0.01);
+	      sunglow = pow8(sunglow);
+
+	sunglow *= timeDay;
+	
+	return sunglow * 2;
+}
+
 vec3 SkyAtmosphereToPoint(vec3 wPos0, vec3 wPos1, io vec3 transmit, vec2 VL) {
 #ifdef PRECOMPUTED_ATMOSPHERE
 	vec3 wDir = normalize(wPos1 - wPos0);
@@ -590,6 +599,12 @@ vec3 SkyAtmosphereToPoint(vec3 wPos0, vec3 wPos1, io vec3 transmit, vec2 VL) {
 	inScatter += CalculateNightSky(wDir, transmitIgnore);
 	inScatter += PrecomputedSky(kCamera, wDir, (1.0 - VL.x) * length(wPos1), sunVector, transmitIgnore)*0.1;
 	inScatter = mix(inScatter, vec3(inScatter.b), biomePrecipness);
+
+	float sunglow = CalculateSunglow(dot(wDir, sunVector));
+	float gradientCoeff = pow4(1.0 - abs(wDir.y) * 0.5);
+	vec3 sunglowColor = mix(skylightColor, sunlightColor * 0.5, gradientCoeff * sunglow) * sunglow;
+
+	inScatter += sunglowColor * 5;
 	
 	float fog0 = CalculateFogFactor(wPos0);
 	float fog1 = CalculateFogFactor(wPos1);
