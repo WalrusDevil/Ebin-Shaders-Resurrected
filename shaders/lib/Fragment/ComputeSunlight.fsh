@@ -4,7 +4,7 @@
 #include "/lib/Misc/ShadowBias.glsl"
 #include "/lib/Acid/portals.glsl"
 
-vec4 noise;
+float noise;
 
 float GetLambertianShading(vec3 normal) {
 	return clamp01(dot(normal, worldLightVector));
@@ -20,8 +20,31 @@ vec2 VogelDiscSample(int stepIndex, int stepCount, float rotation) {
 }
 
 // ask tech, idk
-float ComputeSSS(float nDotL, float SSS, vec3 normal){
-	return mix(nDotL, pow2(nDotL * 0.5 + 0.5), SSS);
+float ComputeSSS(float blockerDistance, float SSS, vec3 normal){
+	#ifndef SUBSURFACE_SCATTERING
+	return 0.0;
+	#endif
+
+	if(SSS < 0.0001){
+		return 0.0;
+	}
+
+	float nDotL = dot(normal, lightVector);
+
+	if(nDotL > -0.00001){
+		return 0.0;
+	}
+
+	float s = 1.0 / (SSS * 0.06);
+	float z = blockerDistance * 255;
+
+	if(isnan(z)){
+		z = 0.0;
+	}
+
+	float scatter = 0.25 * (exp(-s * z) + 3*exp(-s * z / 3));
+
+	return clamp01(scatter);
 }
 
 vec3 SampleShadow(vec3 shadowClipPos, bool useImageShadowMap){
@@ -57,12 +80,42 @@ vec3 ComputeShadows(vec3 shadowClipPos, float penumbraWidthBlocks, bool useImage
 
 
 	for(int i = 0; i < samples; i++){
-		vec2 offset = VogelDiscSample(i, samples, noise.g);
+		vec2 offset = VogelDiscSample(i, samples, noise);
 		shadowSum += SampleShadow(shadowClipPos + vec3(offset * range, 0.0), useImageShadowMap);
 	}
 	shadowSum /= float(samples);
 
 	return shadowSum;
+}
+
+float GetBlockerDistance(vec3 shadowClipPos){
+	float biasCoeff;
+
+	float range = float(BLOCKER_SEARCH_RADIUS) / (2 * shadowDistance);
+
+	vec3 receiverShadowScreenPos = BiasShadowProjection(shadowClipPos, biasCoeff) * 0.5 + 0.5;
+	float receiverDepth = receiverShadowScreenPos.z;
+
+	float blockerDistance = 0;
+
+	float blockerCount = 0;
+
+	for(int i = 0; i < BLOCKER_SEARCH_SAMPLES; i++){
+		vec2 offset = VogelDiscSample(i, BLOCKER_SEARCH_SAMPLES, noise);
+		vec3 newShadowScreenPos = BiasShadowProjection(shadowClipPos + vec3(offset * range, 0.0), biasCoeff) * 0.5 + 0.5;
+		float newBlockerDepth = texture(shadowtex0, newShadowScreenPos.xy).r;
+		if (newBlockerDepth < receiverDepth){
+			blockerDistance += (receiverDepth - newBlockerDepth);
+			blockerCount += 1;
+		}
+	}
+
+	if(blockerCount == 0){
+		return 0.0;
+	}
+	blockerDistance /= blockerCount;
+
+	return clamp01(blockerDistance);
 }
 
 vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, float sunlightCoeff, float SSS, float skyLightmap, bool rightOfPortal) {
@@ -84,15 +137,17 @@ vec3 ComputeSunlight(vec3 worldSpacePosition, vec3 normal, vec3 geometryNormal, 
 		abs((worldSpacePosition.x + cameraPosition.x) - nearestPortalX + 0.5) < PORTAL_RENDER_DISTANCE * 16 / 2
 	);
 
-	noise = vec4(InterleavedGradientNoise(floor(gl_FragCoord.xy)));
+	noise = InterleavedGradientNoise(floor(gl_FragCoord.xy), frameCounter);
 
 	float nDotL = clamp01(dot(normal, lightVector));
 
 	float penumbraWidth = SHADOW_SOFTNESS * rcp(10); // soft shadows
 
 	vec3 shadow = ComputeShadows(shadowClipPos, penumbraWidth, useImageShadowMap);
-	float scatter = ComputeSSS(nDotL, SSS, geometryNormal);
-	sunlight = shadow * scatter;
+	float blockerDistance = GetBlockerDistance(shadowClipPos);
+
+	float scatter = ComputeSSS(blockerDistance, SSS, geometryNormal);
+	sunlight = max(shadow * nDotL, scatter);
 	sunlight = mix(sunlight, vec3(nDotL), distCoeff);
 
 

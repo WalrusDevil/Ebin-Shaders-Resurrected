@@ -84,7 +84,7 @@ const float zShrink = 4.0;
 #define SHADOW_SAMPLES 16 // [4 8 16 32 64]
 #define MAX_PENUMBRA_WIDTH 16.0
 #define MIN_PENUMBRA_WIDTH SHADOW_SOFTNESS * rcp(10)
-#define BLOCKER_SEARCH_SAMPLES 8
+#define BLOCKER_SEARCH_SAMPLES 1
 #define BLOCKER_SEARCH_RADIUS 0.5
 
 cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
