@@ -224,7 +224,12 @@ void main() {
             #endif
         }
 
-        color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
+        if(mask.water > 0.5 && isEyeInWater < 1.0){
+            color = WATER_COLOR.rgb;
+        } else {
+            color = ComputeSky(refracted, vec3(0.0), transmit, 1.0, false, 1.0);
+        }
+        
     }
 
     if (transparentColor.a == 0) { // check if there is something transparent in front of the reflective surface
