@@ -70,9 +70,7 @@ uniform float sunAngle;
 #endif
 
 vec2 GetDefaultLightmap() {
-    vec2 lightmapCoord = mat2(gl_TextureMatrix[1]) * gl_MultiTexCoord1.st;
-
-    return (lightmapCoord * 33.05 / 32.0) - (1.05 / 32.0);
+    return clamp01(gl_MultiTexCoord1.st / 240.0);
 }
 
 vec3 GetWorldSpacePosition() {
@@ -124,6 +122,7 @@ void main() {
     color = gl_Color.rgb;
     texcoord = gl_MultiTexCoord0.st;
     vertLightmap = GetDefaultLightmap();
+    show(vertLightmap.x);
 
     #ifdef IRIS_FEATURE_BLOCK_EMISSION_ATTRIBUTE
     blocklight = at_midBlock.w;
