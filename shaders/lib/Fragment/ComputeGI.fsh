@@ -35,10 +35,10 @@ vec3 ComputeGI(vec3 worldSpacePosition, vec3 normal, float skyLightmap, float ra
 	vec3 projMult = mat3(shadowProjectionInverse) * -vec3(1.0, 1.0, zShrink * 2.0);
 	vec3 projDisp = shadowViewPosition.xyz - shadowProjectionInverse[3].xyz - vec3(0.0, 0.0, 0.5 * projMult.z);
 	
-	cvec3 sampleMax = vec3(0.0, 0.0, radius * radius);
+	vec3 sampleMax = vec3(0.0, 0.0, radius * radius);
 	
-	cfloat brightness = 1.0 * radius * radius * GI_BRIGHTNESS * SUN_LIGHT_LEVEL;
-	cfloat scale      = radius / 256.0;
+	float brightness = 1.0 * radius * radius * GI_BRIGHTNESS * SUN_LIGHT_LEVEL;
+	float scale      = radius / 256.0;
 	
 	noise *= scale;
 	

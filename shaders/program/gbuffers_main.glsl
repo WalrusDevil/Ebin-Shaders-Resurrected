@@ -70,7 +70,8 @@ uniform float sunAngle;
 #endif
 
 vec2 GetDefaultLightmap() {
-    return clamp01(gl_MultiTexCoord1.st / 240.0);
+    vec2 lmcoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+    return (lmcoord * 33.05 / 32.0) - (1.05 / 32.0);
 }
 
 vec3 GetWorldSpacePosition() {

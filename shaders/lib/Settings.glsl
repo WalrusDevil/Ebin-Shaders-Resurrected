@@ -200,7 +200,7 @@ cvec3 torchColor = vec3(1.0, 0.46, 0.25) * 0.85;
 #define FLOODFILL_BLOCKLIGHT
 
 #if defined FLOODFILL_BLOCKLIGHT && defined IRIS_FEATURE_CUSTOM_IMAGES && defined IRIS_FEATURE_COMPUTE_SHADERS
-// #define SHADOWCOMP_ENABLED
+#define SHADOWCOMP_ENABLED
 #endif
 
 #define FXAA
