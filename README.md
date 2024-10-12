@@ -41,8 +41,7 @@ If you would like to discuss Ebin Resurrected, or other Minecraft shaderpacks, j
 - OpenGL 4 compatible hardware is required. This boils down to Nvidia GeForce 400, AMD Radeon HD 5000, Intel HD 3rd gen **or later**. Any modern device should work fine.
 - The Raspberry Pi is not supported as it does not support OpenGL 4.
 - Intel GPUs are untested and you may encounter issues. If you do encounter issues, please report them, as Intel is intended to be supported.
-### Operating System
-- MacOS is **NOT SUPPORTED**.
+- Apple Silicon devices will not work. Other Apple devices may or may not work.
 
 ## If you run into problems
 Having problems? Join my [Discord Server](https://discord.gg/b9SHNcvs6c) and create a thread in `#support`. Alternatively, if you are experiencing a problem with Ebin you consider to be a bug, create a new [issue](https://github.com/jbritain/Ebin-Shaders-Resurrected/issues). Please read the issue guidelines before creating one and make sure somebody else hasn't raised the same issue already. **You are likely to get a faster response on Discord**.
