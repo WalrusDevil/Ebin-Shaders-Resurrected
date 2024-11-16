@@ -240,11 +240,7 @@ float LOD;
 vec4 GetDiffuse(vec2 coord, float materialIDs) {
     vec4 diffuse;
     if (materialIDs == 1) { // water
-        diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
-        #ifdef CLEAR_WATER
-        diffuse.a = 0.25;
-        #endif
-        return diffuse;
+        return vec4(0.0);
     }
 
 
@@ -422,7 +418,7 @@ void main() {
     #endif
     #else
 
-    diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), biomeWetness * vertLightmap.y);
+    diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), biomeWetness * smoothstep(13.5 / 15.0, 14.5 / 15.0, vertLightmap.y));
 
     float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
 

@@ -271,11 +271,15 @@ void main() {
         color = mix(color, cloud.rgb, cloud.a);
     #endif
 
+    if (isEyeInWater == 0.0 && mask.water > 0.5) {
+        color = waterdepthFog(frontPos[0], backPos[0], color);
+    }
+
 
     // blend in transparent stuff
     color = mix(color, transparentColor.rgb, transparentColor.a);
 
-    if (transparentColor.a != 0) {
+    if (transparentColor.a != 0 || mask.water > 0.5) {
         ComputeSpecularLighting(color, frontPos, normal, baseReflectance, perceptualSmoothness, skyLightmap, sunlight);
     }
 
