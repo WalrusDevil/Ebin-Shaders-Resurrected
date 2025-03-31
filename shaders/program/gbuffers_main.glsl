@@ -239,9 +239,12 @@ float LOD;
 
 vec4 GetDiffuse(vec2 coord, float materialIDs) {
     vec4 diffuse;
+
+    #ifdef gbuffers_water
     if (materialIDs == 1) { // water
         return vec4(0.0);
     }
+    #endif
 
 
 

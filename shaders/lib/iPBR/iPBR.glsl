@@ -242,17 +242,21 @@ float generateEmission(PBRData data, float lumaThreshold, float satThreshold){
       data.SSS = oldData.SSS;
     #endif
 
+    #ifdef gbuffers_water
     if(int(ID + 0.5) == IPBR_WATER){
         data.perceptualSmoothness = 1.0;
         data.baseReflectance = 0.02;
     }
+    #endif
 
     if(!hasRPPorosity) data.porosity = 0.2;
 
+    #ifdef gbuffers_water
     if (data.porosity > 0 && int(ID + 0.5) != IPBR_WATER){
 			data.baseReflectance = mix(data.baseReflectance, 0.02, (1.0 - data.porosity) * biomeWetness * smoothstep(13.5 / 15.0, 14.5 / 15.0, vertLightmap.y));
 			data.perceptualSmoothness = mix(data.perceptualSmoothness, (1.0 - data.porosity), biomeWetness * smoothstep(13.5 / 15.0, 14.5 / 15.0, vertLightmap.y));
 		}
+    #endif
 
     if(IPBR_EMITS_LIGHT(ID))   applyiPBR(data.emission, generateEmission(data, 0.8, 0.6));
 
