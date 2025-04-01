@@ -64,7 +64,7 @@ vec3 SampleShadow(vec3 shadowClipPos){
 	#endif
 
 	#ifndef TRANSPARENT_SHADOWS
-	return transparentShadow
+		return vec3(transparentShadow);
 	#endif
 
 	if(transparentShadow == 1.0){ // no shadow at all
