@@ -340,7 +340,7 @@ void main() {
 
     #endif
 
-    if (diffuse.a < alphaTestRef) {
+    if (diffuse.a < alphaTestRef && materialIDs != IPBR_WATER) {
         discard;
     }
 
@@ -381,90 +381,90 @@ void main() {
     #endif
 
     #if defined gbuffers_water || defined gbuffers_textured || defined gbuffers_hand
-    Mask mask = EmptyMask;
+        Mask mask = EmptyMask;
 
-    #ifdef gbuffers_water
+        #ifdef gbuffers_water
+            if (materialIDs == IPBR_WATER) {
+                normal = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
+                mask.water = 1.0;
+            }
+        #endif
 
-    if (materialIDs == IPBR_WATER) {
-        normal = tbnMatrix * ComputeWaveNormals(position[1], tbnMatrix[2]);
-        mask.water = 1.0;
-    }
-    #endif
+        vec3 sunlight = vec3(ComputeSunlight(position[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
+        vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), mat3(gbufferModelView) * normal, PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
 
-    vec3 sunlight = vec3(ComputeSunlight(position[1], mat3(gbufferModelView) * normal, tbnMatrix[2], 1.0, PBR.SSS, vertLightmap.g));
-    vec3 composite = ComputeShadedFragment(powf(diffuse.rgb, 2.2), mask, vertLightmap.r, vertLightmap.g, vec4(0.0, 0.0, 0.0, 1.0), mat3(gbufferModelView) * normal, PBR.emission, position, PBR.materialAO, PBR.SSS, tbnMatrix[2], sunlight);
+        gl_FragData[3] = vec4(sunlight, 1.0);
 
-    gl_FragData[3] = vec4(sunlight, 1.0);
+        vec2 encode;
+        encode.x = Encode4x8F(vec4(0.0, vertLightmap.g, mask.water, 0.1));
+        encode.y = EncodeNormal(normal, 11.0);
 
-    vec2 encode;
-    encode.x = Encode4x8F(vec4(0.0, vertLightmap.g, mask.water, 0.1));
-    encode.y = EncodeNormal(normal, 11.0);
+        gl_FragData[0] = vec4(encode, 0.0, 1.0);
+        gl_FragData[1] = vec4(composite, diffuse.a);
+        gl_FragData[2] = vec4(PBR.perceptualSmoothness, PBR.baseReflectance, 0.0, 1.0);
+        vec3 blockLightColor = vec3(0.0);
 
-    gl_FragData[0] = vec4(encode, 0.0, 1.0);
-    gl_FragData[1] = vec4(composite, diffuse.a);
-    gl_FragData[2] = vec4(PBR.perceptualSmoothness, PBR.baseReflectance, 0.0, 1.0);
-    vec3 blockLightColor = vec3(0.0);
+        if (IPBR_EMITS_LIGHT(materialIDs)) {
+            blockLightColor = texture(gtexture, texcoord).rgb * clamp01(PBR.emission);
+        }
 
-    if (IPBR_EMITS_LIGHT(materialIDs)) {
-        blockLightColor = texture(gtexture, texcoord).rgb * clamp01(PBR.emission);
-    }
-
-    #ifndef gbuffers_textured
-    if (PBR.emission == 0.0) {
-        gl_FragData[4] = vec4(0);
-    } else {
-        gl_FragData[4] = vec4(blockLightColor, 1.0);
-    }
-    #endif
+            #ifndef gbuffers_textured
+            if (PBR.emission == 0.0) {
+                gl_FragData[4] = vec4(0);
+            } else {
+                gl_FragData[4] = vec4(blockLightColor, 1.0);
+            }
+        #endif
+        
     #else
 
-    diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), biomeWetness * smoothstep(13.5 / 15.0, 14.5 / 15.0, vertLightmap.y));
+        diffuse.rgb = mix(diffuse.rgb, diffuse.rgb * (((1.0 - PBR.porosity) / 2) + 0.5), biomeWetness * smoothstep(13.5 / 15.0, 14.5 / 15.0, vertLightmap.y));
 
-    float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
+        float encodedMaterialIDs = EncodeMaterialIDs(0.0, vec4(0.0, 0.0, 0.0, 0.0));
 
-    if (any(isnan(diffuse))) {
-        discard;
-    }
+        if (any(isnan(diffuse))) {
+            discard;
+        }
 
-    gl_FragData[0] = vec4(diffuse.rgb, 1.0);
-    gl_FragData[1] = vec4(
-            Encode4x8F(vec4(
-                    encodedMaterialIDs,
-                    0.0,
-                    vertLightmap.rg
-                )),
+        gl_FragData[0] = vec4(diffuse.rgb, 1.0);
+        gl_FragData[1] = vec4(
+                Encode4x8F(vec4(
+                        encodedMaterialIDs,
+                        0.0,
+                        vertLightmap.rg
+                    )),
 
-            EncodeNormal(normal, 11.0),
+                EncodeNormal(normal, 11.0),
 
-            Encode4x8F(vec4(
-                    PBR.materialAO,
-                    PBR.SSS,
-                    0.0,
-                    0.0
-                )),
+                Encode4x8F(vec4(
+                        PBR.materialAO,
+                        PBR.SSS,
+                        0.0,
+                        0.0
+                    )),
 
-            #if defined gbuffers_terrain
-            EncodeNormal(tbnMatrix[2], 16.0)
-            #else
-            1.0
-        #endif
-        );
-    gl_FragData[2] = vec4(PBR.perceptualSmoothness, PBR.baseReflectance, PBR.emission, 1.0);
+                #if defined gbuffers_terrain
+                    EncodeNormal(tbnMatrix[2], 16.0)
+                #else
+                    1.0
+                #endif
+            );
+        gl_FragData[2] = vec4(PBR.perceptualSmoothness, PBR.baseReflectance, PBR.emission, 1.0);
 
-    vec3 blockLightColor = vec3(0.0);
-    if (IPBR_EMITS_LIGHT(materialIDs) || handLight) {
-        blockLightColor = texture(gtexture, texcoord).rgb * clamp01(PBR.emission);
-    }
+        vec3 blockLightColor = vec3(0.0);
+        if (IPBR_EMITS_LIGHT(materialIDs) || handLight) {
+            blockLightColor = texture(gtexture, texcoord).rgb * clamp01(PBR.emission);
+        }
 
-    if (materialIDs == IPBR_TORCH) {
-        blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
-    }
+        if (materialIDs == IPBR_TORCH) {
+            blockLightColor = vec3(0.5, 0.2, 0.05) * 4.0 * PBR.emission;
+        }
 
-    if (PBR.emission == 0.0) {
-        gl_FragData[4] = vec4(0.0);
-    } else {
-        gl_FragData[4] = vec4(blockLightColor, 0.0);
-    }
+        if (PBR.emission == 0.0) {
+            gl_FragData[4] = vec4(0.0);
+        } else {
+            gl_FragData[4] = vec4(blockLightColor, 0.0);
+        }
     #endif
 
     exit();
