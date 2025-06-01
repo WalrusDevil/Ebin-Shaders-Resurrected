@@ -15,7 +15,12 @@ const bool shadowcolor0Nearest = true;
 const bool shadowcolor1Nearest = false;
 
 const float eyeBrightnessHalflife = 1.5;
+
+#ifdef AO
+const float ambientOcclusionLevel = 0.0;
+#else
 const float ambientOcclusionLevel = 0.65;
+#endif
 
 const bool colortex0Clear = false;
 const bool colortex1Clear = false;
