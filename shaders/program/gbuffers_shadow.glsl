@@ -229,6 +229,7 @@ void main() {
 
 	vec4 diffuse = color * texture(gtexture, texcoord);
 
+	#ifdef gbuffers_water
 	if (materialIDs == IPBR_WATER) {
 		diffuse = vec4(mix(WATER_COLOR.rgb, color.rgb, BIOME_WATER_TINT), WATER_COLOR.a);
 		#ifdef WATER_CAUSTICS
@@ -239,6 +240,7 @@ void main() {
 			diffuse.a = pow2(diffuse.a);
 		#endif
 	}
+	#endif
 	
 	gl_FragData[0] = diffuse;
 	gl_FragData[1] = vec4(vertNormal.xy * 0.5 + 0.5, 0.0, 1.0);
